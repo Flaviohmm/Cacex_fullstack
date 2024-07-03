@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+
+body, html, #root, .App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container-app {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  flex: 0.7;
+  background: linear-gradient(to right,#004c96, #0480bc); /* Gradiente aplicado */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra adicionada */
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 100%; /* Ajuste a largura conforme necessário */
+  
+}
+
+.login-box {
+  background: linear-gradient(to right, #004c96, #0480bc); /* Gradiente aplicado */
+  padding: 2rem;
+  border-radius: 10px;
+  width: 500px;
+  height: 350px;
+  color: white; /* Cor do texto definida como branco */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra adicionada */
+}
+
+.login-box h2 {
+  margin: 0 0 10px 0;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: black;
+}
+
+.login-box button {
+  margin-top: 30px;
+  margin-left: 0px;
+}
+
+/* .login-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #ccc; 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+.login-box button:hover {
+  background-color: #fff;
+} */
+     
+.btn-grad {
+  background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  display: block;
+}
+
+.btn-grad:hover {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+}
