@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import adicionar_setor
+from . import views
 
 urlpatterns = [
-    path('adicionar-setor/', adicionar_setor, name='adicionar_setor'),
+    path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),
+    path('adicionar_municipio/', views.adicionar_municipio, name='adicionar_municipio'),
+    path('adicionar_atividade/', views.adicionar_atividade, name='adicionar_atividade'),
 ]

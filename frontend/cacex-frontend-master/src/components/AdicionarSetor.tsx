@@ -1,53 +1,39 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const AdicionarSetor: React.FC = () => {
-    const [setor, setSetor] = useState('');
-    const [message, setMessage] = useState('');
+    const [orgaoSetor, setOrgaoSetor] = useState('');
 
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8000/adicionar-setor/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nome: setor }),
-            });
-
-            if (response.ok) {
-                setMessage('Setor enviado com sucesso!');
-                setSetor('');
-            } else {
-                setMessage('Erro ao enviar o setor para a API Django');
-            }
-
+            await axios.post('http://localhost:8000/adicionar_setor/', {orgao_setor: orgaoSetor});
+            setOrgaoSetor('');
+            alert('Setor adicionado com sucesso!');
         } catch (error) {
-            console.error('Erro ao enviar com sucesso!', error);
-            setMessage('Erro ao enviar o setor');
+            console.error('Erro ao adicionar setor:', error);
+            alert('Erro ao adicionar setor.');
         }
     };
 
     return (
-        <div>
-            <h2>Adicionar Setor</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="setor">Setor:</label>
-                    <input
-                        type="text"
-                        id="setor"
-                        value={setor}
-                        onChange={(event) => setSetor(event.target.value)}
-                        required
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Setor:
+                    <input 
+                        type="text" 
+                        value={orgaoSetor}
+                        onChange={(e) => setOrgaoSetor(e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
-                </div>
-                <button type="submit">Adicionar Setor</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
-    )
-}
+                </label>
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Adicionar Setor
+                </button>
+            </div>
+        </form>
+    );
+};
 
 export default AdicionarSetor;

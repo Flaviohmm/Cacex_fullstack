@@ -10,6 +10,10 @@ const Header: React.FC = () => {
     navigate('/login');
   };
 
+  const goToAdicionarDados = () => {
+    navigate('/adicionar_dados');
+  }
+
   return (
     <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-4">
         <div className="flex items-center mb-4 md:mb-0">
@@ -19,7 +23,7 @@ const Header: React.FC = () => {
             <button className="hover:bg-blue-500 p-2 rounded">Início</button>
             <button className="hover:bg-blue-500 p-2 rounded">Tabelas</button>
             <button className="hover:bg-blue-500 p-2 rounded">Adicionar Registros</button>
-            <button className="hover:bg-blue-500 p-2 rounded">Adicionar Dados</button>
+            <button className="hover:bg-blue-500 p-2 rounded" onClick={goToAdicionarDados}>Adicionar Dados</button>           
             <button className="hover:bg-blue-500 p-2 rounded">Listar Dados</button>
             <button className="hover:bg-blue-500 p-2 rounded">Histórico Geral</button>
             <button className="hover:bg-blue-500 p-2 rounded">Arquivado</button>

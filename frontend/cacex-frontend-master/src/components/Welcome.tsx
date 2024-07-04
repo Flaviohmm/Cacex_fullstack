@@ -1,15 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import Logo from '../logo2.png'
 import Header from './Header'
 
 const Welcome: React.FC = () => {
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-    }
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
