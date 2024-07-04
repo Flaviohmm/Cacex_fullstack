@@ -21,6 +21,8 @@ const Login: React.FC = () => {
         });
 
         if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('authToken', data.token);
             navigate('/');
         } else {
             alert('Erro ao realizar login');

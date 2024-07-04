@@ -5,8 +5,8 @@ interface PrivateRouteProps {
   element: React.ReactElement;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, ...rest }) => {
-  const isAuthenticated = !!localStorage.getItem('authToken');
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
+  const isAuthenticated = localStorage.getItem('authToken');
 
   return isAuthenticated ? element : <Navigate to="/login" />;
 };
