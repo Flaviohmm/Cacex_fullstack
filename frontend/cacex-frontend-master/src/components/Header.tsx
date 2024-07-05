@@ -18,6 +18,10 @@ const Header: React.FC = () => {
     navigate('/adicionar_dados');
   }
 
+  const goToListarDados = () => {
+    navigate('/listar_dados')
+  }
+
   return (
     <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-4">
         <div className="flex items-center mb-4 md:mb-0">
@@ -28,7 +32,7 @@ const Header: React.FC = () => {
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Tabelas</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Adicionar Registros</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
-            <button className="hover:bg-blue-500 p-2 rounded font-bold">Listar Dados</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Histórico Geral</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Arquivado</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Painel</button>

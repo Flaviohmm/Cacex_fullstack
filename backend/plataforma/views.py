@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Setor, Municipio, Atividade
@@ -30,3 +30,16 @@ def adicionar_atividade(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListSetores(generics.ListAPIView):
+    queryset = Setor.objects.all()
+    serializer_class = SetorSerializer
+
+class ListMunicipios(generics.ListAPIView):
+    queryset = Municipio.objects.all()
+    serializer_class = MunicipioSerializer
+
+class ListAtividade(generics.ListAPIView):
+    queryset = Atividade.objects.all()
+    serializer_class = AtividadeSerializer
