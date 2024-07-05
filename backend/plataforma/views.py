@@ -40,6 +40,6 @@ class ListMunicipios(generics.ListAPIView):
     queryset = Municipio.objects.all()
     serializer_class = MunicipioSerializer
 
-class ListAtividade(generics.ListAPIView):
+class ListAtividades(generics.ListAPIView):
     queryset = Atividade.objects.all()
     serializer_class = AtividadeSerializer

@@ -7,7 +7,7 @@ const AdicionarAtividade: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/adicionar_atividade', {atividade});
+            await axios.post('http://localhost:8000/adicionar_atividade/', {atividade});
             setAtividade('');
             alert('Atividade adicionada com sucesso!');
         } catch (error) {

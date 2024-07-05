@@ -18,7 +18,7 @@ const ListarDados: React.FC = () => {
 
     const fetchMunicipios = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/listar_municipios");
+            const response = await axios.get("http://localhost:8000/listar_municipios/");
             setMunicipios(response.data);
         } catch (error) {
             console.error("Erro ao listar municípios:", error)
@@ -27,7 +27,7 @@ const ListarDados: React.FC = () => {
 
     const fetchAtividades = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/listar_atividades");
+            const response = await axios.get("http://localhost:8000/listar_atividades/");
             setAtividades(response.data);
         } catch (error) {
             console.error("Erro ao listar atividades:", error)
@@ -45,11 +45,25 @@ const ListarDados: React.FC = () => {
             <Header />
             <div className="container mx-auto">
                 <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
-                <ul>
-                    {setores.map((setor: any, index: number) => (
-                        <li key={index}>{setor.orgao_setor}</li>
-                    ))}
-                </ul>
+                <table className="table-auto">
+                    <thead>
+                        <tr>
+                            <th className="border px-4 py-2">Setor</th>
+                            <th className="border px-4 py-2">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {setores.map((setor: any, index: number) => (
+                            <tr key={index}>
+                                <td className="border px-4 py-2">{setor.orgao_setor}</td>
+                                <td className="border px-4 py-2">
+                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
+                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
                 <h2 className="text-xl font-bold mb-2 mt-4">Municípios</h2>
                 <ul>

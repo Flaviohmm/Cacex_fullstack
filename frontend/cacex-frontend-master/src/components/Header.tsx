@@ -23,9 +23,9 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-4">
+    <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8">
         <div className="flex items-center mb-4 md:mb-0">
-            <img src={Logo} alt="Logo" className="h-10 mr-2" />
+            <img src={Logo} alt="Logo" className="h-14 mr-2" />
         </div>
         <nav className="flex flex-wrap justify-center space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToInicio}>Início</button>
