@@ -3,9 +3,15 @@ import axios from "axios";
 import Header from "./Header";
 
 const ListarDados: React.FC = () => {
-    const [setores, setSetores] = useState([]);
-    const [municipios, setMunicipios] = useState([]);
-    const [atividades, setAtividades] = useState([]);
+    const [setores, setSetores] = useState<any[]>([]);
+    const [municipios, setMunicipios] = useState<any[]>([]);
+    const [atividades, setAtividades] = useState<any[]>([]);
+    const [editSetor, setEditSetor] = useState<any>(null);
+    const [newSetorData, setNewSetorData] = useState<string>('');
+    const [editMunicipio, setEditMunicipio] = useState<any>(null);
+    const [newMunicipioData, setNewMunicipioData] = useState<string>('');
+    const [editAtividade, setEditAtividade] = useState<any>(null);
+    const [newAtividadeData, setNewAtividade] = useState<string>('');
 
     const fetchSetores = async () => {
         try {
@@ -40,6 +46,31 @@ const ListarDados: React.FC = () => {
         fetchAtividades();
     }, []);
 
+    const editarSetor = (setor: any) => {
+        setEditSetor(setor);
+        setNewSetorData(setor.orgao_setor);
+    }
+
+    const salvarSetor = async () => {
+        try {
+            const response = await axios.put(`http://localhost:8000/setores/${editSetor.id}/update_setor/`, { orgao_setor: newSetorData });
+            setSetores(setores.map((setor: any) => (setor.id === editSetor.id ? response.data : setor)));
+            setEditSetor(null);
+            setNewSetorData('');
+        } catch (error) {
+            console.error("Erro ao salvar setor:", error);
+        }
+    }
+
+    const deletarSetor = async (setor: any) => {
+        try {
+            await axios.delete(`http://localhost:8000/setores/${setor.id}/delete_setor/`);
+            setSetores(setores.filter((s: any) => s.id !== setor.id));
+        } catch (error) {
+            console.error("Erro ao deletar setor:", error);
+        }
+    }
+
     return (
         <div>
             <Header />
@@ -55,10 +86,40 @@ const ListarDados: React.FC = () => {
                     <tbody>
                         {setores.map((setor: any, index: number) => (
                             <tr key={index}>
-                                <td className="border px-4 py-2">{setor.orgao_setor}</td>
                                 <td className="border px-4 py-2">
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
-                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
+                                    {editSetor?.id === setor.id ? (
+                                        <input 
+                                            type="text" 
+                                            value={newSetorData}
+                                            onChange={(e) => setNewSetorData(e.target.value)}
+                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                        />
+                                    ) : (
+                                        setor.orgao_setor
+                                    )}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {editSetor?.id === setor.id ? (
+                                        <button
+                                            onClick={salvarSetor}
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                        >
+                                            Salvar
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => editarSetor(setor)}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                        >
+                                            Editar
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => deletarSetor(setor)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                    >
+                                        Deletar
+                                    </button>
                                 </td>
                             </tr>
                         ))}

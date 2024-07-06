@@ -1,5 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+
+router = DefaultRouter()
+
+router.register(r'setores', views.SetorViewSet)
+router.register(r'municipios', views.MunicipioViewSet)
+router.register(r'atividades', views.AtividadeViewSet)
 
 urlpatterns = [
     path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),
@@ -8,4 +15,5 @@ urlpatterns = [
     path('listar_setores/', views.ListSetores.as_view(), name='listar_setores'),
     path('listar_municipios/', views.ListMunicipios.as_view(), name='listar_municipios'),
     path('listar_atividades/', views.ListAtividades.as_view(), name='listar_atividades'),
+    path('', include(router.urls)),
 ]
