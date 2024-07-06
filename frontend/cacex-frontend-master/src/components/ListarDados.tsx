@@ -45,7 +45,7 @@ const ListarDados: React.FC = () => {
             <Header />
             <div className="container mx-auto">
                 <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
-                <table className="table-auto">
+                <table className="table-auto mt-4">
                     <thead>
                         <tr>
                             <th className="border px-4 py-2">Setor</th>
@@ -66,18 +66,46 @@ const ListarDados: React.FC = () => {
                 </table>
 
                 <h2 className="text-xl font-bold mb-2 mt-4">Municípios</h2>
-                <ul>
-                    {municipios.map((municipio: any, index: number) => (
-                        <li key={index}>{municipio.municipio}</li>
-                    ))}
-                </ul>
+                <table className="table-auto mt-4">
+                    <thead>
+                        <tr>
+                            <th className="border px-4 py-2">Município</th>
+                            <th className="border px-4 py-2">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {municipios.map((municipio: any, index: number) => (
+                            <tr key={index}>
+                                <td className="border px-4 py-2">{municipio.municipio}</td>
+                                <td className="border px-4 py-2">
+                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
+                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
                 <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
-                <ul>
-                    {atividades.map((atividade: any, index: number) => (
-                        <li key={index}>{atividade.atividade}</li>
-                    ))}
-                </ul>
+                <table className="table-auto mt-4">
+                    <thead>
+                        <tr>
+                            <th className="border px-4 py-2">Atividade</th>
+                            <th className="border px-4 py-2">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {atividades.map((atividade: any, index: number) => (
+                            <tr key={index}>
+                                <td className="border px-4 py-2">{atividade.atividade}</td>
+                                <td className="border px-4 py-2">
+                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
+                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
