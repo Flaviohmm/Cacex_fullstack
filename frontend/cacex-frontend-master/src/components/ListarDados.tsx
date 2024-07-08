@@ -277,6 +277,7 @@ const ListarDados: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
+                <br />
             </div>
         </div>
     );

@@ -48,9 +48,9 @@ const AdicionarRegistro: React.FC = () => {
     return (
         <div>
             <Header />
-            <form onSubmit={handleSubmit} className="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow-md">
+            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
                 <div className="mb-4">
-                    <label className="block text-xl font-bold mb-2">Nome:</label>
+                    <label className="block text-md font-bold mb-2">Nome:</label>
                     <input
                         name="nome"
                         type="text"
