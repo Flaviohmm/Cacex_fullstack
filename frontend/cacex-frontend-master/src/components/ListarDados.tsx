@@ -124,161 +124,164 @@ const ListarDados: React.FC = () => {
     return (
         <div>
             <Header />
-            <div className="container mx-auto">
-                <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
-                <table className="table-auto mt-4">
-                    <thead>
-                        <tr>
-                            <th className="border px-4 py-2">Setor</th>
-                            <th className="border px-4 py-2">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {setores.map((setor: any, index: number) => (
-                            <tr key={index}>
-                                <td className="border px-4 py-2">
-                                    {editSetor?.id === setor.id ? (
-                                        <input 
-                                            type="text" 
-                                            value={newSetorData}
-                                            onChange={(e) => setNewSetorData(e.target.value)}
-                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
-                                        />
-                                    ) : (
-                                        setor.orgao_setor
-                                    )}
-                                </td>
-                                <td className="border px-4 py-2">
-                                    {editSetor?.id === setor.id ? (
-                                        <button
-                                            onClick={salvarSetor}
-                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
-                                        >
-                                            Salvar
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => editarSetor(setor)}
-                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
-                                        >
-                                            Editar
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => deletarSetor(setor)}
-                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
-                                    >
-                                        Deletar
-                                    </button>
-                                </td>
+            <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
+                <div className="container mx-auto">
+                    <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
+                    <table className="table-auto mt-4">
+                        <thead>
+                            <tr>
+                                <th className="border px-4 py-2">Setor</th>
+                                <th className="border px-4 py-2">Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {setores.map((setor: any, index: number) => (
+                                <tr key={index}>
+                                    <td className="border px-4 py-2">
+                                        {editSetor?.id === setor.id ? (
+                                            <input 
+                                                type="text" 
+                                                value={newSetorData}
+                                                onChange={(e) => setNewSetorData(e.target.value)}
+                                                className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                            />
+                                        ) : (
+                                            setor.orgao_setor
+                                        )}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        {editSetor?.id === setor.id ? (
+                                            <button
+                                                onClick={salvarSetor}
+                                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                            >
+                                                Salvar
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => editarSetor(setor)}
+                                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                            >
+                                                Editar
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => deletarSetor(setor)}
+                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                        >
+                                            Deletar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                <h2 className="text-xl font-bold mb-2 mt-4">Municípios</h2>
-                <table className="table-auto mt-4">
-                    <thead>
-                        <tr>
-                            <th className="border px-4 py-2">Município</th>
-                            <th className="border px-4 py-2">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {municipios.map((municipio: any, index: number) => (
-                            <tr key={index}>
-                               <td className="border px-4 py-2">
-                                    {editMunicipio?.id === municipio.id ? (
-                                        <input 
-                                            type="text" 
-                                            value={newMunicipioData}
-                                            onChange={(e) => setNewMunicipioData(e.target.value)}
-                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
-                                        />
-                                    ) : (
-                                        municipio.municipio
-                                    )}
-                               </td>
-                               <td className="border px-4 py-2">
-                                    {editMunicipio?.id === municipio.id ? (
-                                        <button
-                                            onClick={salvarMunicipio}
-                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
-                                        >
-                                            Salvar
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => editarMunicipio(municipio)}
-                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
-                                        >
-                                            Editar
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => deletarMunicipio(municipio)}
-                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
-                                    >
-                                        Deletar
-                                    </button>
-                               </td>
+                    <h2 className="text-xl font-bold mb-2 mt-4">Municípios</h2>
+                    <table className="table-auto mt-4">
+                        <thead>
+                            <tr>
+                                <th className="border px-4 py-2">Município</th>
+                                <th className="border px-4 py-2">Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {municipios.map((municipio: any, index: number) => (
+                                <tr key={index}>
+                                <td className="border px-4 py-2">
+                                        {editMunicipio?.id === municipio.id ? (
+                                            <input 
+                                                type="text" 
+                                                value={newMunicipioData}
+                                                onChange={(e) => setNewMunicipioData(e.target.value)}
+                                                className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                            />
+                                        ) : (
+                                            municipio.municipio
+                                        )}
+                                </td>
+                                <td className="border px-4 py-2">
+                                        {editMunicipio?.id === municipio.id ? (
+                                            <button
+                                                onClick={salvarMunicipio}
+                                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                            >
+                                                Salvar
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => editarMunicipio(municipio)}
+                                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                            >
+                                                Editar
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => deletarMunicipio(municipio)}
+                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                        >
+                                            Deletar
+                                        </button>
+                                </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
-                <table className="table-auto mt-4 mb-4">
-                    <thead>
-                        <tr>
-                            <th className="border px-4 py-2">Atividade</th>
-                            <th className="border px-4 py-2">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {atividades.map((atividade: any, index: number) => (
-                            <tr key={index}>
-                                <td className="border px-4 py-2">
-                                    {editAtividade?.id === atividade.id ? (
-                                        <input 
-                                            type="text"
-                                            value={newAtividadeData}
-                                            onChange={(e) => setNewAtividadeData(e.target.value)} 
-                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
-                                        />
-                                    ) : (
-                                        atividade.atividade
-                                    )}
-                                </td>
-                                <td className="border px-4 py-2">
-                                    {editAtividade?.id === atividade.id ? (
-                                        <button
-                                            onClick={salvarAtividade}
-                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
-                                        >
-                                            Salvar
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => editarAtividade(atividade)}
-                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
-                                        >
-                                            Editar
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => deletarAtividade(atividade)}
-                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
-                                    >
-                                        Deletar
-                                    </button>
-                                </td>
+                    <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
+                    <table className="table-auto mt-4 mb-4">
+                        <thead>
+                            <tr>
+                                <th className="border px-4 py-2">Atividade</th>
+                                <th className="border px-4 py-2">Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <br />
+                        </thead>
+                        <tbody>
+                            {atividades.map((atividade: any, index: number) => (
+                                <tr key={index}>
+                                    <td className="border px-4 py-2">
+                                        {editAtividade?.id === atividade.id ? (
+                                            <input 
+                                                type="text"
+                                                value={newAtividadeData}
+                                                onChange={(e) => setNewAtividadeData(e.target.value)} 
+                                                className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                            />
+                                        ) : (
+                                            atividade.atividade
+                                        )}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        {editAtividade?.id === atividade.id ? (
+                                            <button
+                                                onClick={salvarAtividade}
+                                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                            >
+                                                Salvar
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => editarAtividade(atividade)}
+                                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                            >
+                                                Editar
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => deletarAtividade(atividade)}
+                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                        >
+                                            Deletar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <br />
+                </div>
             </div>
+            <br />
         </div>
     );
 };

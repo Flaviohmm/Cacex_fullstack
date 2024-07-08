@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 
 const AdicionarRegistro: React.FC = () => {
     const [registro, setRegistro] = useState({
@@ -27,12 +26,34 @@ const AdicionarRegistro: React.FC = () => {
         duracao_dias_uteis: 0
     });
 
+    const [setores, setSetores] = useState<any[]>([]);
+    const [municipios, setMunicipios] = useState<any[]>([]);
+    const [atividades, setAtividades] = useState<any[]>([]);
+
     useEffect(() => {
         const nomeUsuario = localStorage.getItem('nomeUsuario') || '';
         setRegistro(prevState => ({
             ...prevState,
             nome: nomeUsuario
         }));
+
+        const fetchData = async () => {
+            try {
+                const [setoresResponse, municipiosResponse, atividadesResponse] = await Promise.all([
+                    axios.get("http://localhost:8000/listar_setores/"),
+                    axios.get("http://localhost:8000/listar_municipios/"),
+                    axios.get("http://localhost:8000/listar_atividades/")
+                ]);
+
+                setSetores(setoresResponse.data);
+                setMunicipios(municipiosResponse.data);
+                setAtividades(atividadesResponse.data);
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -82,6 +103,46 @@ const AdicionarRegistro: React.FC = () => {
 
                     </select>
                     
+                </div>
+                <div className="mb-4">
+                    <label className="block text-md font-bold mb-2">Setor:</label>
+                    <select 
+                        name="orgao_setor"
+                        value={registro.orgao_setor}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                    >
+                        {setores.map(setor => (
+                            <option key={setor.id} value={setor.orgao_setor}>{setor.orgao_setor}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-md font-bold mb-2">Município:</label>
+                    <select 
+                        name="municipio"
+                        value={registro.municipio}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                    >
+                        {municipios.map(municipio => (
+                            <option key={municipio.id} value={municipio.municipio}>{municipio.municipio}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-md font-bold mb-2">Atividade:</label>
+                    <select 
+                        name="atividade"
+                        value={registro.atividade}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                    >
+                        {atividades.map(atividade => (
+                            <option key={atividade.id} value={atividade.atividade}>{atividade.atividade}</option>
+                        ))}
+
+                    </select>
                 </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Adicionar Registro
