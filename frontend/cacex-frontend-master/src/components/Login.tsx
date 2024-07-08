@@ -23,6 +23,7 @@ const Login: React.FC = () => {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('authToken', data.token);
+            localStorage.setItem('nomeUsuario', username);
             navigate('/');
         } else {
             alert('Erro ao realizar login');
