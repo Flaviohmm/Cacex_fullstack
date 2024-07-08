@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r'setores', views.SetorViewSet)
 router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'atividades', views.AtividadeViewSet)
+router.register(r'registros_funcionarios', views.RegistroFuncionariosViewSet)
 
 urlpatterns = [
     path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),

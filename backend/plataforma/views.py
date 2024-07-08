@@ -1,8 +1,8 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios
+from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, RegistroFuncionariosSerializer
 from rest_framework import viewsets
 
 @api_view(['POST'])
@@ -106,3 +106,8 @@ class AtividadeViewSet(viewsets.ModelViewSet):
         atividade = self.get_object()
         atividade.delete()
         return Response(status=204)
+    
+
+class RegistroFuncionariosViewSet(viewsets.ModelViewSet):
+    queryset = RegistroFuncionarios.objects.all()
+    serializer_class = RegistroFuncionariosSerializer

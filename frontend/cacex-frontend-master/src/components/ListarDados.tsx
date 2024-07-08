@@ -228,7 +228,7 @@ const ListarDados: React.FC = () => {
                 </table>
 
                 <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
-                <table className="table-auto mt-4 mb-8">
+                <table className="table-auto mt-4 mb-4">
                     <thead>
                         <tr>
                             <th className="border px-4 py-2">Atividade</th>

@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Logout from './components/Logout';
 import Welcome from './components/Welcome';
 import AdicionarDados from './components/AdicionarDados';
+import AdicionarRegistro from './components/AdicionarRegistro';
 import ListarDados from './components/ListarDados';
 import PrivateRoute from './PrivateRoute';
 
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/' element={<PrivateRoute element={<Welcome />} />} />
+          <Route path="/adicionar_registro" element={<AdicionarRegistro />} />
           <Route path="/adicionar_dados" element={<AdicionarDados />} />
           <Route path="/listar_dados" element={<ListarDados />} />
         </Routes>
