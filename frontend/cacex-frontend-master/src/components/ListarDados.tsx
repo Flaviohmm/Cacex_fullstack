@@ -11,7 +11,7 @@ const ListarDados: React.FC = () => {
     const [editMunicipio, setEditMunicipio] = useState<any>(null);
     const [newMunicipioData, setNewMunicipioData] = useState<string>('');
     const [editAtividade, setEditAtividade] = useState<any>(null);
-    const [newAtividadeData, setNewAtividade] = useState<string>('');
+    const [newAtividadeData, setNewAtividadeData] = useState<string>('');
 
     const fetchSetores = async () => {
         try {
@@ -70,6 +70,56 @@ const ListarDados: React.FC = () => {
             console.error("Erro ao deletar setor:", error);
         }
     }
+
+    const editarMunicipio = (municipio: any) => {
+        setEditMunicipio(municipio);
+        setNewMunicipioData(municipio.municipio);
+    }
+
+    const salvarMunicipio = async () => {
+        try {
+            const response = await axios.put(`http://localhost:8000/municipios/${editMunicipio.id}/update_municipio/`, { municipio: newMunicipioData});
+            setMunicipios(municipios.map((municipio: any) => (municipio.id === editMunicipio.id ? response.data : municipio)));
+            setEditMunicipio(null);
+            setNewMunicipioData('');
+        } catch (error) {
+            console.error("Erro ao salvar município:", error);
+        }
+    };
+
+    const deletarMunicipio = async (municipio: any) => {
+        try {
+            await axios.delete(`http://localhost:8000/municipios/${municipio.id}/delete_municipio/`);
+            setMunicipios(municipios.filter((m: any) => m.id !== municipio.id))
+        } catch (error) {
+            console.error("Erro ao deletar município:", error);
+        }
+    };
+
+    const editarAtividade = (atividade: any) => {
+        setEditAtividade(atividade);
+        setNewAtividadeData(atividade.atividade);
+    };
+
+    const salvarAtividade = async () => {
+        try {
+            const response = await axios.put(`http://localhost:8000/atividades/${editAtividade.id}/update_atividade/`, { atividade: newAtividadeData });
+            setAtividades(atividades.map((atividade: any) => (atividade.id === editAtividade.id ? response.data : atividade)));
+            setEditAtividade(null);
+            setNewAtividadeData('');
+        } catch (error) {
+            console.error("Erro ao salvar atividade:", error);
+        }
+    };
+
+    const deletarAtividade = async (atividade: any) => {
+        try {
+            await axios.delete(`http://localhost:8000/atividades/${atividade.id}/delete_atividade/`);
+            setAtividades(atividades.filter((a: any) => a.id !== atividade.id));
+        } catch (error) {
+            console.error("Erro ao deletar atividade:", error);
+        }
+    };
 
     return (
         <div>
@@ -137,18 +187,48 @@ const ListarDados: React.FC = () => {
                     <tbody>
                         {municipios.map((municipio: any, index: number) => (
                             <tr key={index}>
-                                <td className="border px-4 py-2">{municipio.municipio}</td>
-                                <td className="border px-4 py-2">
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
-                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
-                                </td>
+                               <td className="border px-4 py-2">
+                                    {editMunicipio?.id === municipio.id ? (
+                                        <input 
+                                            type="text" 
+                                            value={newMunicipioData}
+                                            onChange={(e) => setNewMunicipioData(e.target.value)}
+                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                        />
+                                    ) : (
+                                        municipio.municipio
+                                    )}
+                               </td>
+                               <td className="border px-4 py-2">
+                                    {editMunicipio?.id === municipio.id ? (
+                                        <button
+                                            onClick={salvarMunicipio}
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                        >
+                                            Salvar
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => editarMunicipio(municipio)}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                        >
+                                            Editar
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => deletarMunicipio(municipio)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                    >
+                                        Deletar
+                                    </button>
+                               </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
                 <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
-                <table className="table-auto mt-4">
+                <table className="table-auto mt-4 mb-8">
                     <thead>
                         <tr>
                             <th className="border px-4 py-2">Atividade</th>
@@ -158,10 +238,40 @@ const ListarDados: React.FC = () => {
                     <tbody>
                         {atividades.map((atividade: any, index: number) => (
                             <tr key={index}>
-                                <td className="border px-4 py-2">{atividade.atividade}</td>
                                 <td className="border px-4 py-2">
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2">Editar</button>
-                                    <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2">Deletar</button>
+                                    {editAtividade?.id === atividade.id ? (
+                                        <input 
+                                            type="text"
+                                            value={newAtividadeData}
+                                            onChange={(e) => setNewAtividadeData(e.target.value)} 
+                                            className="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                                        />
+                                    ) : (
+                                        atividade.atividade
+                                    )}
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {editAtividade?.id === atividade.id ? (
+                                        <button
+                                            onClick={salvarAtividade}
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300 mx-2"
+                                        >
+                                            Salvar
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => editarAtividade(atividade)}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                        >
+                                            Editar
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => deletarAtividade(atividade)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                    >
+                                        Deletar
+                                    </button>
                                 </td>
                             </tr>
                         ))}
