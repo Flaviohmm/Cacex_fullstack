@@ -1,155 +1,152 @@
-import React, { useState, useEffect } from "react";
-import Header from "./Header";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const AdicionarRegistro: React.FC = () => {
-    const [registro, setRegistro] = useState({
-        nome: '',
+    const [formData, setFormData] = useState({
+        username: '',
         orgao_setor: '',
         municipio: '',
         atividade: '',
         num_convenio: '',
         parlamentar: '',
         objeto: '',
-        oge_ogu: 0,
-        cp_prefeitura: 0,
-        valor_liberado: 0,
+        oge_ogu: '',
+        cp_prefeitura: '',
+        valor_liberado: '',
         prazo_vigencia: '',
         situacao: '',
         providencia: '',
-        status: 'Não Iniciado',
         data_recepcao: '',
         data_inicio: '',
         documento_pendente: false,
         documento_cancelado: false,
         data_fim: '',
-        duracao_dias_uteis: 0
     });
 
-    const [setores, setSetores] = useState<any[]>([]);
-    const [municipios, setMunicipios] = useState<any[]>([]);
-    const [atividades, setAtividades] = useState<any[]>([]);
-
-    useEffect(() => {
-        const nomeUsuario = localStorage.getItem('nomeUsuario') || '';
-        setRegistro(prevState => ({
-            ...prevState,
-            nome: nomeUsuario
-        }));
-
-        const fetchData = async () => {
-            try {
-                const [setoresResponse, municipiosResponse, atividadesResponse] = await Promise.all([
-                    axios.get("http://localhost:8000/listar_setores/"),
-                    axios.get("http://localhost:8000/listar_municipios/"),
-                    axios.get("http://localhost:8000/listar_atividades/")
-                ]);
-
-                setSetores(setoresResponse.data);
-                setMunicipios(municipiosResponse.data);
-                setAtividades(atividadesResponse.data);
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-
-        if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
-            const { checked } = e.target;
-            setRegistro(prevState => ({
-                ...prevState,
-                [name]: checked
-            }));
-        } else {
-            setRegistro(prevState => ({
-                ...prevState,
-                [name]: value
-            }));
-        }
+    // Definindo o tipo de evento apropriado para a função de handleChange
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, type } = e.target;
+        const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:8000/registros_funcionarios/', {
-                ...registro,
-                username: registro.nome
+        // Envie os dados para o servidor
+        axios.post('http://localhost:8000/adicionar_registro/', formData)
+            .then(response => {
+                console.log(response.data);
+                alert('Registro adicionado com sucesso');
+            })
+            .catch(error => {
+                console.error('Houve um erro ao adicionar o registro:', error);
+                alert(`Erro ao adicionar registro: ${error.response?.data?.error ?? error.message}`);
             });
-            console.log('Registro adicionado:', response.data);
-            // limpar o formulário ou fornecer feedback ao usuário
-        } catch (error) {
-            console.error('Erro ao adicionar registro:', error);
-        }
     };
 
     return (
-        <div>
-            <Header />
-            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
-                <div className="mb-4">
-                    <label className="block text-md font-bold mb-2">Nome:</label>
-                    <select
-                        name="nome"
-                        value={registro.nome}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                    >
-                        <option value={registro.nome}>{registro.nome}</option>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Nome:</label>
+                <select name="id" value={formData.username} onChange={handleChange} required>
+                    <option value="">Selecione um usuário</option>
+                    <option value={formData.username}>{formData.username}</option>
+                </select>
+            </div>
 
-                    </select>
-                    
-                </div>
-                <div className="mb-4">
-                    <label className="block text-md font-bold mb-2">Setor:</label>
-                    <select 
-                        name="orgao_setor"
-                        value={registro.orgao_setor}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                    >
-                        {setores.map(setor => (
-                            <option key={setor.id} value={setor.orgao_setor}>{setor.orgao_setor}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-md font-bold mb-2">Município:</label>
-                    <select 
-                        name="municipio"
-                        value={registro.municipio}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                    >
-                        {municipios.map(municipio => (
-                            <option key={municipio.id} value={municipio.municipio}>{municipio.municipio}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-md font-bold mb-2">Atividade:</label>
-                    <select 
-                        name="atividade"
-                        value={registro.atividade}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                    >
-                        {atividades.map(atividade => (
-                            <option key={atividade.id} value={atividade.atividade}>{atividade.atividade}</option>
-                        ))}
+            <div>
+                <label>Órgão Setor:</label>
+                <input type="text" name="orgao_setor" value={formData.orgao_setor} onChange={handleChange} />
+            </div>
 
-                    </select>
-                </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Adicionar Registro
-                </button>
-            </form>
-        </div>
-    )
-}
+            <div>
+                <label>Município:</label>
+                <input type="text" name="municipio" value={formData.municipio} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Atividade:</label>
+                <input type="text" name="atividade" value={formData.atividade} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Num Convênio:</label>
+                <input type="text" name="num_convenio" value={formData.num_convenio} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Parlamentar:</label>
+                <input type="text" name="parlamentar" value={formData.parlamentar} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Objeto:</label>
+                <input type="text" name="objeto" value={formData.objeto} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>OGE/OGU:</label>
+                <input type="text" name="oge_ogu" value={formData.oge_ogu} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>CP Prefeitura:</label>
+                <input type="text" name="cp_prefeitura" value={formData.cp_prefeitura} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Valor Liberado:</label>
+                <input type="text" name="valor_liberado" value={formData.valor_liberado} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Prazo Vigência:</label>
+                <input type="date" name="prazo_vigencia" value={formData.prazo_vigencia} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Situação:</label>
+                <input type="text" name="situacao" value={formData.situacao} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Providência:</label>
+                <input type="text" name="providencia" value={formData.providencia} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Data de Recepção:</label>
+                <input type="date" name="data_recepcao" value={formData.data_recepcao} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Data de Início:</label>
+                <input type="date" name="data_inicio" value={formData.data_inicio} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Documento Pendente:</label>
+                <input type="checkbox" name="documento_pendente" checked={formData.documento_pendente} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Documento Cancelado:</label>
+                <input type="checkbox" name="documento_cancelado" checked={formData.documento_cancelado} onChange={handleChange} />
+            </div>
+
+            <div>
+                <label>Data de Fim:</label>
+                <input type="date" name="data_fim" value={formData.data_fim} onChange={handleChange} />
+            </div>
+
+            <div>
+                <button type="submit">Adicionar Registro</button>
+            </div>
+        </form>
+    );
+};
 
 export default AdicionarRegistro;

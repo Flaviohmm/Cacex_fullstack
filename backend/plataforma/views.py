@@ -2,8 +2,11 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios
+from django.contrib.auth.models import User
+from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, RegistroFuncionariosSerializer
 from rest_framework import viewsets
+import json
 
 @api_view(['POST'])
 def adicionar_setor(request):
@@ -108,6 +111,77 @@ class AtividadeViewSet(viewsets.ModelViewSet):
         return Response(status=204)
     
 
-class RegistroFuncionariosViewSet(viewsets.ModelViewSet):
-    queryset = RegistroFuncionarios.objects.all()
-    serializer_class = RegistroFuncionariosSerializer
+@api_view(['POST'])
+def adicionar_registro(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            nome = User.objects.get(id=data.get('username'))
+            orgao_setor = Setor.objects.get(id=data.get('orgao_setor'))
+            municipio = Municipio.objects.get(id=data.get('municipio'))
+            atividade = Atividade.objects.get(id=data.get('atividade'))
+            num_convenio = data.get('num_convenio')
+            parlamentar = data.get('parlamentar')
+            objeto = data.get('objeto')
+
+            oge_ogu_str = data.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            oge_ogu = float(oge_ogu_str)
+
+            cp_prefeitura_str = data.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            cp_prefeitura = float(cp_prefeitura_str)
+
+            valor_liberado_str = data.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            valor_liberado = float(valor_liberado_str)
+
+            prazo_vigencia = data.get('prazo_vigencia')
+            situacao = data.get('situacao')
+            providencia = data.get('providencia')
+            data_recepcao = data.get('data_recepcao')
+            data_inicio = data.get('data_inicio')
+            documento_pendente = data.get('documento_pendente', False)
+            documento_cancelado = data.get('documento_cancelado', False)
+            data_fim = data.get('data_fim')
+
+            registro = RegistroFuncionarios(
+                nome=nome,
+                orgao_setor=orgao_setor,
+                municipio=municipio,
+                atividade=atividade,
+                num_convenio=num_convenio,
+                parlamentar=parlamentar,
+                objeto=objeto,
+                oge_ogu=oge_ogu,
+                cp_prefeitura=cp_prefeitura,
+                valor_liberado=valor_liberado,
+                prazo_vigencia=prazo_vigencia,
+                situacao=situacao,
+                providencia=providencia,
+                data_recepcao=data_recepcao,
+                data_inicio=data_inicio,
+                documento_pendente=documento_pendente,
+                documento_cancelado=documento_cancelado,
+                data_fim=data_fim,
+            )
+
+            # Salve o registro
+            registro.save()
+
+            # Chame as funções utilitárias
+            registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+            exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+            registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+            # Formate os valores manualmente como moeda (considerando o formato brasileiro)
+            registro.oge_ogu = f'R${oge_ogu:,.2f}'
+            registro.cp_prefeitura = f'R${cp_prefeitura:,.2f}'
+            registro.valor_liberado = f'R${valor_liberado:,.2f}'
+            registro.valor_total = f'R${registro.valor_total:,.2f}'
+            registro.falta_liberar = f'R${registro.falta_liberar:,.2f}'
+
+            return Response({'success': 'Registro adicionado com sucesso'}, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
