@@ -9,13 +9,40 @@ const Login: React.FC = () => {
     const [senha, setSenha] = useState('');
     const navigate = useNavigate();
 
+    const fetchUsuarios = async () => {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Token de autenticação não encontrado. Faça login novamente.');
+            return;
+        }
+    
+        const response = await fetch('http://localhost:8000/usuarios/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`,
+            },
+        });
+    
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            // Process your data here
+        } else {
+            alert('Erro ao buscar lista de usuários.');
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const response = await fetch('http://localhost:8000/auth/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('authToken')}`,
+                
             },
             body: JSON.stringify({ username, senha }),
         });
@@ -23,7 +50,9 @@ const Login: React.FC = () => {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('authToken', data.token);
+            localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('nomeUsuario', username);
+            fetchUsuarios();
             navigate('/');
         } else {
             alert('Erro ao realizar login');

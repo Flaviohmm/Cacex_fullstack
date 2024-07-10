@@ -6,6 +6,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from .serializers import UserSerializer
 import json
 
 @csrf_exempt
@@ -43,7 +49,8 @@ def login(request):
             return JsonResponse({'error': 'Usuário ou senha inválidos.'}, status=400)
         else:
             auth_login(request, usuario)
-            return JsonResponse({'success': 'Login realizado com sucesso.'}, status=200)
+            token, created = Token.objects.get_or_create(user=usuario)
+            return JsonResponse({'success': 'Login realizado com sucesso.', 'token': token.key}, status=200)
         
 @csrf_exempt
 def sair(request):
@@ -52,4 +59,12 @@ def sair(request):
             logout(request)
             return JsonResponse({'success': 'Logout realizado com sucesso.'}, status=200)
         return JsonResponse({'error': 'Usuário não está autenticado.'}, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def lista_usuarios(request):
+    if request.user.is_authenticated:
+        usuarios = User.objects.all()
+        usuarios_list = [{'id': usuario.id, 'username': usuario.username, 'nome': usuario.first_name} for usuario in usuarios]
+        return Response(usuarios_list, status=status.HTTP_200_OK)
     

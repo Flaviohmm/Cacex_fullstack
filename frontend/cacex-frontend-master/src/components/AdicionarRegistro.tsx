@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Header from './Header';
 
 const AdicionarRegistro: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -23,7 +24,58 @@ const AdicionarRegistro: React.FC = () => {
         data_fim: '',
     });
 
-    // Definindo o tipo de evento apropriado para a função de handleChange
+    const [usuarios, setUsuarios] = useState<any[]>([]);
+    const [setores, setSetores] = useState<any[]>([]);
+    const [municipios, setMunicipios] = useState<any[]>([]);
+    const [atividades, setAtividades] = useState<any[]>([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+
+        if (token) {
+            axios.get('http://localhost:8000/usuarios/', {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            })
+                .then(response => setUsuarios(response.data))
+                .catch(error => console.error('Erro ao buscar usuários:', error));
+        } else {
+            console.error('Token de autenticação não encontrado.');
+        }
+
+        fetchSetores();
+        fetchMunicipios();
+        fetchAtividades();
+    }, []); // Pass an empty array to ensure this runs only once
+
+    const fetchSetores = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/listar_setores/");
+            setSetores(response.data);
+        } catch (error) {
+            console.error("Erro ao listar setores:", error);
+        }
+    };
+
+    const fetchMunicipios = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/listar_municipios/");
+            setMunicipios(response.data);
+        } catch (error) {
+            console.error("Erro ao listar municípios:", error);
+        }
+    };
+
+    const fetchAtividades = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/listar_atividades/");
+            setAtividades(response.data);
+        } catch (error) {
+            console.error("Erro ao listar atividades:", error);
+        }
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, type } = e.target;
         const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -35,8 +87,12 @@ const AdicionarRegistro: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Envie os dados para o servidor
-        axios.post('http://localhost:8000/adicionar_registro/', formData)
+        const token = localStorage.getItem('authToken');
+        axios.post('http://localhost:8000/adicionar_registro/', formData, {
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        })
             .then(response => {
                 console.log(response.data);
                 alert('Registro adicionado com sucesso');
@@ -48,104 +104,122 @@ const AdicionarRegistro: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Nome:</label>
-                <select name="id" value={formData.username} onChange={handleChange} required>
-                    <option value="">Selecione um usuário</option>
-                    <option value={formData.username}>{formData.username}</option>
-                </select>
-            </div>
+        <div>
+            <Header />
+            <form onSubmit={handleSubmit} className='max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md'>
+                <div>
+                    <label className="block text-md font-bold mb-2">Nome:</label>
+                    <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Órgão Setor:</label>
-                <input type="text" name="orgao_setor" value={formData.orgao_setor} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Órgão Setor:</label>
+                    <select name="orgao_setor" value={formData.orgao_setor} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
+                        <option value="">Selecione um Órgão/Setor</option>
+                        {setores.map((setor: any, index: number) => (
+                            <option key={index} value={setor.id}>{setor.orgao_setor}</option>
+                        ))}
+                    </select>
+                </div>
 
-            <div>
-                <label>Município:</label>
-                <input type="text" name="municipio" value={formData.municipio} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Município:</label>
+                    <select name="municipio" value={formData.municipio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
+                        <option value="">Selecione um Município</option>
+                        {municipios.map((municipio: any, index: number) => (
+                            <option key={index} value={municipio.id}>{municipio.municipio}</option>
+                        ))}
+                    </select>
+                </div>
 
-            <div>
-                <label>Atividade:</label>
-                <input type="text" name="atividade" value={formData.atividade} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Atividade:</label>
+                    <select name="atividade" value={formData.atividade} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
+                        <option value="">Selecione um Órgão/Setor</option>
+                        {atividades.map((atividade: any, index: number) => (
+                            <option key={index} value={atividade.id}>{atividade.atividade}</option>
+                        ))}
+                    </select>
+                </div>
 
-            <div>
-                <label>Num Convênio:</label>
-                <input type="text" name="num_convenio" value={formData.num_convenio} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Num Convênio:</label>
+                    <input type="text" name="num_convenio" value={formData.num_convenio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Parlamentar:</label>
-                <input type="text" name="parlamentar" value={formData.parlamentar} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Parlamentar:</label>
+                    <input type="text" name="parlamentar" value={formData.parlamentar} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Objeto:</label>
-                <input type="text" name="objeto" value={formData.objeto} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Objeto:</label>
+                    <input type="text" name="objeto" value={formData.objeto} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>OGE/OGU:</label>
-                <input type="text" name="oge_ogu" value={formData.oge_ogu} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">OGE/OGU:</label>
+                    <input type="text" name="oge_ogu" value={formData.oge_ogu} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>CP Prefeitura:</label>
-                <input type="text" name="cp_prefeitura" value={formData.cp_prefeitura} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">CP Prefeitura:</label>
+                    <input type="text" name="cp_prefeitura" value={formData.cp_prefeitura} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Valor Liberado:</label>
-                <input type="text" name="valor_liberado" value={formData.valor_liberado} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Valor Liberado:</label>
+                    <input type="text" name="valor_liberado" value={formData.valor_liberado} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Prazo Vigência:</label>
-                <input type="date" name="prazo_vigencia" value={formData.prazo_vigencia} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Prazo Vigência:</label>
+                    <input type="date" name="prazo_vigencia" value={formData.prazo_vigencia} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Situação:</label>
-                <input type="text" name="situacao" value={formData.situacao} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Situação:</label>
+                    <input type="text" name="situacao" value={formData.situacao} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Providência:</label>
-                <input type="text" name="providencia" value={formData.providencia} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Providência:</label>
+                    <input type="text" name="providencia" value={formData.providencia} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Data de Recepção:</label>
-                <input type="date" name="data_recepcao" value={formData.data_recepcao} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Data de Recepção:</label>
+                    <input type="date" name="data_recepcao" value={formData.data_recepcao} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Data de Início:</label>
-                <input type="date" name="data_inicio" value={formData.data_inicio} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Data de Início:</label>
+                    <input type="date" name="data_inicio" value={formData.data_inicio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
 
-            <div>
-                <label>Documento Pendente:</label>
-                <input type="checkbox" name="documento_pendente" checked={formData.documento_pendente} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Documento Pendente:</label>
+                    <input type="checkbox" name="documento_pendente" checked={formData.documento_pendente} onChange={handleChange} className="form-checkbox h-5 w-5 text-indigo-600"/>
+                </div>
 
-            <div>
-                <label>Documento Cancelado:</label>
-                <input type="checkbox" name="documento_cancelado" checked={formData.documento_cancelado} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Documento Cancelado:</label>
+                    <input type="checkbox" name="documento_cancelado" checked={formData.documento_cancelado} onChange={handleChange} className="form-checkbox h-5 w-5 text-indigo-600"/>
+                </div>
 
-            <div>
-                <label>Data de Fim:</label>
-                <input type="date" name="data_fim" value={formData.data_fim} onChange={handleChange} />
-            </div>
+                <div>
+                    <label className="block text-md font-bold mb-2">Data de Fim:</label>
+                    <input type="date" name="data_fim" value={formData.data_fim} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                </div>
+                <br />
 
-            <div>
-                <button type="submit">Adicionar Registro</button>
-            </div>
-        </form>
+                <div>
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Adicionar Registro</button>
+                </div>
+                <br />
+            </form>
+            <br />
+        </div>
     );
 };
 
