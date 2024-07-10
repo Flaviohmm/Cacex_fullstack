@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, RegistroFuncionariosSerializer
 from rest_framework import viewsets
@@ -180,6 +181,49 @@ def adicionar_registro(request):
             registro.falta_liberar = f'R${registro.falta_liberar:,.2f}'
 
             return Response({'success': 'Registro adicionado com sucesso'}, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET'])
+def listar_registros(request):
+    if request.method == 'GET':
+        try:
+            registros = RegistroFuncionarios.objects.all()
+            serialized_registros = []
+
+            for registro in registros:
+                serialized_registro = {
+                    'nome': registro.nome.username,
+                    'orgao_setor': registro.orgao_setor.orgao_setor,
+                    'municipio': registro.municipio.municipio,
+                    'atividade': registro.atividade.atividade,
+                    'num_convenio': registro.num_convenio,
+                    'parlamentar': registro.parlamentar,
+                    'objeto': registro.objeto,
+                    'oge_ogu': registro.oge_ogu,
+                    'cp_prefeitura': registro.cp_prefeitura,
+                    'valor_total': calcular_valores(registro)[0],
+                    'valor_liberado': registro.valor_liberado,
+                    'falta_liberar': calcular_valores(registro)[1],
+                    'prazo_vigencia': registro.prazo_vigencia,
+                    'situacao': registro.situacao,
+                    'providencia': registro.providencia,
+                    'status': registro.status,
+                    'data_recepcao': registro.data_recepcao,
+                    'data_inicio': registro.data_inicio if registro.data_inicio else 'Sem Data de Inicio',
+                    'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
+                    'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
+                    'data_fim': registro.data_fim if registro.data_fim else 'Sem Data de Termino',
+                    'duracao_dias_uteis': dia_trabalho_total(registro.data_inicio, registro.data_fim),
+                }
+
+                serialized_registros.append(serialized_registro)
+
+            return JsonResponse(serialized_registros, safe=False, status=status.HTTP_200_OK)
         
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -22,6 +22,10 @@ const Header: React.FC = () => {
     navigate('/adicionar_dados');
   }
 
+  const goToListarRegistros = () => {
+    navigate('/listar_registros')
+  }
+
   const goToListarDados = () => {
     navigate('/listar_dados')
   }
@@ -33,7 +37,7 @@ const Header: React.FC = () => {
         </div>
         <nav className="flex flex-wrap justify-center space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToInicio}>Início</button>
-            <button className="hover:bg-blue-500 p-2 rounded font-bold">Tabelas</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarRegistros}>Tabelas</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarRegistro}>Adicionar Registros</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
