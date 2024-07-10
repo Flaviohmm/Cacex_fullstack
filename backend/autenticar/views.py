@@ -61,10 +61,9 @@ def sair(request):
         return JsonResponse({'error': 'Usuário não está autenticado.'}, status=400)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@csrf_exempt
 def lista_usuarios(request):
-    if request.user.is_authenticated:
-        usuarios = User.objects.all()
-        usuarios_list = [{'id': usuario.id, 'username': usuario.username, 'nome': usuario.first_name} for usuario in usuarios]
-        return Response(usuarios_list, status=status.HTTP_200_OK)
+    usuarios = User.objects.all()
+    usuarios_list = [{'id': usuario.id, 'username': usuario.username, 'nome': usuario.first_name} for usuario in usuarios]
+    return Response(usuarios_list, status=status.HTTP_200_OK)
     

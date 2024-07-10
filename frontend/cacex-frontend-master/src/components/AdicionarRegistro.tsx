@@ -108,12 +108,17 @@ const AdicionarRegistro: React.FC = () => {
             <Header />
             <form onSubmit={handleSubmit} className='max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md'>
                 <div>
-                    <label className="block text-md font-bold mb-2">Nome:</label>
-                    <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <label className="block text-md font-bold mb-2 mt-4">Nome de Usuário:</label>
+                    <select name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
+                        <option value="">Selecione um Nome de Usuário</option>
+                        {usuarios.map((usuario: any, index: number) => (
+                            <option key={index} value={usuario.id}>{usuario.username}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Órgão Setor:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Órgão Setor:</label>
                     <select name="orgao_setor" value={formData.orgao_setor} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
                         <option value="">Selecione um Órgão/Setor</option>
                         {setores.map((setor: any, index: number) => (
@@ -123,7 +128,7 @@ const AdicionarRegistro: React.FC = () => {
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Município:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Município:</label>
                     <select name="municipio" value={formData.municipio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
                         <option value="">Selecione um Município</option>
                         {municipios.map((municipio: any, index: number) => (
@@ -133,7 +138,7 @@ const AdicionarRegistro: React.FC = () => {
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Atividade:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Atividade:</label>
                     <select name="atividade" value={formData.atividade} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
                         <option value="">Selecione um Órgão/Setor</option>
                         {atividades.map((atividade: any, index: number) => (
@@ -143,72 +148,72 @@ const AdicionarRegistro: React.FC = () => {
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Num Convênio:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Número do Convênio:</label>
                     <input type="text" name="num_convenio" value={formData.num_convenio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Parlamentar:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Parlamentar:</label>
                     <input type="text" name="parlamentar" value={formData.parlamentar} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Objeto:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Objeto:</label>
                     <input type="text" name="objeto" value={formData.objeto} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">OGE/OGU:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">OGE/OGU:</label>
                     <input type="text" name="oge_ogu" value={formData.oge_ogu} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">CP Prefeitura:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">CP Prefeitura:</label>
                     <input type="text" name="cp_prefeitura" value={formData.cp_prefeitura} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Valor Liberado:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Valor Liberado:</label>
                     <input type="text" name="valor_liberado" value={formData.valor_liberado} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Prazo Vigência:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Prazo de Vigência:</label>
                     <input type="date" name="prazo_vigencia" value={formData.prazo_vigencia} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
-                <div>
-                    <label className="block text-md font-bold mb-2">Situação:</label>
+                <div> 
+                    <label className="block text-md font-bold mb-2 mt-4">Situação:</label>
                     <input type="text" name="situacao" value={formData.situacao} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Providência:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Providência:</label>
                     <input type="text" name="providencia" value={formData.providencia} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Data de Recepção:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Data de Recepção:</label>
                     <input type="date" name="data_recepcao" value={formData.data_recepcao} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Data de Início:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Data de Início:</label>
                     <input type="date" name="data_inicio" value={formData.data_inicio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Documento Pendente:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Documento Pendente:</label>
                     <input type="checkbox" name="documento_pendente" checked={formData.documento_pendente} onChange={handleChange} className="form-checkbox h-5 w-5 text-indigo-600"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Documento Cancelado:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Documento Cancelado:</label>
                     <input type="checkbox" name="documento_cancelado" checked={formData.documento_cancelado} onChange={handleChange} className="form-checkbox h-5 w-5 text-indigo-600"/>
                 </div>
 
                 <div>
-                    <label className="block text-md font-bold mb-2">Data de Fim:</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Data de Fim:</label>
                     <input type="date" name="data_fim" value={formData.data_fim} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
                 </div>
                 <br />
