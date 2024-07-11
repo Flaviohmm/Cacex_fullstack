@@ -113,12 +113,18 @@ const ListarRegistros: React.FC = () => {
                                             fixedDecimalScale={true}
                                         />
                                     </td>
-                                    <td className="py-2 px-4 border-b">{registro.prazo_vigencia}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        {registro.prazo_vigencia}
+                                    </td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>
                                     <td className="py-2 px-4 border-b">{registro.status}</td>
-                                    <td className="py-2 px-4 border-b">{registro.data_recepcao}</td>
-                                    <td className="py-2 px-4 border-b">{registro.data_inicio}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        {registro.data_recepcao}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {registro.data_inicio}
+                                    </td>
                                     <td className="py-2 px-4 border-b">{registro.documento_pendente}</td>
                                     <td className="py-2 px-4 border-b">{registro.documento_cancelado}</td>
                                     <td className="py-2 px-4 border-b">{registro.data_fim}</td>

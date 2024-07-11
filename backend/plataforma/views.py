@@ -136,12 +136,17 @@ def adicionar_registro(request):
             valor_liberado = float(valor_liberado_str)
 
             prazo_vigencia = data.get('prazo_vigencia')
+
             situacao = data.get('situacao')
             providencia = data.get('providencia')
+
             data_recepcao = data.get('data_recepcao')
+
             data_inicio = data.get('data_inicio')
+                
             documento_pendente = data.get('documento_pendente', False)
             documento_cancelado = data.get('documento_cancelado', False)
+
             data_fim = data.get('data_fim')
 
             registro = RegistroFuncionarios(
@@ -209,15 +214,15 @@ def listar_registros(request):
                     'valor_total': calcular_valores(registro)[0],
                     'valor_liberado': registro.valor_liberado,
                     'falta_liberar': calcular_valores(registro)[1],
-                    'prazo_vigencia': registro.prazo_vigencia,
+                    'prazo_vigencia': registro.prazo_vigencia.strftime('%d/%m/%Y'),
                     'situacao': registro.situacao,
                     'providencia': registro.providencia,
                     'status': registro.status,
-                    'data_recepcao': registro.data_recepcao,
-                    'data_inicio': registro.data_inicio if registro.data_inicio else 'Sem Data de Inicio',
+                    'data_recepcao': registro.data_recepcao.strftime('%d/%m/%Y'),
+                    'data_inicio': registro.data_inicio.strftime('%d/%m/%Y') if registro.data_inicio else 'Sem Data de Inicio',
                     'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
                     'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
-                    'data_fim': registro.data_fim if registro.data_fim else 'Sem Data de Termino',
+                    'data_fim': registro.data_fim.strftime('%d/%m/%Y') if registro.data_fim else 'Sem Data de Termino',
                     'duracao_dias_uteis': dia_trabalho_total(registro.data_inicio, registro.data_fim),
                 }
 
