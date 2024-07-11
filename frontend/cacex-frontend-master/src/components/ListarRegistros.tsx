@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { NumericFormat } from "react-number-format";
 import Header from "./Header";
 
 const ListarRegistros: React.FC = () => {
@@ -57,11 +58,61 @@ const ListarRegistros: React.FC = () => {
                                     <td className="py-2 px-4 border-b">{registro.atividade}</td>
                                     <td className="py-2 px-4 border-b">{registro.num_convenio}</td>
                                     <td className="py-2 px-4 border-b">{registro.parlamentar}</td>
-                                    <td className="py-2 px-4 border-b">{registro.oge_ogu}</td>
-                                    <td className="py-2 px-4 border-b">{registro.cp_prefeitura}</td>
-                                    <td className="py-2 px-4 border-b">{registro.valor_total}</td>
-                                    <td className="py-2 px-4 border-b">{registro.valor_liberado}</td>
-                                    <td className="py-2 px-4 border-b">{registro.falta_liberar}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        <NumericFormat
+                                            value={registro.oge_ogu}
+                                            displayType={'text'}
+                                            thousandSeparator={'.'}
+                                            decimalSeparator={','}
+                                            prefix={'R$ '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        <NumericFormat
+                                            value={registro.cp_prefeitura}
+                                            displayType={'text'}
+                                            thousandSeparator={'.'}
+                                            decimalSeparator={','}
+                                            prefix={'R$ '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        <NumericFormat
+                                            value={registro.valor_total}
+                                            displayType="text"
+                                            thousandSeparator={'.'}
+                                            decimalSeparator=","
+                                            prefix="R$ "
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        <NumericFormat
+                                            value={registro.valor_liberado}
+                                            displayType="text"
+                                            thousandSeparator={'.'}
+                                            decimalSeparator=","
+                                            prefix="R$ "
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        <NumericFormat
+                                            value={registro.falta_liberar}
+                                            displayType="text"
+                                            thousandSeparator={'.'}
+                                            decimalSeparator=","
+                                            prefix="R$ "
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                    </td>
                                     <td className="py-2 px-4 border-b">{registro.prazo_vigencia}</td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>

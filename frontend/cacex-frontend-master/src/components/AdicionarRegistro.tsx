@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from './Header';
+import { NumericFormat, NumberFormatBaseProps } from 'react-number-format';
 
 const AdicionarRegistro: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -149,32 +150,86 @@ const AdicionarRegistro: React.FC = () => {
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Número do Convênio:</label>
-                    <input type="text" name="num_convenio" value={formData.num_convenio} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <input 
+                        type="text" 
+                        name="num_convenio" 
+                        value={formData.num_convenio} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                        placeholder='Digite o Número do Convênio'
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Parlamentar:</label>
-                    <input type="text" name="parlamentar" value={formData.parlamentar} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <input 
+                        type="text" 
+                        name="parlamentar" 
+                        value={formData.parlamentar} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                        placeholder='Digite o nome do Parlamentar'
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Objeto:</label>
-                    <input type="text" name="objeto" value={formData.objeto} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <input 
+                        type="text" 
+                        name="objeto" 
+                        value={formData.objeto} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                        placeholder='Digite a descrição do Objeto'
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">OGE/OGU:</label>
-                    <input type="text" name="oge_ogu" value={formData.oge_ogu} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <NumericFormat
+                        name='oge_ogu'
+                        value={formData.oge_ogu}
+                        onChange={handleChange}
+                        className='w-full px-4 py-2 border border-gray-300 rounded'
+                        placeholder='Digite o valor da OGE/OGU (R$)'
+                        thousandSeparator='.'
+                        decimalSeparator=','
+                        prefix='R$ '
+                        decimalScale={2}
+                        fixedDecimalScale={true}
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">CP Prefeitura:</label>
-                    <input type="text" name="cp_prefeitura" value={formData.cp_prefeitura} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <NumericFormat
+                        name='cp_prefeitura'
+                        value={formData.cp_prefeitura}
+                        onChange={handleChange}
+                        className='w-full px-4 py-2 border border-gray-300 rounded'
+                        placeholder='Digite o valor da CP Prefeitura (R$)' 
+                        thousandSeparator='.'
+                        decimalSeparator=','                      
+                        prefix='R$ '
+                        decimalScale={2}
+                        fixedDecimalScale={true}
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Valor Liberado:</label>
-                    <input type="text" name="valor_liberado" value={formData.valor_liberado} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <NumericFormat
+                        name='valor_liberado'
+                        value={formData.valor_liberado}
+                        onChange={handleChange}
+                        className='w-full px-4 py-2 border border-gray-300 rounded'
+                        placeholder='Digite o Valor Liberado (R$)'
+                        thousandSeparator='.'
+                        decimalSeparator=','
+                        prefix='R$ '
+                        decimalScale={2}
+                        fixedDecimalScale={true}
+                    />
                 </div>
 
                 <div>
@@ -184,12 +239,26 @@ const AdicionarRegistro: React.FC = () => {
 
                 <div> 
                     <label className="block text-md font-bold mb-2 mt-4">Situação:</label>
-                    <input type="text" name="situacao" value={formData.situacao} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <input 
+                        type="text" 
+                        name="situacao" 
+                        value={formData.situacao} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                        placeholder='Digite a descrição da Situação'
+                    />
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Providência:</label>
-                    <input type="text" name="providencia" value={formData.providencia} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded"/>
+                    <input 
+                        type="text" 
+                        name="providencia" 
+                        value={formData.providencia} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded"
+                        placeholder='Digite a descriçaõ da Providência'
+                    />
                 </div>
 
                 <div>
