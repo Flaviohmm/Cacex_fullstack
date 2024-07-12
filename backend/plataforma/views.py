@@ -4,9 +4,11 @@ from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, RegistroFuncionariosSerializer
 from rest_framework import viewsets
+import datetime
 import json
 
 @api_view(['POST'])
@@ -201,7 +203,12 @@ def listar_registros(request):
             serialized_registros = []
 
             for registro in registros:
+                prazo_vigencia = registro.prazo_vigencia.strftime('%d/%m/%Y')
+                dias_restantes = (registro.prazo_vigencia - timezone.now().date()).days
+                exibir_modal_prazo_vigencia = dias_restantes <= 30
+
                 serialized_registro = {
+                    'id': registro.id,
                     'nome': registro.nome.username,
                     'orgao_setor': registro.orgao_setor.orgao_setor,
                     'municipio': registro.municipio.municipio,
@@ -214,7 +221,9 @@ def listar_registros(request):
                     'valor_total': calcular_valores(registro)[0],
                     'valor_liberado': registro.valor_liberado,
                     'falta_liberar': calcular_valores(registro)[1],
-                    'prazo_vigencia': registro.prazo_vigencia.strftime('%d/%m/%Y'),
+                    'prazo_vigencia': prazo_vigencia,
+                    'dias_restantes_prazo_vigencia': dias_restantes,
+                    'exibir_modal_prazo_vigencia': exibir_modal_prazo_vigencia,
                     'situacao': registro.situacao,
                     'providencia': registro.providencia,
                     'status': registro.status,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from './Header';
-import { NumericFormat, NumberFormatBaseProps } from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 
 const AdicionarRegistro: React.FC = () => {
     const [formData, setFormData] = useState({

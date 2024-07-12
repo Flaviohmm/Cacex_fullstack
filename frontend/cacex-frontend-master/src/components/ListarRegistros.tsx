@@ -3,14 +3,46 @@ import axios from "axios";
 import { NumericFormat } from "react-number-format";
 import Header from "./Header";
 
+interface Registro {
+    id: number;
+    nome: string;
+    orgao_setor: string;
+    municipio: string;
+    atividade: string;
+    num_convenio: string;
+    parlamentar: string;
+    oge_ogu: number;
+    cp_prefeitura: number;
+    valor_total: number;
+    valor_liberado: number;
+    falta_liberar: number;
+    prazo_vigencia: string;
+    situacao: string;
+    providencia: string;
+    status: string;
+    data_recepcao: string;
+    data_inicio: string;
+    documento_pendente: string;
+    documento_cancelado: string;
+    data_fim: string;
+    duracao_dias_uteis: number;
+    exibir_modal_prazo_vigencia: boolean;
+    dias_restantes_prazo_vigencia: number;
+}
+
 const ListarRegistros: React.FC = () => {
     const [registros, setRegistros] = useState<any[]>([]);
+    const [currentModal, setCurrentModal] = useState<number | null>(null);
 
     useEffect(() => {
         const carregarRegistros = async () => {
             try {
                 const response = await axios.get("http://localhost:8000/listar_registros/");
                 setRegistros(response.data);
+                const firstModalIndex = response.data.findIndex((r: Registro) => r.exibir_modal_prazo_vigencia);
+                if (firstModalIndex !== -1) {
+                    setCurrentModal(response.data[firstModalIndex].id);
+                }
             } catch (error) {
                 console.error("Erro ao buscar registros:", error)
             }
@@ -18,6 +50,16 @@ const ListarRegistros: React.FC = () => {
 
         carregarRegistros();
     }, []);
+
+    const closeModal = (id: number) => {
+        setCurrentModal(null); // Close the current modal
+        // Move to the next modal if present
+        const nextIndex = registros.findIndex((registro: Registro) => registro.id === id) + 1;
+        const nextModal = registros.find((registro: Registro, index: number) => index >= nextIndex && registro.exibir_modal_prazo_vigencia);
+        if (nextModal) {
+            setCurrentModal(nextModal.id);
+        }
+    }
 
     return (
         <div>
@@ -50,7 +92,7 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Duração de Dias Uteis</th>
                         </thead>
                         <tbody>
-                            {registros.map((registro: any, index: number) => (
+                            {registros.map((registro: Registro, index: number) => (
                                 <tr key={index} className="hover:bg-gray-100">
                                     <td className="py-2 px-4 border-b">{registro.nome}</td>
                                     <td className="py-2 px-4 border-b">{registro.orgao_setor}</td>
@@ -118,7 +160,24 @@ const ListarRegistros: React.FC = () => {
                                     </td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>
-                                    <td className="py-2 px-4 border-b">{registro.status}</td>
+                                    {/* <td className="py-2 px-4 border-b">
+                                        {registro.status}
+                                    </td> */}
+                                    {registro.status == 'Concluído' && (
+                                        <td className="py-2 px-4 border-b bg-green-500">{registro.status}</td>
+                                    )}
+                                    {registro.status == 'Pendente' && (
+                                        <td className="py-2 px-4 border-b bg-red-500 text-white">{registro.status}</td>
+                                    )}
+                                    {registro.status == 'Suspenso' &&(
+                                        <td className="py-2 px-4 border-b bg-gray-300">{registro.status}</td>
+                                    )}
+                                    {registro.status == 'Não Iniciado' && (
+                                        <td className="py-2 px-4 border-b bg-blue-500 text-white">{registro.status}</td>
+                                    )}
+                                    {registro.status == 'Em Análise' && (
+                                        <td className="py-2 px-4 border-b bg-yellow-300">{registro.status}</td>
+                                    )}
                                     <td className="py-2 px-4 border-b">
                                         {registro.data_recepcao}
                                     </td>
@@ -135,8 +194,33 @@ const ListarRegistros: React.FC = () => {
                     </table>
                 </div>
             </div>
+            
+            {registros.map((registro: Registro) => (
+                registro.exibir_modal_prazo_vigencia && currentModal === registro.id && (
+                    <div key={registro.id} className={`fixed inset-0 z-50 flex items-center justify-center ${currentModal === registro.id ? 'block' : 'hidden'}`}>
+                        <div className="fixed inset-0 bg-black opacity-50" onClick={() => closeModal(registro.id)}></div>
+                        <div className="bg-white p-8 rounded shadow-lg relative">
+                            <h2 className="text-xl font-bold mb-4">Notificação de Prazo</h2>
+                            <p className="mb-4">
+                                {registro.dias_restantes_prazo_vigencia > 0
+                                    ? `O convênio ${registro.num_convenio} está com o prazo de vigência próximo do seu vencimento. Restam ${registro.dias_restantes_prazo_vigencia} dias.`
+                                    : `O convênio ${registro.num_convenio} está com o prazo de vigência vencido.`
+                                }
+                            </p>
+                            <div className="flex justify-end">
+                                <button
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    onClick={() => closeModal(registro.id)}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            ))}
         </div>
-    )
-}
+    );
+};
 
 export default ListarRegistros;
