@@ -51,6 +51,69 @@ const ListarRegistros: React.FC = () => {
         carregarRegistros();
     }, []);
 
+    const generateCSV = () => {
+        const csvHeaders = [
+            "Nome",
+            "Órgão/Setor",
+            "Município",
+            "Atividade",
+            "Número do Convênio",
+            "Parlamentar",
+            "OGE/OGU",
+            "CP Prefeitura",
+            "Valor Total",
+            "Valor Liberado",
+            "Falta Liberar",
+            "Prazo de Vigência",
+            "Situação",
+            "Providência",
+            "Status",
+            "Data de Recepção",
+            "Data de Início",
+            "Documento Pendente",
+            "Documento Cancelado",
+            "Data do Fim",
+            "Duração de Dias Úteis",
+        ];
+
+        const csvRows = [
+            csvHeaders.join(";"),
+            ...registros.map((registro: Registro) => [
+                registro.nome,
+                registro.orgao_setor,
+                registro.municipio,
+                registro.atividade,
+                registro.num_convenio,
+                registro.parlamentar,
+                typeof registro.oge_ogu === 'number' ? `R$ ${registro.oge_ogu.toFixed(2).replace(".", ",")}` : `${registro.oge_ogu}`.replace('.', ','),
+                typeof registro.cp_prefeitura === 'number' ? `R$ ${registro.cp_prefeitura.toFixed(2).replace(".", ",")}` : `${registro.cp_prefeitura}`.replace('.', ','),
+                typeof registro.valor_total === 'number' ? `R$ ${registro.valor_total.toFixed(2).replace(".", ",")}` : `${registro.valor_total}`.replace('.', ','),
+                typeof registro.valor_liberado === 'number' ? `R$ ${registro.valor_liberado.toFixed(2).replace(".", ",")}` : `${registro.valor_liberado}`.replace('.', ','),
+                typeof registro.falta_liberar === 'number' ? `R$ ${registro.falta_liberar.toFixed(2).replace(".", ",")}` : `${registro.falta_liberar}`.replace('.', ','),
+                registro.prazo_vigencia,
+                registro.situacao,
+                registro.providencia,
+                registro.status,
+                registro.data_recepcao,
+                registro.data_inicio,
+                registro.documento_pendente,
+                registro.documento_cancelado,
+                registro.data_fim,
+                registro.duracao_dias_uteis
+            ].join(";"))
+        ];
+
+        const blob = new Blob([csvRows.join("\n")], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a')
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'registros.csv';
+        document.body.appendChild(a)
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
     const closeModal = (id: number) => {
         setCurrentModal(null); // Close the current modal
         // Move to the next modal if present
@@ -160,9 +223,6 @@ const ListarRegistros: React.FC = () => {
                                     </td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>
-                                    {/* <td className="py-2 px-4 border-b">
-                                        {registro.status}
-                                    </td> */}
                                     {registro.status == 'Concluído' && (
                                         <td className="py-2 px-4 border-b bg-green-500">{registro.status}</td>
                                     )}
@@ -192,7 +252,17 @@ const ListarRegistros: React.FC = () => {
                             ))}
                         </tbody>
                     </table>
+
                 </div>
+
+                <br />
+
+                <button
+                    className="mb-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={generateCSV}
+                >
+                    Gerar CSV
+                </button>
             </div>
             
             {registros.map((registro: Registro) => (
