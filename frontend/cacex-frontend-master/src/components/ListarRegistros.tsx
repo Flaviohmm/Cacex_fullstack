@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NumericFormat } from "react-number-format";
 import Header from "./Header";
+import DetalheModal from "./DetalheModal";
 
 interface Registro {
     id: number;
@@ -11,6 +12,7 @@ interface Registro {
     atividade: string;
     num_convenio: string;
     parlamentar: string;
+    objeto: string;
     oge_ogu: number;
     cp_prefeitura: number;
     valor_total: number;
@@ -33,6 +35,7 @@ interface Registro {
 const ListarRegistros: React.FC = () => {
     const [registros, setRegistros] = useState<any[]>([]);
     const [currentModal, setCurrentModal] = useState<number | null>(null);
+    const [selectedRegistro, setSelectedRegistro] = useState<Registro | null>(null);
 
     useEffect(() => {
         const carregarRegistros = async () => {
@@ -59,6 +62,7 @@ const ListarRegistros: React.FC = () => {
             "Atividade",
             "Número do Convênio",
             "Parlamentar",
+            "Objeto",
             "OGE/OGU",
             "CP Prefeitura",
             "Valor Total",
@@ -85,6 +89,7 @@ const ListarRegistros: React.FC = () => {
                 registro.atividade,
                 registro.num_convenio,
                 registro.parlamentar,
+                registro.objeto,
                 typeof registro.oge_ogu === 'number' ? `R$ ${registro.oge_ogu.toFixed(2).replace(".", ",")}` : `${registro.oge_ogu}`.replace('.', ','),
                 typeof registro.cp_prefeitura === 'number' ? `R$ ${registro.cp_prefeitura.toFixed(2).replace(".", ",")}` : `${registro.cp_prefeitura}`.replace('.', ','),
                 typeof registro.valor_total === 'number' ? `R$ ${registro.valor_total.toFixed(2).replace(".", ",")}` : `${registro.valor_total}`.replace('.', ','),
@@ -114,6 +119,14 @@ const ListarRegistros: React.FC = () => {
         window.URL.revokeObjectURL(url);
     }
 
+    const openModal = (registro: Registro) => {
+        setSelectedRegistro(registro)
+    }
+
+    const closeModalDetail = () => {
+        setSelectedRegistro(null);
+    }
+
     const closeModal = (id: number) => {
         setCurrentModal(null); // Close the current modal
         // Move to the next modal if present
@@ -138,6 +151,7 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Atividade</th>
                             <th className="py-2 px-4 border-b text-left">Número do Convênio</th>
                             <th className="py-2 px-4 border-b text-left">Parlamentar</th>
+                            <th className="py-2 px-4 border-b text-left">Objeto</th>
                             <th className="py-2 px-4 border-b text-left">OGE/OGU</th>
                             <th className="py-2 px-4 border-b text-left">CP Prefeitura</th>
                             <th className="py-2 px-4 border-b text-left">Valor Total</th>
@@ -153,6 +167,7 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Documento Cancelado</th>
                             <th className="py-2 px-4 border-b text-left">Data do Fim</th>
                             <th className="py-2 px-4 border-b text-left">Duração de Dias Uteis</th>
+                            <th className="py-2 px-4 border-b text-left">Ver Detalhes</th>
                         </thead>
                         <tbody>
                             {registros.map((registro: Registro, index: number) => (
@@ -163,6 +178,7 @@ const ListarRegistros: React.FC = () => {
                                     <td className="py-2 px-4 border-b">{registro.atividade}</td>
                                     <td className="py-2 px-4 border-b">{registro.num_convenio}</td>
                                     <td className="py-2 px-4 border-b">{registro.parlamentar}</td>
+                                    <td className="py-2 px-4 border-b">{registro.objeto}</td>
                                     <td className="py-2 px-4 border-b">
                                         <NumericFormat
                                             value={registro.oge_ogu}
@@ -223,19 +239,19 @@ const ListarRegistros: React.FC = () => {
                                     </td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>
-                                    {registro.status == 'Concluído' && (
+                                    {registro.status === 'Concluído' && (
                                         <td className="py-2 px-4 border-b bg-green-500">{registro.status}</td>
                                     )}
-                                    {registro.status == 'Pendente' && (
+                                    {registro.status === 'Pendente' && (
                                         <td className="py-2 px-4 border-b bg-red-500 text-white">{registro.status}</td>
                                     )}
-                                    {registro.status == 'Suspenso' &&(
+                                    {registro.status === 'Suspenso' &&(
                                         <td className="py-2 px-4 border-b bg-gray-300">{registro.status}</td>
                                     )}
-                                    {registro.status == 'Não Iniciado' && (
+                                    {registro.status === 'Não Iniciado' && (
                                         <td className="py-2 px-4 border-b bg-blue-500 text-white">{registro.status}</td>
                                     )}
-                                    {registro.status == 'Em Análise' && (
+                                    {registro.status === 'Em Análise' && (
                                         <td className="py-2 px-4 border-b bg-yellow-300">{registro.status}</td>
                                     )}
                                     <td className="py-2 px-4 border-b">
@@ -248,12 +264,25 @@ const ListarRegistros: React.FC = () => {
                                     <td className="py-2 px-4 border-b">{registro.documento_cancelado}</td>
                                     <td className="py-2 px-4 border-b">{registro.data_fim}</td>
                                     <td className="py-2 px-4 border-b">{registro.duracao_dias_uteis}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        <button className="bg-blue-500 text-white font-bold hover:bg-blue-700 py-2 px-4 rounded" onClick={() => openModal(registro)}>
+                                            Detalhes
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
 
                 </div>
+
+                {selectedRegistro && (
+                    <DetalheModal
+                        registro={selectedRegistro}
+                        isOpen={!!selectedRegistro}
+                        onClose={closeModalDetail}
+                    />
+                )}
 
                 <br />
 
