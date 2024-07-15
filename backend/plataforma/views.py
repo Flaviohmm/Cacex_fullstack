@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
@@ -238,6 +239,124 @@ def listar_registros(request):
                 serialized_registros.append(serialized_registro)
 
             return JsonResponse(serialized_registros, safe=False, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET'])
+def listar_registro_por_id(request, id):
+    if request.method == 'GET':
+        try:
+            registro = get_object_or_404(RegistroFuncionarios, id=id)
+            prazo_vigencia = registro.prazo_vigencia.strftime('%d/%m/%Y')
+            dias_restantes = (registro.prazo_vigencia - timezone.now().date()).days
+            exibir_modal_prazo_vigencia = dias_restantes <= 30
+
+            serialized_registro = {
+                'id': registro.id,
+                'nome': registro.nome.username,
+                'orgao_setor': registro.orgao_setor.orgao_setor,
+                'municipio': registro.municipio.municipio,
+                'atividade': registro.atividade.atividade,
+                'num_convenio': registro.num_convenio,
+                'parlamentar': registro.parlamentar,
+                'objeto': registro.objeto,
+                # 'oge_ogu': registro.oge_ogu,
+                # 'cp_prefeitura': registro.cp_prefeitura,
+                # 'valor_total': calcular_valores(registro)[0],
+                # 'valor_liberado': registro.valor_liberado,
+                # 'falta_liberar': calcular_valores(registro)[1],
+                'prazo_vigencia': prazo_vigencia,
+                'dias_restantes_prazo_vigencia': dias_restantes,
+                'exibir_modal_prazo_vigencia': exibir_modal_prazo_vigencia,
+                'situacao': registro.situacao,
+                'providencia': registro.providencia,
+                'status': registro.status,
+                'data_recepcao': registro.data_recepcao.strftime('%d/%m/%Y'),
+                # 'data_inicio': registro.data_inicio.strftime('%d/%m/%Y') if registro.data_inicio else 'Sem Data de Inicio',
+                # 'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
+                # 'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
+                # 'data_fim': registro.data_fim.strftime('%d/%m/%Y') if registro.data_fim else 'Sem Data de Termino',
+                'duracao_dias_uteis': dia_trabalho_total(registro.data_inicio, registro.data_fim),
+            }
+
+            return JsonResponse(serialized_registro, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['PUT'])
+def editar_registro(request, id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            registro = RegistroFuncionarios.objects.get(id=id)
+
+            registro.nome = User.objects.get(id=data.get('username'))
+            registro.orgao_setor = Setor.objects.get(id=data.get('orgao_setor'))
+            registro.municipio = Municipio.objects.get(id=data.get('municipio'))
+            registro.atividade = Atividade.objects.get(id=data.get('atividade'))
+            registro.num_convenio = data.get('num_convenio')
+            registro.parlamentar = data.get('parlamentar')
+            registro.objeto = data.get('objeto')
+
+            oge_ogu_str = data.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            registro.oge_ogu = float(oge_ogu_str)
+
+            cp_prefeitura_str = data.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            registro.cp_prefeitura = float(cp_prefeitura_str)
+
+            valor_liberado_str = data.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            registro.valor_liberado = float(valor_liberado_str)
+
+            registro.prazo_vigencia = data.get('prazo_vigencia')
+            registro.situacao = data.get('situacao')
+            registro.providencia = data.get('providencia')
+            registro.data_recepcao = data.get('data_recepcao')
+            registro.data_inicio = data.get('data_inicio')
+            registro.documento_pendente = data.get('documento_pendente', False)
+            registro.documento_cancelado = data.get('documento_cancelado', False)
+            registro.data_fim = data.get('data_fim')
+
+            # Salve o registro atualizado
+            registro.save()
+
+            # Atualize os valores calculados e formatados, conforme necessário
+            registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+            exbir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+            registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+            registro.oge_ogu = f'R${registro.oge_ogu:,.2f}'
+            registro.cp_prefeitura = f'R${registro.cp_prefeitura:,.2f}'
+            registro.valor_liberado = f'R${registro.valor_liberado:,.2f}'
+            registro.valor_total = f'R${registro.valor_total:,.2f}'
+            registro.falta_liberar = f'R${registro.falta_liberar:,.2f}'
+
+            return Response({'success': 'Registro atualizado com sucesso'}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['DELETE'])
+def excluir_registro(request, id):
+    if request.method == 'DELETE':
+        try:
+            registro = RegistroFuncionarios.objects.get(id=id)
+            registro.delete()
+
+            return Response({'success': 'Registro excluído com sucesso'}, status=status.HTTP_200_OK)
+        
+        except RegistroFuncionarios.DoesNotExist:
+            return Response({'error': 'Registro não encontrado'}, status=status.HTTP_404_NOT_FOUND)
         
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

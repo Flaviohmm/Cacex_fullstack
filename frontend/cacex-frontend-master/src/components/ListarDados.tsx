@@ -125,6 +125,7 @@ const ListarDados: React.FC = () => {
         <div>
             <Header />
             <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Lista de Dados</h2>
                 <div className="container mx-auto">
                     <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
                     <table className="table-auto mt-4">

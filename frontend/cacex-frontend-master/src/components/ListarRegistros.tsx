@@ -36,6 +36,7 @@ const ListarRegistros: React.FC = () => {
     const [registros, setRegistros] = useState<any[]>([]);
     const [currentModal, setCurrentModal] = useState<number | null>(null);
     const [selectedRegistro, setSelectedRegistro] = useState<Registro | null>(null);
+    const [dataUpdated, setDataUpdated] = useState(false);
 
     useEffect(() => {
         const carregarRegistros = async () => {
@@ -52,7 +53,7 @@ const ListarRegistros: React.FC = () => {
         };
 
         carregarRegistros();
-    }, []);
+    }, [dataUpdated]);
 
     const generateCSV = () => {
         const csvHeaders = [
@@ -135,6 +136,10 @@ const ListarRegistros: React.FC = () => {
         if (nextModal) {
             setCurrentModal(nextModal.id);
         }
+    }
+
+    const handleDataUpdate = () => {
+        setDataUpdated(!dataUpdated);
     }
 
     return (
@@ -281,6 +286,7 @@ const ListarRegistros: React.FC = () => {
                         registro={selectedRegistro}
                         isOpen={!!selectedRegistro}
                         onClose={closeModalDetail}
+                        onUpdate={handleDataUpdate}
                     />
                 )}
 

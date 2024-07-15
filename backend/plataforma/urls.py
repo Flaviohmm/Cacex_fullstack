@@ -17,5 +17,8 @@ urlpatterns = [
     path('listar_municipios/', views.ListMunicipios.as_view(), name='listar_municipios'),
     path('listar_atividades/', views.ListAtividades.as_view(), name='listar_atividades'),
     path('listar_registros/', views.listar_registros, name='listar_registros'),
+    path('listar_registro/<int:id>/', views.listar_registro_por_id, name='listar_registro_por_id'),
+    path('editar_registro/<int:id>/', views.editar_registro, name='editar_registro'),
+    path('excluir_registro/<int:id>/', views.excluir_registro, name='excluir_registro'),
     path('', include(router.urls)),
 ]

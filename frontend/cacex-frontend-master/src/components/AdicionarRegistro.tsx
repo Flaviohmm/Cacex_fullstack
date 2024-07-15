@@ -108,6 +108,7 @@ const AdicionarRegistro: React.FC = () => {
         <div>
             <Header />
             <form onSubmit={handleSubmit} className='max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md'>
+                <h2 className="text-2xl font-bold mb-6 text-center">Adicionar Registro</h2>
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Nome de Usuário:</label>
                     <select name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>

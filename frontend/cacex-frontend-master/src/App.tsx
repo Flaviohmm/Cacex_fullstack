@@ -8,6 +8,7 @@ import AdicionarDados from './components/AdicionarDados';
 import AdicionarRegistro from './components/AdicionarRegistro';
 import ListarDados from './components/ListarDados';
 import ListarRegistros from './components/ListarRegistros';
+import EditRegistro from './components/EditRegistro';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/adicionar_dados" element={<AdicionarDados />} />
           <Route path='/listar_registros' element={<ListarRegistros />} />
           <Route path="/listar_dados" element={<ListarDados />} />
+          <Route path='/editar/:id' element={<EditRegistro />} />
         </Routes>
       </div>
     </BrowserRouter>

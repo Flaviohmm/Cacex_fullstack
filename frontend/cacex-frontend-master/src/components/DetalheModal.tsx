@@ -1,5 +1,7 @@
+import axios from "axios";
 import React from "react";
 import { NumericFormat } from "react-number-format";
+import { useNavigate } from "react-router-dom";
 
 interface Registro {
     id: number;
@@ -33,10 +35,29 @@ interface DetalheModalProps {
     registro: Registro;
     isOpen: any;
     onClose: any;
+    onUpdate: any;
 }
 
-const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose}) => {
+const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, onUpdate}) => {
+    const navigate = useNavigate();
+
     if (!isOpen) return null;
+
+    const handleDelete = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:8000/excluir_registro/${registro.id}/`);
+            alert(response.data.success);
+            onClose();
+            onUpdate();
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao excluir registro.");
+        }
+    };
+
+    const handleEdit = async () => {
+        navigate(`/editar/${registro.id}`)
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
@@ -120,11 +141,16 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose}) 
                     <p><strong>Duração de Dias Úteis:</strong> {registro.duracao_dias_uteis}</p>
                 </div>
                 <div className="flex justify-end mt-4 space-x-2">
-                    <button>Editar</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleEdit}>
+                        Editar
+                    </button>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete}>
+                        Excluir
+                    </button>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default DetalheModal;
