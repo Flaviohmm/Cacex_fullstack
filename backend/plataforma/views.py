@@ -251,9 +251,12 @@ def listar_registro_por_id(request, id):
     if request.method == 'GET':
         try:
             registro = get_object_or_404(RegistroFuncionarios, id=id)
-            prazo_vigencia = registro.prazo_vigencia.strftime('%d/%m/%Y')
+            prazo_vigencia = registro.prazo_vigencia.strftime('%Y-%m-%d')
             dias_restantes = (registro.prazo_vigencia - timezone.now().date()).days
             exibir_modal_prazo_vigencia = dias_restantes <= 30
+
+            def format_currency(value):
+                return f'R${value:,.2f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
 
             serialized_registro = {
                 'id': registro.id,
@@ -264,22 +267,22 @@ def listar_registro_por_id(request, id):
                 'num_convenio': registro.num_convenio,
                 'parlamentar': registro.parlamentar,
                 'objeto': registro.objeto,
-                # 'oge_ogu': registro.oge_ogu,
-                # 'cp_prefeitura': registro.cp_prefeitura,
-                # 'valor_total': calcular_valores(registro)[0],
-                # 'valor_liberado': registro.valor_liberado,
-                # 'falta_liberar': calcular_valores(registro)[1],
+                'oge_ogu': format_currency(registro.oge_ogu),
+                'cp_prefeitura': format_currency(registro.cp_prefeitura),
+                'valor_total': format_currency(calcular_valores(registro)[0]),
+                'valor_liberado': format_currency(registro.valor_liberado),
+                'falta_liberar': format_currency(calcular_valores(registro)[1]),
                 'prazo_vigencia': prazo_vigencia,
                 'dias_restantes_prazo_vigencia': dias_restantes,
                 'exibir_modal_prazo_vigencia': exibir_modal_prazo_vigencia,
                 'situacao': registro.situacao,
                 'providencia': registro.providencia,
                 'status': registro.status,
-                'data_recepcao': registro.data_recepcao.strftime('%d/%m/%Y'),
-                # 'data_inicio': registro.data_inicio.strftime('%d/%m/%Y') if registro.data_inicio else 'Sem Data de Inicio',
-                # 'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
-                # 'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
-                # 'data_fim': registro.data_fim.strftime('%d/%m/%Y') if registro.data_fim else 'Sem Data de Termino',
+                'data_recepcao': registro.data_recepcao.strftime('%Y-%m-%d'),
+                'data_inicio': registro.data_inicio.strftime('%Y-%m-%d') if registro.data_inicio else None,
+                'documento_pendente': registro.documento_pendente,
+                'documento_cancelado': registro.documento_cancelado,
+                'data_fim': registro.data_fim.strftime('%Y-%m-%d') if registro.data_fim else None,
                 'duracao_dias_uteis': dia_trabalho_total(registro.data_inicio, registro.data_fim),
             }
 

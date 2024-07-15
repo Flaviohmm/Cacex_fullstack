@@ -111,8 +111,16 @@ const EditRegistro: React.FC = () => {
         }
     };
 
+    const formatDate = (dateStr: string | undefined): string => {
+        if (!dateStr) return '';
+
+        const [year, month, day] = dateStr.split('/');
+        return `${day}/${month}/${year}`
+    }
+
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        const { name, type } = e.target;
+        const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
         setData((prevState) => ({
             ...prevState,
             [name]: value,
@@ -228,7 +236,6 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
-                        required
                     />
                 </div>
 
@@ -245,7 +252,6 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
-                        required
                     />
                 </div>
 
@@ -262,7 +268,6 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
-                        required
                     />
                 </div>
 
