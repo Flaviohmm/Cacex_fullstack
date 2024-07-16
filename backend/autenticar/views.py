@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
@@ -61,9 +62,18 @@ def sair(request):
         return JsonResponse({'error': 'Usuário não está autenticado.'}, status=400)
 
 @api_view(['GET'])
-@csrf_exempt
+@permission_classes([IsAuthenticated])
 def lista_usuarios(request):
-    usuarios = User.objects.all()
-    usuarios_list = [{'id': usuario.id, 'username': usuario.username, 'nome': usuario.first_name} for usuario in usuarios]
-    return Response(usuarios_list, status=status.HTTP_200_OK)
+    user = request.user
+    user_data = {'id': user.id, 'username': user.username, 'nome': user.first_name}
+    return Response([user_data], status=status.HTTP_200_OK)
+
+
+class UserList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = get_object_or_404(User, username=request.user.username)
+        user_data = {'id': user.id, 'username': user.username, 'name': user.first_name}
+        return Response([user_data])
     

@@ -14,8 +14,19 @@ const ListarDados: React.FC = () => {
     const [newAtividadeData, setNewAtividadeData] = useState<string>('');
 
     const fetchSetores = async () => {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Token de autenticação não encontrado. Faça login novamente.');
+            return;
+        }
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_setores/");
+            const response = await axios.get("http://localhost:8000/listar_setores/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setSetores(response.data);
         } catch (error) {
             console.error("Erro ao listar setores:", error)
@@ -23,8 +34,19 @@ const ListarDados: React.FC = () => {
     };
 
     const fetchMunicipios = async () => {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Token de autenticação não encontrado. Faça login novamente.');
+            return;
+        }
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_municipios/");
+            const response = await axios.get("http://localhost:8000/listar_municipios/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setMunicipios(response.data);
         } catch (error) {
             console.error("Erro ao listar municípios:", error)
@@ -32,8 +54,19 @@ const ListarDados: React.FC = () => {
     };
 
     const fetchAtividades = async () => {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Token de autenticação não encontrado. Faça login novamente.');
+            return;
+        }
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_atividades/");
+            const response = await axios.get("http://localhost:8000/listar_atividades/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setAtividades(response.data);
         } catch (error) {
             console.error("Erro ao listar atividades:", error)

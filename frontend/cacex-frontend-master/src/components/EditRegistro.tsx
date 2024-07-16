@@ -70,7 +70,11 @@ const EditRegistro: React.FC = () => {
 
         const fetchRegistro = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/listar_registro/${id}`);
+                const response = await axios.get(`http://localhost:8000/listar_registro/${id}`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    },
+                });
                 setData(response.data);
             } catch (err) {
                 console.error(err);
@@ -85,8 +89,14 @@ const EditRegistro: React.FC = () => {
     }, [id]); // Pass an empty array to ensure this runs only once
 
     const fetchSetores = async () => {
+        const token = localStorage.getItem('authToken');
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_setores/");
+            const response = await axios.get("http://localhost:8000/listar_setores/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setSetores(response.data);
         } catch (error) {
             console.error("Erro ao listar setores:", error);
@@ -94,8 +104,14 @@ const EditRegistro: React.FC = () => {
     };
 
     const fetchMunicipios = async () => {
+        const token = localStorage.getItem('authToken');
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_municipios/");
+            const response = await axios.get("http://localhost:8000/listar_municipios/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setMunicipios(response.data);
         } catch (error) {
             console.error("Erro ao listar municípios:", error);
@@ -103,8 +119,14 @@ const EditRegistro: React.FC = () => {
     };
 
     const fetchAtividades = async () => {
+        const token = localStorage.getItem('authToken');
+
         try {
-            const response = await axios.get("http://localhost:8000/listar_atividades/");
+            const response = await axios.get("http://localhost:8000/listar_atividades/", {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setAtividades(response.data);
         } catch (error) {
             console.error("Erro ao listar atividades:", error);
@@ -128,9 +150,14 @@ const EditRegistro: React.FC = () => {
     };
 
     const handleSubmit = async (e: FormEvent) => {
+        const token = localStorage.getItem('authToken');
         e.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:8000/editar_registro/${id}/`, data);
+            const response = await axios.put(`http://localhost:8000/editar_registro/${id}/`, data, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             console.log(response.data);
             alert('Registro editado com sucesso.')
         } catch (error) {

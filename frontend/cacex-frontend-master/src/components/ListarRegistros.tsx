@@ -39,9 +39,15 @@ const ListarRegistros: React.FC = () => {
     const [dataUpdated, setDataUpdated] = useState(false);
 
     useEffect(() => {
+        const token = localStorage.getItem('authToken');
+
         const carregarRegistros = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/listar_registros/");
+                const response = await axios.get("http://localhost:8000/listar_registros/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    },
+                });
                 setRegistros(response.data);
                 const firstModalIndex = response.data.findIndex((r: Registro) => r.exibir_modal_prazo_vigencia);
                 if (firstModalIndex !== -1) {
