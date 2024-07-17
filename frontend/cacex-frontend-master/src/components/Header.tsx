@@ -30,6 +30,10 @@ const Header: React.FC = () => {
     navigate('/listar_dados')
   }
 
+  const goToHistorico = () => {
+    navigate('/historico')
+  }
+
   return (
     <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8">
         <div className="flex items-center mb-4 md:mb-0">
@@ -41,7 +45,7 @@ const Header: React.FC = () => {
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarRegistro}>Adicionar Registros</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
-            <button className="hover:bg-blue-500 p-2 rounded font-bold">Histórico Geral</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Arquivado</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Painel</button>
         </nav>

@@ -1,15 +1,16 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, RegistroFuncionariosSerializer
+from .templatetags.custom_filters import format_currency
+from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer
 from rest_framework import viewsets
-import datetime
+from datetime import datetime
 import json
 
 @api_view(['POST'])
@@ -294,12 +295,63 @@ def listar_registro_por_id(request, id):
     return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+def dados_atuais_registro(registro):
+    dados_atuais = {
+        'nome': registro.nome.username,
+        'orgao_setor': registro.orgao_setor.orgao_setor,
+        'municipio': registro.municipio.municipio,
+        'atividade': registro.atividade.atividade,
+        'num_convenio': registro.num_convenio,
+        'parlamentar': registro.parlamentar,
+        'objeto': registro.objeto,
+        'oge_ogu': format_currency(registro.oge_ogu),
+        'cp_prefeitura': format_currency(registro.cp_prefeitura),
+        'valor_total': format_currency(calcular_valores(registro)[0]),
+        'valor_liberado': format_currency(registro.valor_liberado),
+        'falta_liberar': format_currency(calcular_valores(registro)[1]),
+        'prazo_vigencia': registro.prazo_vigencia.strftime("%d/%m/%Y"),
+        'situacao': registro.situacao,
+        'providencia': registro.providencia,
+        'status': registro.status,
+        'data_recepcao': registro.data_recepcao.strftime("%d/%m/%Y"),
+        'data_inicio': registro.data_inicio.strftime("%d/%m/%Y") if registro.data_inicio else "",
+        'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
+        'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
+        'data_fim': registro.data_fim.strftime("%d/%m/%Y") if registro.data_fim else "",
+        'duracao_dias_uteis': registro.duracao_dias_uteis
+    }
+
+    return dados_atuais
+
+def comparar_valores(historico_dados_anteriores, historico_dados_atuais):
+    diff = []
+    for key, value_anterior in historico_dados_anteriores.items():
+        if key in historico_dados_atuais:
+            value_atual = historico_dados_atuais[key]
+            if value_atual != value_anterior:
+                diff.append((key, value_anterior, value_atual))
+    return diff
+
 @api_view(['PUT'])
 def editar_registro(request, id):
+    registro = get_object_or_404(RegistroFuncionarios, id=id)
+
+    # Consulte o histórico
+    historico_registros = Historico.objects.filter(registro=registro).order_by('-data')
+
+    # Obtenha os dados atuais do registro antes de qualquer alteração
+    dados_atuais = dados_atuais_registro(registro)
+
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
-            registro = RegistroFuncionarios.objects.get(id=id)
+
+            # Guarde os dados atuais antes das alterações
+            dados_anteriores = dados_atuais
+
+            # Exiba ou manipule os dados anteriores conforme necessário
+            for historico in historico_registros:
+                historico.dados_anteriores = dados_anteriores
 
             registro.nome = User.objects.get(id=data.get('username'))
             registro.orgao_setor = Setor.objects.get(id=data.get('orgao_setor'))
@@ -318,18 +370,32 @@ def editar_registro(request, id):
             valor_liberado_str = data.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
             registro.valor_liberado = float(valor_liberado_str)
 
-            registro.prazo_vigencia = data.get('prazo_vigencia')
+            registro.prazo_vigencia = datetime.strptime(data.get('prazo_vigencia'), '%Y-%m-%d').date()
             registro.situacao = data.get('situacao')
             registro.providencia = data.get('providencia')
-            registro.data_recepcao = data.get('data_recepcao')
-            registro.data_inicio = data.get('data_inicio')
+            registro.data_recepcao = datetime.strptime(data.get('data_recepcao'), '%Y-%m-%d').date()
+            registro.data_inicio = datetime.strptime(data.get('data_inicio'), '%Y-%m-%d').date() if data.get('data_inicio') else None
             registro.documento_pendente = data.get('documento_pendente', False)
             registro.documento_cancelado = data.get('documento_cancelado', False)
-            registro.data_fim = data.get('data_fim')
+            registro.data_fim = datetime.strptime(data.get('data_fim'), '%Y-%m-%d').date() if data.get('data_fim') else None
 
             # Salve o registro atualizado
             registro.save()
 
+            # Registre a atividade no histórico, incluindo os dados anteriores
+            Historico.objects.create(
+                usuario=request.user,
+                acao='editar',
+                dados_anteriores=dados_anteriores,
+                dados_atuais=dados_atuais_registro(registro),
+                dados_alterados=comparar_valores(dados_anteriores, dados_atuais),
+                data=timezone.now(),
+                registro=registro
+            )
+
+            for historico in historico_registros:
+                historico.dados_atuais = dados_atuais_registro(registro)
+                
             # Atualize os valores calculados e formatados, conforme necessário
             registro.valor_total, registro.falta_liberar = calcular_valores(registro)
             exbir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
@@ -365,3 +431,66 @@ def excluir_registro(request, id):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
     return Response({'error': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Historico.objects.all()
+    serializer_class = HistoricoSerializer
+
+    def list(self, request, *args, **kwargs):
+        historico_registros = self.get_queryset()
+        serializer = self.get_serializer(historico_registros, many=True)
+        return Response(serializer.data)
+    
+    def comparar_valores(dados_anteriores, dados_atuais):
+        alteracoes = {}
+        for key in dados_anteriores.keys():
+            if dados_anteriores[key] != dados_atuais[key]:
+                alteracoes[key] = {
+                    'antes': dados_anteriores[key],
+                    'depois': dados_atuais[key],
+                }
+        return alteracoes
+
+@api_view(['GET']) 
+def historico(request):
+    historico_registros = Historico.objects.all()
+
+    # Inicializa a lista de diferenças como vazia
+    registros = []
+
+    for hist in historico_registros:
+        registro = {
+            'acao': hist.acao,
+            'data': hist.data,
+            'usuario': hist.usuario,
+            'dados_anteriores': hist.dados_anteriores,
+            'dados_atuais': hist.dados_atuais,
+            'dados_alterados': hist.dados_alterados if hist.dados_alterados else comparar_valores(hist.dados_anteriores, hist.dados_atuais)
+        }
+        registros.append(registro)
+
+    return JsonResponse({'historico_registros': registros})
+
+def historico_detail(request, id):
+    # Obtenha o registro específico ou retorne um 404 se não existir
+    registro = get_object_or_404(RegistroFuncionarios, id=id)
+
+    # Obtém os registros do histórico relacionados ao registro específico
+    historico_registros = Historico.objects.filter(id=registro.id).order_by('-data')
+
+    # Inicializa a lista de diferenças como vazia
+    registros = []
+
+    for hist in historico_registros:
+        reg = {
+            'acao': hist.acao,
+            'data': hist.data,
+            'usuario': hist.usuario,
+            'dados_anteriores': hist.dados_anteriores,
+            'dados_atuais': hist.dados_atuais,
+            'dados_alterados': comparar_valores(hist.dados_anteriores, hist.dados_atuais)
+        }
+        registros.append(reg)
+
+    return JsonResponse({'historico_registros': registros})

@@ -1,6 +1,8 @@
+from .templatetags.custom_filters import format_currency
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -138,3 +140,91 @@ class RegistroFuncionarios(models.Model):
             f"{self.status} | {self.data_recepcao} | {self.data_inicio} | {self.documento_pendente} | "
             f"{self.documento_cancelado} | {self.data_fim} | {self.duracao_dias_uteis}"
         )
+    
+class DecimalJSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        elif callable(obj):
+            # Se obj for uma função/método, converta para uma string representativa
+            return f"{obj.__module__}.{obj.__name__}"
+        return super().default(obj)
+
+class Historico(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    acao = models.CharField(max_length=255)
+    data = models.DateTimeField(auto_now_add=True)
+    dados_anteriores = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+    registro = models.ForeignKey(RegistroFuncionarios, on_delete=models.CASCADE)
+    dados_atuais = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+    dados_alterados = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None: # Verifica se o objeto já existe no banco (edição)
+            # Obtém o objeto existente no banco para capturar os dados atuais
+            objeto_existente = Historico.objects.get(pk=self.pk)
+
+            # Atualiza os dados anteriores com base nos dados atuais do objeto existente
+            self.dados_anteriores = objeto_existente.dados_atuais
+
+            # Atualiza os dados atuais com os dados atuais do objeto atual
+            self.dados_atuais = self.get_current_data()
+
+            # Calcula os dados alterados
+            self.dados_alterados = self.comparar_valores(self.dados_anteriores, self.dados_atuais)
+        else: # Novo objeto
+            self.dados_atuais = self.get_current_data()
+
+        super(Historico, self).save(*args, **kwargs)
+
+    def get_dados_anteriores_log(self, logs):
+        dados_anteriores = {}
+
+        for log in logs:
+            if 'Dados Anteriores' in log:
+                parsed_data = log[log.find('{'):log.rfind('}')+1]
+                dados_anteriores = eval(parsed_data)
+
+        return dados_anteriores
+
+    def get_current_data(self):
+        # Acessando os dados atuais do modelo RegistroFuncionarios associado
+        dados_atuais = {
+            'nome': self.registro.nome.username,
+            'orgao_setor': self.registro.orgao_setor.orgao_setor,
+            'municipio': self.registro.municipio.municipio,
+            'atividade': self.registro.atividade.atividade,
+            'num_convenio': self.registro.num_convenio,
+            'parlamentar': self.registro.parlamentar,
+            'objeto': self.registro.objeto,
+            'oge_ogu': format_currency(self.registro.oge_ogu),
+            'cp_prefeitura': format_currency(self.registro.cp_prefeitura),
+            'valor_total': format_currency(self.registro.valor_total),
+            'valor_liberado': format_currency(self.registro.valor_liberado),
+            'falta_liberar': format_currency(self.registro.falta_liberar),
+            'prazo_vigencia': self.registro.prazo_vigencia.strftime("%d/%m/%Y"),
+            'situacao': self.registro.situacao,
+            'providencia': self.registro.providencia,
+            'status': self.registro.status,
+            'data_recepcao': self.registro.data_recepcao.strftime("%d/%m/%Y"),
+            'data_inicio': self.registro.data_inicio.strftime("%d/%m/%Y") if self.registro.data_inicio else "",
+            'documento_pendente': 'Sim' if self.registro.documento_pendente else 'Não',
+            'documento_cancelado': 'Sim' if self.registro.documento_cancelado else 'Não',
+            'data_fim': self.registro.data_fim.strftime("%d/%m/%Y") if self.registro.data_fim else "",
+            'duracao_dias_uteis': self.registro.duracao_dias_uteis
+        }
+
+        return dados_atuais
+    
+    def comparar_valores(self, dados_anteriores, dados_atuais):
+        diff = []
+        for key, value_anterior in dados_anteriores.items():
+            if key in dados_atuais:
+                value_atual = dados_atuais[key]
+                if value_atual != value_anterior:
+                    diff.append((key, value_anterior, value_atual))
+        return diff
+
+    def __str__(self):
+        formatted_date = self.data.strftime('%d/%m/%Y %H:%M:%S')
+        return f'{self.usuario} - {self.acao} em {formatted_date} | \n Dados Anteriores: {self.dados_anteriores} ->  \n Dados Atuais: {self.dados_atuais}' 

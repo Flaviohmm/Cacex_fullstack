@@ -25,6 +25,17 @@ interface RegistroData {
     data_fim: string;
 }
 
+interface HistoricoData {
+    id: number;
+    usuario: string;
+    acao: string;
+    dados_anteriores: string;
+    dados_atuais: string;
+    dados_alterados: string;
+    data: string;
+    registro: number;
+}
+
 const EditRegistro: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // Obtenha o ID dos parâmetros da URL
     const [data, setData] = useState<RegistroData>({
@@ -47,6 +58,8 @@ const EditRegistro: React.FC = () => {
         documento_cancelado: false,
         data_fim: '',
     });
+
+    const [historico, setHistorico] = useState<HistoricoData[]>([]);
 
     const [usuarios, setUsuarios] = useState<any[]>([]);
     const [setores, setSetores] = useState<any[]>([]);
@@ -86,6 +99,7 @@ const EditRegistro: React.FC = () => {
         fetchMunicipios();
         fetchAtividades();
         fetchRegistro();
+        fetchHistorico();
     }, [id]); // Pass an empty array to ensure this runs only once
 
     const fetchSetores = async () => {
@@ -133,12 +147,23 @@ const EditRegistro: React.FC = () => {
         }
     };
 
-    const formatDate = (dateStr: string | undefined): string => {
-        if (!dateStr) return '';
+    const fetchHistorico = async () => {
+        const token = localStorage.getItem('authToken'); // Obtendo o token de autenticação
 
-        const [year, month, day] = dateStr.split('/');
-        return `${day}/${month}/${year}`
-    }
+        try {
+            const response = await axios.get(`http://localhost:8000/historico/${id}`, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
+
+            if (response.status === 200) {
+                setHistorico(response.data);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar o histórico:', error);
+        }
+    };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, type } = e.target;
@@ -152,14 +177,31 @@ const EditRegistro: React.FC = () => {
     const handleSubmit = async (e: FormEvent) => {
         const token = localStorage.getItem('authToken');
         e.preventDefault();
+        console.log("Dados enviados:", data);
+
+        // Convertendo strings de data para o formato correto se necessário
+        const formattedData = {
+            ...data,
+            prazo_vigencia: new Date(data.prazo_vigencia).toISOString().split('T')[0],
+            data_recepcao: new Date(data.data_recepcao).toISOString().split('T')[0],
+            data_inicio: data.data_inicio ? new Date(data.data_inicio).toISOString().split('T')[0] : null,
+            data_fim: data.data_fim ? new Date(data.data_fim).toISOString().split('T')[0] : null,
+        };
+        
         try {
-            const response = await axios.put(`http://localhost:8000/editar_registro/${id}/`, data, {
+            const response = await axios.put(`http://localhost:8000/editar_registro/${id}/`, formattedData, {
                 headers: {
-                    'Authorization': `Token ${token}`
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json',
                 },
             });
+
+            // Supondo que a resposta seja sempre correta se o status for 200
+            if (response.status === 200 && response.data.success) {
+                alert('Registro editado com sucesso.')
+                fetchHistorico();
+            }
             console.log(response.data);
-            alert('Registro editado com sucesso.')
         } catch (error) {
             console.error(error);
             alert('Erro ao editar o registro')
@@ -361,6 +403,36 @@ const EditRegistro: React.FC = () => {
                 <br />
             </form>
             <br />
+
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold mb-6 text-center">Histórico de Alterações</h2>
+                <table className="table-auto w-full">
+                    <thead>
+                        <tr>
+                            <th className="px-4 py-2">ID</th>
+                            <th className="px-4 py-2">Usuário</th>
+                            <th className="px-4 py-2">Ação</th>
+                            <th className="px-4 py-2">Dados Anteriores</th>
+                            <th className="px-4 py-2">Dados Atuais</th>
+                            <th className="px-4 py-2">Dados Alterados</th>
+                            <th className="px-4 py-2">Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Array.isArray(historico) && historico.map((entry) => (
+                            <tr key={entry.id}>
+                                <td className="border px-4 py-2">{entry.id}</td>
+                                <td className="border px-4 py-2">{entry.usuario}</td>
+                                <td className="border px-4 py-2">{entry.acao}</td>
+                                <td className="border px-4 py-2">{entry.dados_anteriores}</td>
+                                <td className="border px-4 py-2">{entry.dados_atuais}</td>
+                                <td className="border px-4 py-2">{entry.dados_alterados}</td>
+                                <td className="border px-4 py-2">{entry.data}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     )

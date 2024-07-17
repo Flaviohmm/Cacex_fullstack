@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
 
 class SetorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +27,22 @@ class RegistroFuncionariosSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret['nome'] = instance.nome.id # Se nome for uma FK
         return ret
+    
+def comparar_valores(historico_dados_anteriores, historico_dados_atuais):
+    diff = []
+    for key, value_anterior in historico_dados_anteriores.items():
+        if key in historico_dados_atuais:
+            value_atual = historico_dados_atuais[key]
+            if value_atual != value_anterior:
+                diff.append((key, value_anterior, value_atual))
+    return diff 
+   
+class HistoricoSerializer(serializers.ModelSerializer):
+    dados_alterados = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Historico
+        fields = ['id', 'acao', 'data', 'usuario', 'dados_anteriores', 'dados_atuais', 'dados_alterados']
+
+    def get_dados_alterados(self, obj):
+        return comparar_valores(obj.dados_anteriores, obj.dados_atuais)    
