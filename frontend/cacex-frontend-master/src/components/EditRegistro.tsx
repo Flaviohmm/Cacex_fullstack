@@ -403,36 +403,6 @@ const EditRegistro: React.FC = () => {
                 <br />
             </form>
             <br />
-
-            <div className="mt-10">
-                <h2 className="text-2xl font-bold mb-6 text-center">Histórico de Alterações</h2>
-                <table className="table-auto w-full">
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2">ID</th>
-                            <th className="px-4 py-2">Usuário</th>
-                            <th className="px-4 py-2">Ação</th>
-                            <th className="px-4 py-2">Dados Anteriores</th>
-                            <th className="px-4 py-2">Dados Atuais</th>
-                            <th className="px-4 py-2">Dados Alterados</th>
-                            <th className="px-4 py-2">Data</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Array.isArray(historico) && historico.map((entry) => (
-                            <tr key={entry.id}>
-                                <td className="border px-4 py-2">{entry.id}</td>
-                                <td className="border px-4 py-2">{entry.usuario}</td>
-                                <td className="border px-4 py-2">{entry.acao}</td>
-                                <td className="border px-4 py-2">{entry.dados_anteriores}</td>
-                                <td className="border px-4 py-2">{entry.dados_atuais}</td>
-                                <td className="border px-4 py-2">{entry.dados_alterados}</td>
-                                <td className="border px-4 py-2">{entry.data}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
         </div>
 
     )

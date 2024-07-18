@@ -1,39 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { format } from 'date-fns'
 import Header from "./Header";
+import { useParams } from "react-router-dom";
 
-interface HistoricoRegistro {
-    id: number;
+interface HistoricoRegistroID {
     acao: string;
     data: string;
-    usuario: string;
+    usuario: {
+        id: number;
+        username: string;
+    };
     dados_anteriores: Record<string, string>;
     dados_atuais: Record<string, string>;
     dados_alterados: Array<[string, string, string]>;
 }
 
-const HistoricoRegistro: React.FC = () => {
-    const [historicoRegistros, setHistoricoRegistros] = useState<HistoricoRegistro[]>([]);
+interface HistoricoRegistrosResponse {
+    historico_registros: HistoricoRegistroID[];
+}
+
+const HistoricoRegistroID: React.FC = () => {
+    const { id } = useParams<{ id: string }>(); // Pega o ID da URL
+    const [historicoRegistros, setHistoricoRegistros] = useState<HistoricoRegistroID[]>([]);
 
     const token = localStorage.getItem('authToken');
 
     useEffect(() => {
-        fetch('http://localhost:8000/historico/', {
-            headers: {
-                'Authorization': `Token ${token}`
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Dados recebidos:', data)
-                if (Array.isArray(data)) {
-                    setHistoricoRegistros(data);
-                } else {
-                    console.error('Response is not an array:', data);
-                }
+        if (id) {
+            fetch(`http://localhost:8000/historico/${id}`, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
             })
-            .catch(error => console.error('Error fetching data:', error));
-    }, [token]);
+                .then(response => {
+                    console.log('Resposta da API:', response);
+                    return response.json()
+                })
+                .then(data => {
+                    console.log('Dados recebidos:', data)
+                    if (data.historico_registros) {
+                        setHistoricoRegistros(data.historico_registros);
+                    } else {
+                        console.error('Response is not an array:', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+    }, [id ,token]);
 
     return (
         <div>
@@ -94,4 +107,4 @@ const HistoricoRegistro: React.FC = () => {
     )
 }
 
-export default HistoricoRegistro;
+export default HistoricoRegistroID;

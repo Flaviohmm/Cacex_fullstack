@@ -337,7 +337,7 @@ def editar_registro(request, id):
     registro = get_object_or_404(RegistroFuncionarios, id=id)
 
     # Consulte o histórico
-    historico_registros = Historico.objects.filter(registro=registro).order_by('-data')
+    historico_registros = Historico.objects.filter(registro=registro).order_by('data')
 
     # Obtenha os dados atuais do registro antes de qualquer alteração
     dados_atuais = dados_atuais_registro(registro)
@@ -434,7 +434,7 @@ def excluir_registro(request, id):
 
 
 class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Historico.objects.all()
+    queryset = Historico.objects.all().order_by('-data')
     serializer_class = HistoricoSerializer
 
     def list(self, request, *args, **kwargs):
@@ -452,32 +452,12 @@ class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):
                 }
         return alteracoes
 
-@api_view(['GET']) 
-def historico(request):
-    historico_registros = Historico.objects.all()
-
-    # Inicializa a lista de diferenças como vazia
-    registros = []
-
-    for hist in historico_registros:
-        registro = {
-            'acao': hist.acao,
-            'data': hist.data,
-            'usuario': hist.usuario,
-            'dados_anteriores': hist.dados_anteriores,
-            'dados_atuais': hist.dados_atuais,
-            'dados_alterados': hist.dados_alterados if hist.dados_alterados else comparar_valores(hist.dados_anteriores, hist.dados_atuais)
-        }
-        registros.append(registro)
-
-    return JsonResponse({'historico_registros': registros})
-
-def historico_detail(request, id):
+def historico_detail(request, registro_id):
     # Obtenha o registro específico ou retorne um 404 se não existir
-    registro = get_object_or_404(RegistroFuncionarios, id=id)
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
 
     # Obtém os registros do histórico relacionados ao registro específico
-    historico_registros = Historico.objects.filter(id=registro.id).order_by('-data')
+    historico_registros = Historico.objects.filter(registro_id=registro).order_by('-data')
 
     # Inicializa a lista de diferenças como vazia
     registros = []
@@ -486,7 +466,10 @@ def historico_detail(request, id):
         reg = {
             'acao': hist.acao,
             'data': hist.data,
-            'usuario': hist.usuario,
+            'usuario': {
+                'id': hist.usuario.id,
+                'username': hist.usuario.username,
+            },
             'dados_anteriores': hist.dados_anteriores,
             'dados_atuais': hist.dados_atuais,
             'dados_alterados': comparar_valores(hist.dados_anteriores, hist.dados_atuais)

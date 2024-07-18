@@ -59,6 +59,10 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, o
         navigate(`/editar/${registro.id}`)
     };
 
+    const handleHist = async () => {
+        navigate(`/historico/${registro.id}`)
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
             <div className="bg-white p-10 rounded shadow-lg relative" onClick={(e) => e.stopPropagation()}>
@@ -143,6 +147,9 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, o
                 <div className="flex justify-end mt-4 space-x-2">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleEdit}>
                         Editar
+                    </button>
+                    <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleHist}>
+                        Histórico
                     </button>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete}>
                         Excluir
