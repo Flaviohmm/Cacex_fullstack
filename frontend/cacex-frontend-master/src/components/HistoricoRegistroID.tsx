@@ -15,10 +15,6 @@ interface HistoricoRegistroID {
     dados_alterados: Array<[string, string, string]>;
 }
 
-interface HistoricoRegistrosResponse {
-    historico_registros: HistoricoRegistroID[];
-}
-
 const HistoricoRegistroID: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // Pega o ID da URL
     const [historicoRegistros, setHistoricoRegistros] = useState<HistoricoRegistroID[]>([]);

@@ -160,7 +160,7 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Órgão/Setor</th>
                             <th className="py-2 px-4 border-b text-left">Município</th>
                             <th className="py-2 px-4 border-b text-left">Atividade</th>
-                            <th className="py-2 px-4 border-b text-left">Número do Convênio</th>
+                            <th className="py-2 px-4 border-b text-left">N° do Convênio</th>
                             <th className="py-2 px-4 border-b text-left">Parlamentar</th>
                             <th className="py-2 px-4 border-b text-left">Objeto</th>
                             <th className="py-2 px-4 border-b text-left">OGE/OGU</th>

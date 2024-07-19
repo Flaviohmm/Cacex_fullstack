@@ -2,6 +2,8 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -477,3 +479,142 @@ def historico_detail(request, registro_id):
         registros.append(reg)
 
     return JsonResponse({'historico_registros': registros})
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    """ Retorna o token CSRF """
+    return JsonResponse({'csrfToken': request.META.get('CSRF_COOKIE')})
+
+@csrf_exempt
+@require_POST
+def anexar_registro(request, registro_id):
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+    registros_anexados = request.session.get('registros_anexados', [])
+    registros_desanexados = request.session.get('registros_desanexados', [])
+
+    if not any(r['id'] == registro_id for r in registros_anexados):
+        registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+        registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+        registro_dict = {
+            'id': registro.id,
+            'nome': registro.nome.username,
+            'orgao_setor': registro.orgao_setor.orgao_setor,
+            'municipio': registro.municipio.municipio,
+            'atividade': registro.atividade.atividade,
+            'num_convenio': registro.num_convenio,
+            'parlamentar': registro.parlamentar,
+            'objeto': registro.objeto,
+            'oge_ogu': f'R${registro.oge_ogu:,.2f}',
+            'cp_prefeitura': f'R${registro.cp_prefeitura:,.2f}',
+            'valor_total': f'R${registro.valor_total:,.2f}',
+            'valor_liberado': f'R${registro.valor_liberado:,.2f}',
+            'falta_liberar': f'R${registro.falta_liberar:,.2f}',
+            'prazo_vigencia': registro.prazo_vigencia.strftime('%d/%m/%Y'),
+            'situacao': registro.situacao,
+            'providencia': registro.providencia,
+            'status': registro.status,
+            'data_recepcao': registro.data_recepcao.strftime('%d/%m/%Y'),
+            'data_inicio': registro.data_inicio.strftime('%d/%m/%Y') if registro.data_inicio else None,
+            'documento_pendente': registro.documento_pendente,
+            'documento_cancelado': registro.documento_cancelado,
+            'data_fim': registro.data_fim.strftime('%d/%m/%Y') if registro.data_fim else None,
+            'duracao_dias_uteis': registro.duracao_dias_uteis,
+        }
+
+        registros_anexados.append(registro_dict)
+
+        if registro_id in registros_desanexados:
+            registros_desanexados.remove(registro_id)
+
+        request.session['registros_anexados'] = registros_anexados
+        request.session['registros_desanexados'] = registros_desanexados
+        request.session.modified = True
+
+        print("Registros anexados atualizados:", request.session['registros_anexados'])
+
+    print("Registros Anexados na Sessão após modificação:", request.session.get('registros_anexados'))
+    return JsonResponse({'message': 'Registro anexado com sucesso'})
+
+@csrf_exempt
+def desanexar_registro(request, registro_id):
+    # Obtenha a lista de registros anexados e desanexados da sessão
+    registros_anexados = request.session.get('registros_anexados', [])
+    registros_desanexados = request.session.get('registros_desanexados', [])
+
+    # Verifique se o registro já está desanexado
+    if registro_id not in registros_desanexados:
+        # Obtenha o registro a ser desanexado a partir da lista de registros anexados
+        registro_dict = next((registro for registro in registros_anexados if registro['id'] == registro_id), None)
+
+        if registro_dict:
+            # Crie uma instância de Nome (substitua 'Nome' pelo seu modelo real)
+            nome_instance = User.objects.get(username=registro_dict['nome'])
+            orgao_setor_instance = Setor.objects.get(orgao_setor=registro_dict['orgao_setor'])
+            municipio_instance = Municipio.objects.get(municipio=registro_dict['municipio'])
+            atividade_instance = Atividade.objects.get(atividade=registro_dict['atividade'])
+
+            # Converta o registro_dict para um objeto RegistroFuncionarios
+            novo_registro = RegistroFuncionarios(
+                nome=nome_instance,
+                orgao_setor=orgao_setor_instance,
+                municipio=municipio_instance,
+                atividade=atividade_instance,
+                num_convenio=registro_dict['num_convenio'],
+                parlamentar=registro_dict['parlamentar'],
+                objeto=registro_dict['objeto'],
+                oge_ogu=registro_dict['oge_ogu'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                cp_prefeitura=registro_dict['cp_prefeitura'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                valor_liberado=registro_dict['valor_liberado'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                prazo_vigencia=datetime.strptime(registro_dict['prazo_vigencia'], '%d/%m/%Y').date(),
+                situacao=registro_dict['situacao'],
+                providencia=registro_dict['providencia'],
+                data_recepcao=datetime.strptime(registro_dict['data_recepcao'], '%d/%m/%Y').date(),
+                data_inicio=None if registro_dict['data_inicio'] is None else datetime.strptime(registro_dict['data_inicio'], '%d/%m/%Y').date(),
+                documento_pendente=registro_dict['documento_pendente'],
+                documento_cancelado=registro_dict['documento_cancelado'],
+                data_fim=None if registro_dict['data_fim'] is None else datetime.strptime(registro_dict['data_fim'], '%d/%m/%Y').date(),
+            )
+
+            # Salve o novo registro na tabela original
+            novo_registro.save()
+
+            # Adicione o registro novamente à tabela original
+            registros_anexados.append(registro_dict)
+
+            # Remova o registro da lista de registros anexados
+            registros_anexados = [r for r in registros_anexados if r['id'] != registro_id]
+
+            # Atualize a lista de registros anexados e desanexados na sessão
+            request.session['registros_anexados'] = registros_anexados
+
+            # Adicione o registro à lista de registros desanexados
+            registros_desanexados.append(registro_id)
+
+            # Atualize a lista de registros desanexados na sessão
+            request.session['registros_desanexados'] = registros_desanexados
+
+    return JsonResponse({'message': 'Registro desanexado com sucesso'})
+
+@ensure_csrf_cookie
+def mostrar_registros_anexados(request):
+    registros_anexados = request.session.get('registros_anexados', [])
+    registros_desanexados = request.session.get('registros_desanexados', [])
+
+    context = {
+        'registros_anexados': registros_anexados,
+        'registros_desanexados': registros_desanexados
+    }
+
+    # Verifique os dados armazenados na sessão e no objeto de resposta JSON
+    print("Registros Anexados na Sessão:", registros_anexados)
+    print("Contexto para o retorno:", context)
+
+    return JsonResponse(context)
+
+@csrf_exempt
+def verificar_sessao(request):
+    # Log e retorno da sessão completa para depuração
+    print("Conteúdo Completo da Sessão:", dict(request.session))
+    return JsonResponse(dict(request.session.items()))

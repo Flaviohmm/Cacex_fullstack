@@ -11,6 +11,7 @@ import ListarRegistros from './components/ListarRegistros';
 import EditRegistro from './components/EditRegistro';
 import HistoricoRegistro from './components/HistoricoRegistro';
 import HistoricoRegistroID from './components/HistoricoRegistroID';
+import Anexados from './components/Anexados';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path='/editar/:id' element={<EditRegistro />} />
           <Route path='/historico' element={<HistoricoRegistro />} />
           <Route path='/historico/:id' Component={HistoricoRegistroID} />
+          <Route path='/mostrar_registros_anexados' element={<Anexados />} />
         </Routes>
       </div>
     </BrowserRouter>

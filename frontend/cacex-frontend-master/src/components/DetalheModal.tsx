@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
 
@@ -40,6 +40,22 @@ interface DetalheModalProps {
 
 const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, onUpdate}) => {
     const navigate = useNavigate();
+    const [csrfToken, setCsrfToken] = useState<string>("");
+
+    useEffect(() => {
+        const getCsrfToken = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/csrf_token/");
+                setCsrfToken(response.data.csrfToken);
+                axios.defaults.headers.common['X-CSRFToken'] = response.data.csrfToken;
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao obter o token CSRF.");
+            }
+        };
+
+        getCsrfToken();
+    }, []);
 
     if (!isOpen) return null;
 
@@ -61,7 +77,27 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, o
 
     const handleHist = async () => {
         navigate(`/historico/${registro.id}`)
-    }
+    };
+
+    const handleAnexar = async () => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/anexar_registro/${registro.id}/`, 
+                {}, 
+                {
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            alert(response.data.message);
+            onUpdate();  // Chame onUpdate para atualizar a lista após anexar o registro
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao anexar registro.");
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
@@ -150,6 +186,9 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, o
                     </button>
                     <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleHist}>
                         Histórico
+                    </button>
+                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleAnexar}>
+                        Anexar
                     </button>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete}>
                         Excluir

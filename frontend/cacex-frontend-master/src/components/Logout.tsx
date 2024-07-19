@@ -5,7 +5,7 @@ const Logout: React.FC = () => {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        const response = await fetch('hhtp://localhost:8000/auth/sair', {
+        const response = await fetch('http://localhost:8000/auth/sair', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

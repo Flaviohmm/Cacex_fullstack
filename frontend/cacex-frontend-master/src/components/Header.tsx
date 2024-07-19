@@ -34,6 +34,10 @@ const Header: React.FC = () => {
     navigate('/historico')
   }
 
+  const goToAnexar = () => {
+    navigate('/mostrar_registros_anexados')
+  }
+
   return (
     <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8">
         <div className="flex items-center mb-4 md:mb-0">
@@ -46,7 +50,7 @@ const Header: React.FC = () => {
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>
-            <button className="hover:bg-blue-500 p-2 rounded font-bold">Arquivado</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAnexar}>Arquivado</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold">Painel</button>
         </nav>
         <button onClick={handleLogout} className="bg-white text-blue-700 font-bold hover:bg-gray-200 p-2 rounded mt-4 md:mt-0">

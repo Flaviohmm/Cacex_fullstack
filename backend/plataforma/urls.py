@@ -22,5 +22,10 @@ urlpatterns = [
     path('editar_registro/<int:id>/', views.editar_registro, name='editar_registro'),
     path('excluir_registro/<int:id>/', views.excluir_registro, name='excluir_registro'),
     path('historico/<int:registro_id>/', views.historico_detail, name='historico_detail'),
+    path('csrf_token/', views.get_csrf_token, name="csrf_token"),
+    path('anexar_registro/<int:registro_id>/', views.anexar_registro, name='anexar_registro'),
+    path('desanexar_registro/<int:registro_id>/', views.desanexar_registro, name='desanexar_registro'),
+    path('mostrar_registros_anexados/', views.mostrar_registros_anexados, name='mostrar_registros_anexados'),
+    path('verificar_sessao/', views.verificar_sessao, name='verificar_sessao'),
     path('', include(router.urls)),
 ]
