@@ -506,11 +506,11 @@ def anexar_registro(request, registro_id):
             'num_convenio': registro.num_convenio,
             'parlamentar': registro.parlamentar,
             'objeto': registro.objeto,
-            'oge_ogu': f'R${registro.oge_ogu:,.2f}',
-            'cp_prefeitura': f'R${registro.cp_prefeitura:,.2f}',
-            'valor_total': f'R${registro.valor_total:,.2f}',
-            'valor_liberado': f'R${registro.valor_liberado:,.2f}',
-            'falta_liberar': f'R${registro.falta_liberar:,.2f}',
+            'oge_ogu': float(registro.oge_ogu),
+            'cp_prefeitura': float(registro.cp_prefeitura),
+            'valor_total': float(registro.valor_total),
+            'valor_liberado': float(registro.valor_liberado),
+            'falta_liberar': float(registro.falta_liberar),
             'prazo_vigencia': registro.prazo_vigencia.strftime('%d/%m/%Y'),
             'situacao': registro.situacao,
             'providencia': registro.providencia,
@@ -532,10 +532,43 @@ def anexar_registro(request, registro_id):
         request.session['registros_desanexados'] = registros_desanexados
         request.session.modified = True
 
+        registro.delete()
+
         print("Registros anexados atualizados:", request.session['registros_anexados'])
 
     print("Registros Anexados na Sessão após modificação:", request.session.get('registros_anexados'))
-    return JsonResponse({'message': 'Registro anexado com sucesso'})
+
+    response_data = {
+        'message': 'Registro anexado com sucesso',
+        'registros_anexados': [
+            {
+                'id': r['id'],
+                'nome': r['nome'],
+                'orgao_setor': r['orgao_setor'],
+                'municipio': r['municipio'],
+                'atividade': r['atividade'],
+                'num_convenio': r['num_convenio'],
+                'parlamentar': r['parlamentar'],
+                'objeto': r['objeto'],
+                'oge_ogu': f'R${r["oge_ogu"]:,.2f}',
+                'cp_prefeitura': f'R${r["cp_prefeitura"]:,.2f}',
+                'valor_total': f'R${r["valor_total"]:,.2f}',
+                'valor_liberado': f'R${r["valor_liberado"]:,.2f}',
+                'falta_liberar': f'R${r["falta_liberar"]:,.2f}',
+                'prazo_vigencia': r['prazo_vigencia'],
+                'situacao': r['situacao'],
+                'providencia': r['providencia'],
+                'status': r['status'],
+                'data_recepcao': r['data_recepcao'],
+                'data_inicio': r['data_inicio'],
+                'documento_pendente': r['documento_pendente'],
+                'documento_cancelado': r['documento_cancelado'],
+                'data_fim': r['data_fim'],
+                'duracao_dias_uteis': r['duracao_dias_uteis'],
+            } for r in registros_anexados
+        ]
+    }
+    return JsonResponse(response_data)
 
 @csrf_exempt
 def desanexar_registro(request, registro_id):
@@ -564,9 +597,9 @@ def desanexar_registro(request, registro_id):
                 num_convenio=registro_dict['num_convenio'],
                 parlamentar=registro_dict['parlamentar'],
                 objeto=registro_dict['objeto'],
-                oge_ogu=registro_dict['oge_ogu'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
-                cp_prefeitura=registro_dict['cp_prefeitura'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
-                valor_liberado=registro_dict['valor_liberado'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                oge_ogu=registro_dict['oge_ogu'],
+                cp_prefeitura=registro_dict['cp_prefeitura'],
+                valor_liberado=registro_dict['valor_liberado'],
                 prazo_vigencia=datetime.strptime(registro_dict['prazo_vigencia'], '%d/%m/%Y').date(),
                 situacao=registro_dict['situacao'],
                 providencia=registro_dict['providencia'],
@@ -609,6 +642,7 @@ def mostrar_registros_anexados(request):
 
     # Verifique os dados armazenados na sessão e no objeto de resposta JSON
     print("Registros Anexados na Sessão:", registros_anexados)
+    print("Registros Desanexados na Sessão:", registros_desanexados)
     print("Contexto para o retorno:", context)
 
     return JsonResponse(context)
