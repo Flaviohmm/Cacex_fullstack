@@ -3,11 +3,16 @@ import axios from "axios";
 
 const AdicionarSetor: React.FC = () => {
     const [orgaoSetor, setOrgaoSetor] = useState('');
+    const token = localStorage.getItem('authToken');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/adicionar_setor/', {orgao_setor: orgaoSetor});
+            await axios.post('http://localhost:8000/adicionar_setor/', {orgao_setor: orgaoSetor}, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setOrgaoSetor('');
             alert('Setor adicionado com sucesso!');
         } catch (error) {

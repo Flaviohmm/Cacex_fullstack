@@ -3,11 +3,16 @@ import axios from "axios";
 
 const AdicionarAtividade: React.FC = () => {
     const [atividade, setAtividade] = useState('');
+    const token = localStorage.getItem('authToken');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/adicionar_atividade/', {atividade});
+            await axios.post('http://localhost:8000/adicionar_atividade/', {atividade}, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setAtividade('');
             alert('Atividade adicionada com sucesso!');
         } catch (error) {

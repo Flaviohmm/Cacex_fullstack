@@ -3,12 +3,17 @@ import axios from "axios";
 
 const AdicionarMunicipio: React.FC = () => {
     const [municipio, setMunicipio] = useState('');
+    const token = localStorage.getItem('authToken');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            await axios.post('http://localhost:8000/adicionar_municipio/', { municipio });
+            await axios.post('http://localhost:8000/adicionar_municipio/', { municipio }, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
             setMunicipio('');
             alert('Município adicionado com sucesso!');
         } catch (error) {
