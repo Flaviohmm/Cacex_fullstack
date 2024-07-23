@@ -33,10 +33,21 @@ interface Registro {
 }
 
 const ListarRegistros: React.FC = () => {
-    const [registros, setRegistros] = useState<any[]>([]);
+    const [registros, setRegistros] = useState<Registro[]>([]);
+    const [filteredRegistros, setFilteredRegistros] = useState<Registro[]>([]);
     const [currentModal, setCurrentModal] = useState<number | null>(null);
     const [selectedRegistro, setSelectedRegistro] = useState<Registro | null>(null);
     const [dataUpdated, setDataUpdated] = useState(false);
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
+    const [filters, setFilters] = useState ({
+        nome: '',
+        orgao_setor: '',
+        municipio: '',
+        num_convenio: '',
+        parlamentar: '',
+        situacao: '',
+        status: ''
+    });
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -49,6 +60,7 @@ const ListarRegistros: React.FC = () => {
                     },
                 });
                 setRegistros(response.data);
+                setFilteredRegistros(response.data);
                 const firstModalIndex = response.data.findIndex((r: Registro) => r.exibir_modal_prazo_vigencia);
                 if (firstModalIndex !== -1) {
                     setCurrentModal(response.data[firstModalIndex].id);
@@ -60,6 +72,34 @@ const ListarRegistros: React.FC = () => {
 
         carregarRegistros();
     }, [dataUpdated]);
+
+    // Função para abrir o modal de filtro
+    const handleFilter = () => {
+        setFilterModalOpen(true);
+    }
+
+    // Função para aplicar o filtro
+    const applyFilter = () => {
+        const filtered = registros.filter(registro => {
+            return (
+                (filters.nome ? registro.nome.includes(filters.nome) : true) &&
+                (filters.orgao_setor ? registro.orgao_setor.includes(filters.orgao_setor) : true) &&
+                (filters.municipio ? registro.municipio.includes(filters.municipio) : true) &&
+                (filters.num_convenio ? registro.num_convenio.includes(filters.num_convenio) : true) &&
+                (filters.parlamentar ? registro.parlamentar.includes(filters.parlamentar) : true) &&
+                (filters.situacao ? registro.situacao.includes(filters.situacao) : true) &&
+                (filters.status ? registro.status.includes(filters.status) : true) 
+            );
+        });
+        setFilteredRegistros(filtered);
+        setFilterModalOpen(false); // Fecha o modal após aplicar o filtro
+    }
+
+    // Atualiza o estado dos filtros com base na entrada do usuário
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilters({ ...filters, [name]: value });
+    }
 
     const generateCSV = () => {
         const csvHeaders = [
@@ -181,7 +221,7 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Ver Detalhes</th>
                         </thead>
                         <tbody>
-                            {registros.map((registro: Registro, index: number) => (
+                            {filteredRegistros.map((registro: Registro, index: number) => (
                                 <tr key={index} className="hover:bg-gray-100">
                                     <td className="py-2 px-4 border-b">{registro.nome}</td>
                                     <td className="py-2 px-4 border-b">{registro.orgao_setor}</td>
@@ -304,32 +344,144 @@ const ListarRegistros: React.FC = () => {
                 >
                     Gerar CSV
                 </button>
-            </div>
-            
-            {registros.map((registro: Registro) => (
-                registro.exibir_modal_prazo_vigencia && currentModal === registro.id && (
-                    <div key={registro.id} className={`fixed inset-0 z-50 flex items-center justify-center ${currentModal === registro.id ? 'block' : 'hidden'}`}>
-                        <div className="fixed inset-0 bg-black opacity-50" onClick={() => closeModal(registro.id)}></div>
-                        <div className="bg-white p-8 rounded shadow-lg relative">
-                            <h2 className="text-xl font-bold mb-4">Notificação de Prazo</h2>
-                            <p className="mb-4">
-                                {registro.dias_restantes_prazo_vigencia > 0
-                                    ? `O convênio ${registro.num_convenio} está com o prazo de vigência próximo do seu vencimento. Restam ${registro.dias_restantes_prazo_vigencia} dias.`
-                                    : `O convênio ${registro.num_convenio} está com o prazo de vigência vencido.`
-                                }
-                            </p>
+                <button
+                    className="mx-4 mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleFilter}
+                >
+                    Filtro
+                </button>
+
+                {/* Modal de Filtro */}
+                {filterModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div className="fixed inset-0 bg-black opacity-50" onClick={() => setFilterModalOpen(false)}></div>
+                        <div className="bg-white p-24 w-1/2 rounded shadow-lg relative">
+                            <h2 className="text-xl font-bold mb-6">Filtrar Registros</h2>
+
+                            {/* Formulário de filtros */}
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Nome:</label>
+                                <input 
+                                    type="text" 
+                                    name="nome"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.nome}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Órgão/Setor:</label>
+                                <input 
+                                    type="text" 
+                                    name="orgao_setor"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.orgao_setor}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Município:</label>
+                                <input 
+                                    type="text"
+                                    name="municipio"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.municipio}
+                                    onChange={handleFilterChange} 
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Número do Convênio:</label>
+                                <input 
+                                    type="text"
+                                    name="num_convenio"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.num_convenio} 
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Parlamentar:</label>
+                                <input 
+                                    type="text" 
+                                    name="parlamentar"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.parlamentar}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Situação:</label>
+                                <input 
+                                    type="text" 
+                                    name="status"
+                                    className="border rounded w-full py-2 px-3"
+                                    value={filters.status}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-gray-700">Status:</label>
+                                <input 
+                                    type="text" 
+                                    name="status"
+                                    className="border rounded w-full py-2 px-3 mb-4"
+                                    value={filters.status}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+
                             <div className="flex justify-end">
                                 <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    onClick={() => closeModal(registro.id)}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                                    onClick={applyFilter}
+                                >
+                                    Aplicar Filtro
+                                </button>
+                                <button
+                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                    onClick={() => setFilterModalOpen(false)}
                                 >
                                     Fechar
                                 </button>
                             </div>
                         </div>
                     </div>
-                )
-            ))}
+                )}
+
+
+                {/* Notificação de Prazo */}
+                {registros.map((registro: Registro) => (
+                    registro.exibir_modal_prazo_vigencia && currentModal === registro.id && (
+                        <div key={registro.id} className={`fixed inset-0 z-50 flex items-center justify-center ${currentModal === registro.id ? 'block' : 'hidden'}`}>
+                            <div className="fixed inset-0 bg-black opacity-50" onClick={() => closeModal(registro.id)}></div>
+                            <div className="bg-white p-8 rounded shadow-lg relative">
+                                <h2 className="text-xl font-bold mb-4">Notificação de Prazo</h2>
+                                <p className="mb-4">
+                                    {registro.dias_restantes_prazo_vigencia > 0
+                                        ? `O convênio ${registro.num_convenio} está com o prazo de vigência próximo do seu vencimento. Restam ${registro.dias_restantes_prazo_vigencia} dias.`
+                                        : `O convênio ${registro.num_convenio} está com o prazo de vigência vencido.`
+                                    }
+                                </p>
+                                <div className="flex justify-end">
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        onClick={() => closeModal(registro.id)}
+                                    >
+                                        Fechar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                ))}
+
+            </div>
         </div>
     );
 };

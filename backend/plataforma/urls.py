@@ -27,5 +27,7 @@ urlpatterns = [
     path('desanexar_registro/<int:registro_id>/', views.desanexar_registro, name='desanexar_registro'),
     path('mostrar_registros_anexados/', views.mostrar_registros_anexados, name='mostrar_registros_anexados'),
     path('verificar_sessao/', views.verificar_sessao, name='verificar_sessao'),
+    path('tabela_caixa/', views.tabela_caixa_api, name='tabela_caixa_api'),
+    path('selecionar_municipio/<int:municipio_id>/', views.selecionar_municipio_api, name='selecionar_municipio_api'),
     path('', include(router.urls)),
 ]

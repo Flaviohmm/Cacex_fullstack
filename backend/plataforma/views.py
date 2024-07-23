@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .templatetags.custom_filters import format_currency
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer
+from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer
 from rest_framework import viewsets
 from datetime import datetime
 import json
@@ -652,3 +652,102 @@ def verificar_sessao(request):
     # Log e retorno da sessão completa para depuração
     print("Conteúdo Completo da Sessão:", dict(request.session))
     return JsonResponse(dict(request.session.items()))
+
+
+@require_GET
+def tabela_filtrada(request):
+    # Obtenha os registros filtrados como antes
+    nomes = User.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    nome_id = request.GET.get('nome')
+    orgao_setor_id = request.GET.get('orgao_setor')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.all()
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if orgao_setor_id:
+        registros_filtrados = registros_filtrados.filter(orgao_setor__id=orgao_setor_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    # Serialização dos registros filtrados
+    registros_data = [
+        {
+            'id': registro.id,
+            'nome': str(registro.nome.username),
+            'orgao_setor': str(registro.orgao_setor.orgao_setor),
+            'municipio': str(registro.municipio.municipio),
+            'num_convenio': registro.num_convenio,
+            'parlamentar': registro.parlamentar,
+            'prazo_vigencia': registro.prazo_vigencia,
+            'status': registro.status
+        } for registro in registros_filtrados
+    ]
+
+    return JsonResponse({
+        'registros_filtrados': registros_data,
+        'nomes': list(nomes.values()),
+        'orgaos_setores': list(orgaos_setores.values()),
+        'municipios': list(municipios.values())
+    })
+
+
+@api_view(['GET'])
+def tabela_caixa_api(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA')
+    municipios = Municipio.objects.all()
+
+    # Serializando os dados
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+    municipios_serializados = MunicipioSerializer(municipios, many=True)
+
+    data = {
+        'registros': registros_serializados.data,
+        'municipios': municipios_serializados.data,
+    }
+
+    return Response(data)
+
+@api_view(['GET'])
+def selecionar_municipio_api(request, municipio_id):
+    try:
+        municipio = Municipio.objects.get(id=municipio_id)
+    except Municipio.DoesNotExist:
+        return Response({'error': 'Municipio not found'}, status=404)
+    
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA', municipio=municipio)
+    municipios = Municipio.objects.all()
+
+    # Serializando os dados
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+    municipios_serializados = MunicipioSerializer(municipio, many=True)
+
+    data = {
+        'registros': registros_serializados.data,
+        'municipio': {
+            'id': municipio.id,
+            'municipio': municipio.municipio,
+        },
+        'municipios': municipios_serializados.data,
+    }
+
+    return Response(data)
