@@ -2,14 +2,30 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NumericFormat } from "react-number-format";
 import Header from "./Header";
-import DetalheModal from "./DetalheModal";
+import DetalheModalCaixa from "./DetalheModalCaixa";
+import { useParams } from "react-router-dom";
+
+interface OrgaoSetor {
+    id: number;
+    orgao_setor: string; // ou qualquer outra propriedade relevante
+}
+
+interface Municipio {
+    id: number;
+    municipio: string; // ou qualquer outra propriedade relevante
+}
+
+interface Atividade {
+    id: number;
+    atividade: string; // ou qualquer outra propriedade relevante
+}
 
 interface Registro {
     id: number;
     nome: string;
-    orgao_setor: string;
-    municipio: string;
-    atividade: string;
+    orgao_setor: OrgaoSetor;
+    municipio: Municipio;
+    atividade: Atividade;
     num_convenio: string;
     parlamentar: string;
     objeto: string;
@@ -32,14 +48,16 @@ interface Registro {
     dias_restantes_prazo_vigencia: number;
 }
 
-const ListarRegistros: React.FC = () => {
+const ListarTabelaCaixa: React.FC = () => {
+    const { municipioId } = useParams<{ municipioId: string }>(); // Obtenha o municipioId da URL
     const [registros, setRegistros] = useState<Registro[]>([]);
+    const [municipio, setMunicipio] = useState<Municipio[]>([]);
     const [filteredRegistros, setFilteredRegistros] = useState<Registro[]>([]);
     const [currentModal, setCurrentModal] = useState<number | null>(null);
     const [selectedRegistro, setSelectedRegistro] = useState<Registro | null>(null);
     const [dataUpdated, setDataUpdated] = useState(false);
     const [filterModalOpen, setFilterModalOpen] = useState(false);
-    const [filters, setFilters] = useState ({
+    const [filters, setFilters] = useState({
         nome: '',
         orgao_setor: '',
         municipio: '',
@@ -54,24 +72,27 @@ const ListarRegistros: React.FC = () => {
 
         const carregarRegistros = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/listar_registros/", {
+                const response = await axios.get(`http://localhost:8000/selecionar_municipio/${municipioId}`, {
                     headers: {
                         'Authorization': `Token ${token}`
                     },
                 });
-                setRegistros(response.data);
-                setFilteredRegistros(response.data);
-                const firstModalIndex = response.data.findIndex((r: Registro) => r.exibir_modal_prazo_vigencia);
+                setRegistros(response.data.registros);
+                setFilteredRegistros(response.data.registros);
+                const firstModalIndex = response.data.registros.findIndex((r: Registro) => r.exibir_modal_prazo_vigencia);
                 if (firstModalIndex !== -1) {
-                    setCurrentModal(response.data[firstModalIndex].id);
+                    setCurrentModal(response.data.registros[firstModalIndex].id);
                 }
+                
             } catch (error) {
-                console.error("Erro ao buscar registros:", error)
+                console.error("Erro ao buscar registros:", error);
             }
         };
 
-        carregarRegistros();
-    }, [dataUpdated]);
+        if (municipioId) {
+            carregarRegistros();
+        }
+    }, [municipioId, dataUpdated]);
 
     // Função para abrir o modal de filtro
     const handleFilter = () => {
@@ -83,8 +104,8 @@ const ListarRegistros: React.FC = () => {
         const filtered = registros.filter(registro => {
             return (
                 (filters.nome ? registro.nome.includes(filters.nome) : true) &&
-                (filters.orgao_setor ? registro.orgao_setor.includes(filters.orgao_setor) : true) &&
-                (filters.municipio ? registro.municipio.includes(filters.municipio) : true) &&
+                (filters.orgao_setor ? registro.orgao_setor.orgao_setor.includes(filters.orgao_setor) : true) &&
+                (filters.municipio ? registro.municipio.municipio.includes(filters.municipio) : true) &&
                 (filters.num_convenio ? registro.num_convenio.includes(filters.num_convenio) : true) &&
                 (filters.parlamentar ? registro.parlamentar.includes(filters.parlamentar) : true) &&
                 (filters.situacao ? registro.situacao.includes(filters.situacao) : true) &&
@@ -131,9 +152,9 @@ const ListarRegistros: React.FC = () => {
             csvHeaders.join(";"),
             ...registros.map((registro: Registro) => [
                 registro.nome,
-                registro.orgao_setor,
-                registro.municipio,
-                registro.atividade,
+                registro.orgao_setor.orgao_setor,
+                registro.municipio.municipio,
+                registro.atividade.atividade,
                 registro.num_convenio,
                 registro.parlamentar,
                 registro.objeto,
@@ -188,6 +209,15 @@ const ListarRegistros: React.FC = () => {
         setDataUpdated(!dataUpdated);
     }
 
+    const formatarData = (dataString: string) => {
+        const data = new Date(dataString);
+        const dia = String(data.getDate()).padStart(2, '0'); // Obtém o dia e preenche com zero á esquerda
+        const mes = String(data.getMonth() + 1).padStart(2, '0'); // Os meses começam do zero, adicione 1
+        const ano = data.getFullYear();
+
+        return `${dia}/${mes}/${ano}` // Formato dd/mm/yyyy
+    }
+
     return (
         <div>
             <Header />
@@ -221,12 +251,12 @@ const ListarRegistros: React.FC = () => {
                             <th className="py-2 px-4 border-b text-left">Ver Detalhes</th>
                         </thead>
                         <tbody>
-                            {filteredRegistros.map((registro: Registro, index: number) => (
-                                <tr key={index} className="hover:bg-gray-100">
+                            {filteredRegistros.map((registro: Registro) => (
+                                <tr key={registro.id} className="hover:bg-gray-100">
                                     <td className="py-2 px-4 border-b">{registro.nome}</td>
-                                    <td className="py-2 px-4 border-b">{registro.orgao_setor}</td>
-                                    <td className="py-2 px-4 border-b">{registro.municipio}</td>
-                                    <td className="py-2 px-4 border-b">{registro.atividade}</td>
+                                    <td className="py-2 px-4 border-b">{registro.orgao_setor.orgao_setor}</td>
+                                    <td className="py-2 px-4 border-b">{registro.municipio.municipio}</td>
+                                    <td className="py-2 px-4 border-b">{registro.atividade.atividade}</td>
                                     <td className="py-2 px-4 border-b">{registro.num_convenio}</td>
                                     <td className="py-2 px-4 border-b">{registro.parlamentar}</td>
                                     <td className="py-2 px-4 border-b">{registro.objeto}</td>
@@ -286,7 +316,7 @@ const ListarRegistros: React.FC = () => {
                                         />
                                     </td>
                                     <td className="py-2 px-4 border-b">
-                                        {registro.prazo_vigencia}
+                                        {formatarData(registro.prazo_vigencia)}
                                     </td>
                                     <td className="py-2 px-4 border-b">{registro.situacao}</td>
                                     <td className="py-2 px-4 border-b">{registro.providencia}</td>
@@ -306,14 +336,14 @@ const ListarRegistros: React.FC = () => {
                                         <td className="py-2 px-4 border-b bg-yellow-300">{registro.status}</td>
                                     )}
                                     <td className="py-2 px-4 border-b">
-                                        {registro.data_recepcao}
+                                        {formatarData(registro.data_recepcao)}
                                     </td>
                                     <td className="py-2 px-4 border-b">
-                                        {registro.data_inicio}
+                                        {registro.data_inicio ? formatarData(registro.data_inicio) : "Sem Data de Inicio"}
                                     </td>
-                                    <td className="py-2 px-4 border-b">{registro.documento_pendente}</td>
-                                    <td className="py-2 px-4 border-b">{registro.documento_cancelado}</td>
-                                    <td className="py-2 px-4 border-b">{registro.data_fim}</td>
+                                    <td className="py-2 px-4 border-b">{registro.documento_pendente ? "Sim" : "Não"}</td>
+                                    <td className="py-2 px-4 border-b">{registro.documento_cancelado ? "Sim" : "Não"}</td>
+                                    <td className="py-2 px-4 border-b">{registro.data_fim ? formatarData(registro.data_fim) : "Sem Data de Termino"}</td>
                                     <td className="py-2 px-4 border-b">{registro.duracao_dias_uteis}</td>
                                     <td className="py-2 px-4 border-b">
                                         <button className="bg-blue-500 text-white font-bold hover:bg-blue-700 py-2 px-4 rounded" onClick={() => openModal(registro)}>
@@ -328,7 +358,7 @@ const ListarRegistros: React.FC = () => {
                 </div>
 
                 {selectedRegistro && (
-                    <DetalheModal
+                    <DetalheModalCaixa
                         registro={selectedRegistro}
                         isOpen={!!selectedRegistro}
                         onClose={closeModalDetail}
@@ -484,6 +514,6 @@ const ListarRegistros: React.FC = () => {
             </div>
         </div>
     );
-};
+}
 
-export default ListarRegistros;
+export default ListarTabelaCaixa;

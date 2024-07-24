@@ -13,6 +13,7 @@ import HistoricoRegistro from './components/HistoricoRegistro';
 import HistoricoRegistroID from './components/HistoricoRegistroID';
 import Anexados from './components/Anexados';
 import TabelaCaixa from './components/TabelaCaixa';
+import ListarTabelaCaixa from './components/ListarTabelaCaixa';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Route path='/historico/:id' Component={HistoricoRegistroID} />
           <Route path='/mostrar_registros_anexados' element={<Anexados />} />
           <Route path='/tabela_caixa' Component={TabelaCaixa} />
+          <Route path='/listar_tabela_caixa/:municipioId' Component={ListarTabelaCaixa} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -735,11 +735,10 @@ def selecionar_municipio_api(request, municipio_id):
         return Response({'error': 'Municipio not found'}, status=404)
     
     registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA', municipio=municipio)
-    municipios = Municipio.objects.all()
 
     # Serializando os dados
     registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
-    municipios_serializados = MunicipioSerializer(municipio, many=True)
+    municipios_serializados = MunicipioSerializer(municipio)
 
     data = {
         'registros': registros_serializados.data,

@@ -29,8 +29,6 @@ const TabelaCaixa: React.FC = () => {
         fetchData();
     }, []);
 
-    if (loading) return <div>Loading...</div>
-
     // Criando um conjunto para restrear os municípios já exibidos
     const municipiosExibidos = new Set<number>();
 
@@ -42,6 +40,7 @@ const TabelaCaixa: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {registros.map((registro) => {
                         const municipioId = registro.municipio.id;
+                        const token = localStorage.getItem('authToken');
 
                         // Se o município já foi exibido, não renderize novamente
                         if (municipiosExibidos.has(municipioId)) {
@@ -54,7 +53,7 @@ const TabelaCaixa: React.FC = () => {
                         return (
                             <a
                                 key={registro.id}
-                                href={`http://localhost:8000/selecionar_municipio/${registro.municipio.id}`}
+                                href={`/listar_tabela_caixa/${registro.municipio.id}`}
                                 className="block rounded-lg bg-blue-700 text-white font-bold text-center p-6 hover:bg-blue-500 transition"
                             >
                                 {registro.municipio.municipio}
