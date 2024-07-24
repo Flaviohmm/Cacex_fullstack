@@ -246,7 +246,7 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Atividade:</label>
                     <select name="atividade" value={data.atividade} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        <option value="">Selecione um Órgão/Setor</option>
+                        <option value="">Selecione uma Atividade</option>
                         {atividades.map((atividade: any, index: number) => (
                             <option key={index} value={atividade.id}>{atividade.atividade}</option>
                         ))}
