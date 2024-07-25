@@ -29,5 +29,10 @@ urlpatterns = [
     path('verificar_sessao/', views.verificar_sessao, name='verificar_sessao'),
     path('tabela_caixa/', views.tabela_caixa_api, name='tabela_caixa_api'),
     path('selecionar_municipio/<int:municipio_id>/', views.selecionar_municipio_api, name='selecionar_municipio_api'),
+    path('tabela_estado/', views.tabela_estado, name='tabela_estado'),
+    path('tabela_fnde/', views.tabela_fnde, name='tabela_fnde'),
+    path('tabela_simec/', views.tabela_simec, name='tabela_simec'),
+    path('tabela_fns/', views.tabela_fns, name='tabela_fns'),
+    path('tabela_entidade/', views.tabela_entidade, name='tabela_entidade'),
     path('', include(router.urls)),
 ]

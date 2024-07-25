@@ -9,17 +9,37 @@ const Welcome: React.FC = () => {
         navigate('/tabela_caixa')
     }
 
+    const goToTabelaEstado = () => {
+        navigate('/tabela_estado')
+    }
+
+    const goToTabelaFnde = () => {
+        navigate('/tabela_fnde')
+    }
+
+    const goToTabelaSimec = () => {
+        navigate('/tabela_simec')
+    }
+
+    const goToTabelaFns = () => {
+        navigate('/tabela_fns')
+    }
+
+    const goToTabelaEntidade = () => {
+        navigate('/tabela_entidade')
+    }
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-grow flex justify-center items-center p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaCaixa}>CAIXA</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">ESTADO</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">FNDE</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">SIMEC</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">FNS</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">ENTIDADE</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaEstado}>ESTADO</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaFnde}>FNDE</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaSimec}>SIMEC</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaFns}>FNS</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaEntidade}>ENTIDADE</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">PREVIDÊNCIA</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">FGTS</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">RECEITA FEDERAL</button>

@@ -727,6 +727,7 @@ def tabela_caixa_api(request):
 
     return Response(data)
 
+
 @api_view(['GET'])
 def selecionar_municipio_api(request, municipio_id):
     try:
@@ -750,3 +751,98 @@ def selecionar_municipio_api(request, municipio_id):
     }
 
     return Response(data)
+
+
+@api_view(['GET'])
+def tabela_estado(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='ESTADO')
+    municipios = Municipio.objects.all()
+    
+    # Serializando os registros
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+
+    # Converte o queryset em uma lista de dicionários
+    municipios_data = list(municipios.values())
+
+    response_data = {
+        'municipios': municipios_data,
+        'registros': registros_serializados.data,
+    }
+
+    return JsonResponse(response_data)
+
+
+@api_view(['GET'])
+def tabela_fnde(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNDE')
+    municipios = Municipio.objects.all()
+
+    # Serializando os registros
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+
+    # Converte o queryset em uma lista de dicionários
+    municipios_data = list(municipios.values())
+
+    response_data = {
+        'municipios': municipios_data,
+        'registros': registros_serializados.data,
+    }
+
+    return JsonResponse(response_data)
+
+
+@api_view(['GET'])
+def tabela_simec(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='SIMEC')
+    municipios = Municipio.objects.all()
+
+    # Serializando os registros
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+
+    # Converte o queryset em uma lista de dicionários
+    municipios_data = list(municipios.values())
+
+    response_data = {
+        'municipios': municipios_data,
+        'registros': registros_serializados.data,
+    }
+
+    return JsonResponse(response_data)
+
+
+@api_view(['GET'])
+def tabela_fns(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNS')
+    municipios = Municipio.objects.all()
+
+    # Serializando os registros
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+
+    # Converte o queryset em uma lista de dicionários
+    municipios_data = list(municipios.values())
+
+    response_data = {
+        'municipios': municipios_data,
+        'registros': registros_serializados.data,
+    }
+
+    return JsonResponse(response_data)
+
+
+@api_view(['GET'])
+def tabela_entidade(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='Entidade')
+    municipios = Municipio.objects.all()
+
+    # Serializando os registros
+    registros_serializados = RegistroFuncionariosSerializer(registros, many=True)
+
+    # Converte o queryset em uma lista de dicionários
+    municipios_data = list(municipios.values())
+
+    response_data = {
+        'municipios': municipios_data,
+        'registros': registros_serializados.data,
+    }
+
+    return JsonResponse(response_data)

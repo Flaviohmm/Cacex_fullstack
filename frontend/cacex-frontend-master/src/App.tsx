@@ -14,6 +14,11 @@ import HistoricoRegistroID from './components/HistoricoRegistroID';
 import Anexados from './components/Anexados';
 import TabelaCaixa from './components/TabelaCaixa';
 import ListarTabelaCaixa from './components/ListarTabelaCaixa';
+import ListarTabelaEstado from './components/ListarTabelaEstado';
+import ListarTabelaFnde from './components/ListarTabelaFnde';
+import ListarTabelaSimec from './components/ListarTabelaSimec';
+import ListarTabelaFns from './components/ListarTabelaFns';
+import ListarTabelaEntidade from './components/ListarTabelaEntidade';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -35,6 +40,11 @@ const App: React.FC = () => {
           <Route path='/mostrar_registros_anexados' element={<Anexados />} />
           <Route path='/tabela_caixa' Component={TabelaCaixa} />
           <Route path='/listar_tabela_caixa/:municipioId' Component={ListarTabelaCaixa} />
+          <Route path='/tabela_estado' Component={ListarTabelaEstado} />
+          <Route path='/tabela_fnde' Component={ListarTabelaFnde} />
+          <Route path='/tabela_simec' Component={ListarTabelaSimec} />
+          <Route path='/tabela_fns' Component={ListarTabelaFns} />
+          <Route path='/tabela_entidade' Component={ListarTabelaEntidade} />
         </Routes>
       </div>
     </BrowserRouter>
