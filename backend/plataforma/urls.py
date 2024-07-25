@@ -34,5 +34,6 @@ urlpatterns = [
     path('tabela_simec/', views.tabela_simec, name='tabela_simec'),
     path('tabela_fns/', views.tabela_fns, name='tabela_fns'),
     path('tabela_entidade/', views.tabela_entidade, name='tabela_entidade'),
+    path('dashboard_data/', views.dashboard_data, name='dashboard_data'),
     path('', include(router.urls)),
 ]

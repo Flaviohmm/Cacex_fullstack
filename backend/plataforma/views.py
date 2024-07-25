@@ -1,10 +1,11 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
@@ -846,3 +847,41 @@ def tabela_entidade(request):
     }
 
     return JsonResponse(response_data)
+
+
+@api_view(['GET'])
+def dashboard_data(request):
+    try:
+        # Total de atividades
+        total_atividades = RegistroFuncionarios.objects.count()
+
+        # Contagem de atividades por status
+        concluidos = RegistroFuncionarios.objects.filter(status=Status.CONCLUIDO).count()
+        pendentes = RegistroFuncionarios.objects.filter(status=Status.PENDENTE).count()
+        em_analise = RegistroFuncionarios.objects.filter(status=Status.EM_ANALISE).count()
+        nao_iniciado = RegistroFuncionarios.objects.filter(status=Status.NAO_INICIADO).count()
+        suspensos = RegistroFuncionarios.objects.filter(status=Status.SUSPENSO).count()
+
+        # Agrupamento de atividades por orgão/setor
+        demanda_geral = RegistroFuncionarios.objects.values('orgao_setor__orgao_setor').annotate(total=Count('id'))
+
+        # Agrupamento de demanda por atividade
+        demanda_por_atividade = RegistroFuncionarios.objects.values('atividade__atividade').annotate(total=Count('id'))
+
+        # Preparando os dados para o JSON
+        response_data = {
+            'total_atividades': total_atividades,
+            'atividades_concluidas': concluidos,
+            'atividades_com_pendencia': pendentes,
+            'atividades_em_analise': em_analise,
+            'atividades_nao_iniciadas': nao_iniciado,
+            'atividades_suspensas': suspensos,
+            'demanda_geral': list(demanda_geral),
+            'demanda_por_atividade': list(demanda_por_atividade)
+        }
+
+        return Response(response_data, status=200)
+    
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
