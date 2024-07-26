@@ -3,6 +3,9 @@ import axios from "axios";
 import { NumericFormat } from "react-number-format";
 import Header from "./Header";
 import DetalheModalCaixa from "./DetalheModalCaixa";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
 
 interface OrgaoSetor {
     id: number;
@@ -214,13 +217,41 @@ const ListarTabelaFnde: React.FC = () => {
         return `${dia}/${mes}/${ano}` // Formato dd/mm/yyyy
     }
 
+    const generatePDF = () => {
+        const input = document.getElementById('registros-table');
+        if (input) {
+            html2canvas(input).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                const imgWidth = 190; // largura da imagem no PDF
+                const pageHeight = pdf.internal.pageSize.height;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const heightLeft = imgHeight;
+
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                position += heightLeft;
+
+                // Se a imagem for maior que uma página, adicione uma nova página
+                while (heightLeft >= pageHeight) {
+                    position = heightLeft - pageHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                }
+
+                pdf.save('registros.pdf');
+            });
+        }
+    };
+
     return (
         <div>
             <Header />
             <div className="p-4">
                 <h1 className="text-2xl font-bold mb-4">Registros</h1>
                 <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white">
+                    <table className="min-w-full bg-white" id="registros-table">
                         <thead>
                             <th className="py-2 px-4 border-b text-left">Nome</th>
                             <th className="py-2 px-4 border-b text-left">Órgão/Setor</th>
@@ -371,7 +402,13 @@ const ListarTabelaFnde: React.FC = () => {
                     Gerar CSV
                 </button>
                 <button
-                    className="mx-4 mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="mx-4 mb-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={generatePDF}
+                >
+                    Gerar PDF
+                </button>
+                <button
+                    className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     onClick={handleFilter}
                 >
                     Filtro
