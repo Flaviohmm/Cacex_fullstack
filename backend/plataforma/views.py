@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status, RegistroAdminstracao
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
@@ -15,6 +15,7 @@ from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializ
 from rest_framework import viewsets
 from datetime import datetime
 import json
+import traceback
 
 @api_view(['POST'])
 def adicionar_setor(request):
@@ -885,3 +886,83 @@ def dashboard_data(request):
     except Exception as e:
         return Response({'error': str(e)}, status=400)
 
+
+@api_view(['POST'])
+def adicionar_registro_administrativo(request):
+    if request.method == 'POST':
+        try:
+            # Carregar dados do corpo da requisição
+            data = json.loads(request.body)
+
+            # Obter a lista de municípios ou um único município
+            municipio_ids = data.get('municipios') # O seu frontend deve enviar como 'municipios'
+
+            if isinstance(municipio_ids, list) and municipio_ids:
+                # Obter a lista de municípios ou um único município
+                municipio = get_object_or_404(Municipio, id=municipio_ids[0]) # Pegue apenas o primeiro município
+            else:
+                return Response({'error': 'ID do município inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Obter outros dados da requisição
+            prazo_vigencia = data.get('prazo_vigencia')
+            num_contrato = data.get('num_contrato')
+            pub_femurn = data.get('pub_femurn')
+            na_cacex = data.get('na_cacex', False)
+            na_prefeitura = data.get('na_prefeitura', False)
+
+            if not prazo_vigencia or not num_contrato or pub_femurn is None:
+                return Response({'error': 'Dados obrigatórios ausentes.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                # No seu método de salvar o registro
+                prazo_vigencia = datetime.strptime(prazo_vigencia, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({'error': 'Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Criar a instância do registro
+            registro = RegistroAdminstracao(
+                municipio=municipio,
+                prazo_vigencia=prazo_vigencia,
+                num_contrato=num_contrato,
+                pub_femurn=pub_femurn,
+                na_cacex=na_cacex,
+                na_prefeitura=na_prefeitura,
+            )
+
+            registro.save()
+
+            # Chame as funções utilitárias
+            exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+
+            print(registro)
+
+            # Retornar uma resposta de sucesso
+            return Response({'message': 'Registro adicionado com sucesso!'}, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            print(traceback.format_exc())
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'error': 'Método não permitido.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET'])
+def listar_tabela_administrativa(request):
+    registros = RegistroAdminstracao.objects.all()
+
+    registros_data = [
+        
+        {
+            'id': registro.id,
+            'municipio': registro.municipio.municipio,
+            'prazo_vigencia': registro.prazo_vigencia.strftime('%d/%m/%Y'),
+            'num_contrato': registro.num_contrato,
+            'pub_femurn': registro.pub_femurn,
+            'na_cacex': registro.na_cacex,
+            'na_prefeitura': registro.na_prefeitura,
+            'dias_restantes': (registro.prazo_vigencia - timezone.now().date()).days,
+            'exibir_modal_prazo_vigencia': (registro.prazo_vigencia - timezone.now().date()).days <= 30,
+        } for registro in registros
+    ]
+
+    return Response(registros_data, status=status.HTTP_200_OK)

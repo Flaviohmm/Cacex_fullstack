@@ -20,6 +20,8 @@ import ListarTabelaSimec from './components/ListarTabelaSimec';
 import ListarTabelaFns from './components/ListarTabelaFns';
 import ListarTabelaEntidade from './components/ListarTabelaEntidade';
 import Dashboard from './components/Dashboard';
+import AdicionarRegistroAdministrativo from './components/AdicionarRegistroAdministrativo';
+import ListarTabelaAdministrativa from './components/ListarTabelaAdministrativa';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -47,6 +49,8 @@ const App: React.FC = () => {
           <Route path='/tabela_fns' Component={ListarTabelaFns} />
           <Route path='/tabela_entidade' Component={ListarTabelaEntidade} />
           <Route path='/dashboard_data' Component={Dashboard} />
+          <Route path='/adicionar_registro_administrativo' Component={AdicionarRegistroAdministrativo} />
+          <Route path='/listar_tabela_administrativa' Component={ListarTabelaAdministrativa} />
         </Routes>
       </div>
     </BrowserRouter>

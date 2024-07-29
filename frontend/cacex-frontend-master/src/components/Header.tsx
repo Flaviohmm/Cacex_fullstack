@@ -14,10 +14,6 @@ const Header: React.FC = () => {
     navigate('/')
   }
 
-  const goToAdicionarRegistro = () => {
-    navigate('/adicionar_registro')
-  }
-
   const goToAdicionarDados = () => {
     navigate('/adicionar_dados');
   }
@@ -42,6 +38,13 @@ const Header: React.FC = () => {
     navigate('/dashboard_data')
   }
 
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const path = e.target.value;
+    if (path) {
+      navigate(path);
+    }
+  }
+
   return (
     <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8">
         <div className="flex items-center mb-4 md:mb-0">
@@ -49,8 +52,33 @@ const Header: React.FC = () => {
         </div>
         <nav className="flex flex-wrap justify-center space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToInicio}>Início</button>
-            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarRegistros}>Tabelas</button>
-            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarRegistro}>Adicionar Registros</button>
+
+            {/* Dropdown para Listar Tabelas */}
+            <div className="relative inline-block">
+              <select 
+                onChange={handleDropdownChange}
+                className="hover:bg-blue-500 p-2 rounded font-bold bg-blue-700 text-white cursor-pointer w-36"
+                defaultValue={""}
+              >
+                <option value="" disabled>Listar Tabelas</option>
+                <option value="/listar_registros">Tabela Geral</option>
+                <option value="/listar_tabela_administrativa">Tabela Administrativa</option>
+              </select>
+            </div>
+
+            {/* Dropdown para Adicionar Registros */}
+            <div className="relative inline-block">
+              <select 
+                onChange={handleDropdownChange}
+                className="hover:bg-blue-500 p-2 rounded font-bold bg-blue-700 text-white cursor-pointer w-48"
+                defaultValue={""}
+              >
+                <option value="" disabled>Adicionar Registros</option>
+                <option value="/adicionar_registro">Adicionar Registro Geral</option>
+                <option value="/adicionar_registro_administrativo">Adicionar Registro Administrativo</option>
+              </select>
+            </div>
+
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>

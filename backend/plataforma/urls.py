@@ -14,6 +14,7 @@ urlpatterns = [
     path('adicionar_municipio/', views.adicionar_municipio, name='adicionar_municipio'),
     path('adicionar_atividade/', views.adicionar_atividade, name='adicionar_atividade'),
     path('adicionar_registro/', views.adicionar_registro, name='adicionar_registro'),
+    path('adicionar_registro_administrativo/', views.adicionar_registro_administrativo, name='adicionar_registro_administrativo'),
     path('listar_setores/', views.ListSetores.as_view(), name='listar_setores'),
     path('listar_municipios/', views.ListMunicipios.as_view(), name='listar_municipios'),
     path('listar_atividades/', views.ListAtividades.as_view(), name='listar_atividades'),
@@ -34,6 +35,7 @@ urlpatterns = [
     path('tabela_simec/', views.tabela_simec, name='tabela_simec'),
     path('tabela_fns/', views.tabela_fns, name='tabela_fns'),
     path('tabela_entidade/', views.tabela_entidade, name='tabela_entidade'),
-    path('dashboard_data/', views.dashboard_data, name='dashboard_data'),
+    path('dashboard_data/', views.dashboard_data, name='dashboard_data'), 
+    path('listar_tabela_administrativa/', views.listar_tabela_administrativa, name='listar_tabela_administrativa'),
     path('', include(router.urls)),
 ]
