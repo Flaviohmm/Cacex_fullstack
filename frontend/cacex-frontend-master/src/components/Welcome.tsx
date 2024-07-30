@@ -29,6 +29,10 @@ const Welcome: React.FC = () => {
         navigate('/tabela_entidade')
     }
 
+    const goToTabelaAdministrativa = () => {
+        navigate('/listar_tabela_administrativa')
+    }
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -43,7 +47,7 @@ const Welcome: React.FC = () => {
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">PREVIDÊNCIA</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">FGTS</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">RECEITA FEDERAL</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">ADMINISTRAÇÃO</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaAdministrativa}>ADMINISTRAÇÃO</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">CONTABILIDADE</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">INDIVIDUALIZAÇÃO</button>
                 </div>
