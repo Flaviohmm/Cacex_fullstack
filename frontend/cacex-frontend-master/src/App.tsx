@@ -22,6 +22,7 @@ import ListarTabelaEntidade from './components/ListarTabelaEntidade';
 import Dashboard from './components/Dashboard';
 import AdicionarRegistroAdministrativo from './components/AdicionarRegistroAdministrativo';
 import ListarTabelaAdministrativa from './components/ListarTabelaAdministrativa';
+import EditRegistroAdministrativo from './components/EditRegistroAdministrativo';
 import PrivateRoute from './PrivateRoute';
 
 const App: React.FC = () => {
@@ -51,6 +52,7 @@ const App: React.FC = () => {
           <Route path='/dashboard_data' Component={Dashboard} />
           <Route path='/adicionar_registro_administrativo' Component={AdicionarRegistroAdministrativo} />
           <Route path='/listar_tabela_administrativa' Component={ListarTabelaAdministrativa} />
+          <Route path='/editar_registro_administrativo/:id' Component={EditRegistroAdministrativo} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, RegistroAdminstracao
 
 
 class SetorSerializer(serializers.ModelSerializer):
@@ -64,3 +64,11 @@ class HistoricoSerializer(serializers.ModelSerializer):
 
     def get_dados_alterados(self, obj):
         return comparar_valores(obj.dados_anteriores, obj.dados_atuais)  
+    
+class RegistroAdministracaoSerializer(serializers.ModelSerializer):
+    municipio = MunicipioSerializer()
+
+    class Meta:
+        model = RegistroAdminstracao
+        fields = '__all__'
+

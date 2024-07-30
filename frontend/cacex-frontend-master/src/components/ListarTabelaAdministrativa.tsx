@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
+import axios from "axios";
 
 interface Registro {
     id: number;
@@ -38,6 +39,31 @@ const ListarTabelaAdministrativa = () => {
         fetchRegistros();
     }, [token]);
 
+    const editarRegistro = (registro: Registro) => {
+        // Redirecionar para a página de edição com ID do registro
+        window.location.href = `/editar_registro_administrativo/${registro.id}`
+    }
+
+    const excluirRegistro = async (id: number) => {
+        const confirmDelete = window.confirm('Você tem certeza que deseja excluir este registro?');
+
+        if(confirmDelete) {
+            try {
+                const token = localStorage.getItem('authToken');
+                await axios.delete(`http://localhost:8000/excluir_registro_administrativo/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                alert('Registro excluído com sucesso!');
+                setRegistros(registros.filter(registro => registro.id !== id)); // Atualiza a lista
+            } catch (error) {
+                console.error('Erro ao excluir registro:', error);
+                alert('Erro ao excluir registro');
+            }
+        }
+    };
+
     const closeModal = () => {
         if (currentModal !== null) {
             // Verifica o próximo registro a ser exibido
@@ -60,17 +86,19 @@ const ListarTabelaAdministrativa = () => {
                 <table className="min-w-full bg-white border border-gray-200">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th rowSpan={2} className="py-2 border-b border-gray-200 text-left text-md font-semibold text-gray-700">Município</th>
-                            <th rowSpan={2} className="py-2 border-b border-gray-200 text-left text-md font-semibold text-gray-700">Vigência</th>
-                            <th colSpan={3} className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">Na Prefeitura</th>
-                            <th className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">Na CACEX</th>
-                            <th colSpan={2} className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">Na Pref</th>
+                            <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Município</th>
+                            <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Vigência</th>
+                            <th colSpan={3} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Prefeitura</th>
+                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700 w-40">Na CACEX</th>
+                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Pref</th>
+                            <th rowSpan={2} className="py-2 border-b border-gray-200 text-center text-md font-semibold text-gray-700">Ações</th>
                         </tr>
                         <tr>
-                            <th colSpan={2} className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">N° do Contrato</th>
-                            <th className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">Publicação FEMURN</th>
-                            <th rowSpan={2} colSpan={2} className="text-center border-b border-gray-200 text-md font-semibold text-gray-700">Contra Assinado</th>
+                            <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">N° do Contrato</th>
+                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Publicação FEMURN</th>
+                            <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Contra Assinado</th>
                         </tr>
+                        
                     </thead>
                     <tbody>
                         {registros.map((registro: Registro, index: number) => {
@@ -91,12 +119,16 @@ const ListarTabelaAdministrativa = () => {
                                         setCurrentModal(index);
                                     }
                                 }}>
-                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700">{registro.municipio}</td>
-                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700">{registro.prazo_vigencia}</td>
+                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.municipio}</td>
+                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.prazo_vigencia}</td>
                                     <td colSpan={2} className="text-center border-b border-gray-200 text-md text-gray-700">{registro.num_contrato}</td>
                                     <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.pub_femurn}</td>
                                     <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_cacex ? 'OK' : 'F'}</td>
                                     <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_prefeitura ? 'OK' : 'F'}</td>
+                                    <td className="text-center border-b border-gray-200 text-md text-gray-700">
+                                       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1" onClick={() => editarRegistro(registro)}>Editar</button>
+                                       <button className="bg-red-500 hover:bg-red-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1 ml-2" onClick={() => excluirRegistro(registro.id)}>Excluir</button>
+                                    </td>
                                 </tr>
                             );
                         })}

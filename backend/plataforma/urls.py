@@ -37,5 +37,7 @@ urlpatterns = [
     path('tabela_entidade/', views.tabela_entidade, name='tabela_entidade'),
     path('dashboard_data/', views.dashboard_data, name='dashboard_data'), 
     path('listar_tabela_administrativa/', views.listar_tabela_administrativa, name='listar_tabela_administrativa'),
+    path('listar_tabela_administrativa/<int:id>', views.listar_tabela_administrativa_por_id, name='listar_tabela_administrativa_por_id'),
+    path('editar_registro_administrativo/<int:registro_id>/', views.editar_registro_administrativo, name='editar_registro_administrativo'),
     path('', include(router.urls)),
 ]

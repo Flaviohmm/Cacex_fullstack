@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .templatetags.custom_filters import format_currency
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer
+from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer, RegistroAdministracaoSerializer
 from rest_framework import viewsets
 from datetime import datetime
 import json
@@ -966,3 +966,56 @@ def listar_tabela_administrativa(request):
     ]
 
     return Response(registros_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def listar_tabela_administrativa_por_id(request, id):
+    try:
+        # Buscando o objeto único pelo id
+        registro = RegistroAdminstracao.objects.get(id=id)
+
+        # Serializando o registro (use seu serializer aqui)
+        serializer = RegistroAdministracaoSerializer(registro)
+
+        return Response(serializer.data)
+    except RegistroAdminstracao.DoesNotExist:
+        return Response({'error': 'Registro não encontrado'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+@api_view(['PUT'])
+def editar_registro_administrativo(request, registro_id):
+    try:
+        registro = get_object_or_404(RegistroAdminstracao, id=registro_id)
+        data = json.loads(request.body)
+
+        # Obter o município selecionado pelo ID
+        municipio_id = data.get('municipio') # Assume que município retorna apenas o ID
+        if municipio_id:
+            municipio = get_object_or_404(Municipio, id=municipio_id)
+            registro.municipio = municipio # Atribuir a instância correta do município
+
+        registro.prazo_vigencia = datetime.strptime(data.get('prazo_vigencia', registro.prazo_vigencia.strftime('%Y-%m-%d')), '%Y-%m-%d').date()
+        registro.num_contrato = data.get('num_contrato', registro.num_contrato)
+        registro.pub_femurn = data.get('pub_femurn', registro.pub_femurn)
+        registro.na_cacex = data.get('na_cacex', registro.na_cacex)
+        registro.na_prefeitura = data.get('na_prefeitura', registro.na_prefeitura)
+
+        registro.save()
+
+        return Response({'message': 'Registro editado com sucesso!'}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['DELETE'])
+def excluir_registro_administrativo(request, registro_id):
+    try:
+        registro = get_object_or_404(RegistroAdminstracao, id=registro_id)
+        registro.delete()
+        return Response({'message': 'Registro excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
