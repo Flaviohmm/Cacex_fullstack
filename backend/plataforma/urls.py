@@ -39,5 +39,6 @@ urlpatterns = [
     path('listar_tabela_administrativa/', views.listar_tabela_administrativa, name='listar_tabela_administrativa'),
     path('listar_tabela_administrativa/<int:id>', views.listar_tabela_administrativa_por_id, name='listar_tabela_administrativa_por_id'),
     path('editar_registro_administrativo/<int:registro_id>/', views.editar_registro_administrativo, name='editar_registro_administrativo'),
+    path('excluir_registro_administrativo/<int:registro_id>/', views.excluir_registro_administrativo, name='excluir_registro_adminstrativo'),
     path('', include(router.urls)),
 ]

@@ -49,7 +49,6 @@ const ListarTabelaAdministrativa = () => {
 
         if(confirmDelete) {
             try {
-                const token = localStorage.getItem('authToken');
                 await axios.delete(`http://localhost:8000/excluir_registro_administrativo/${id}/`, {
                     headers: {
                         'Authorization': `Token ${token}`,
