@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status, RegistroAdminstracao
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status, RegistroAdminstracao, FuncionarioPrevidencia
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .templatetags.custom_filters import format_currency
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer, RegistroAdministracaoSerializer
+from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer, RegistroAdministracaoSerializer, FuncionarioSerializer
 from rest_framework import viewsets
 from datetime import datetime
 import json
@@ -1008,8 +1008,8 @@ def editar_registro_administrativo(request, registro_id):
     
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
 
+    
 @api_view(['DELETE'])
 def excluir_registro_administrativo(request, registro_id):
     try:
@@ -1018,4 +1018,59 @@ def excluir_registro_administrativo(request, registro_id):
         return Response({'message': 'Registro excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class FuncionarioViewSet(viewsets.ModelViewSet):
+    queryset = FuncionarioPrevidencia.objects.all()
+    serializer_class = FuncionarioSerializer
+
+    def listar_previdencia(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = []
+
+        # Adiciona a contribuição a cada funcionário no queryset
+        for funcionario in queryset:
+            contribuicao = funcionario.calcular_contribuicao()
+            data.append({
+                'id': funcionario.id,
+                'nome': funcionario.nome,
+                'salario': f'R$ {funcionario.salario:,.2f}'.replace(',', 'v').replace('.', ',').replace('v', '.'),
+                'categoria': funcionario.categoria,
+                'contribuicao': f'R$ {contribuicao:,.2f}'.replace(',', 'v').replace('.', ',').replace('v', '.')
+            })
+
+        # serializer = self.get_serializer(queryset, many=True)
+        return Response(data)
+    
+    def adicionar_previdencia(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            funcionario = serializer.save()
+            # Calcula a contribuição do novo funcionário
+            funcionario.contribuicao = funcionario.calcular_contribuicao()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({
+            'error': 'Dados inválidos',
+            'details': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    def atualizar_previdencia(self, request, pk, *args, **kwargs):
+        try:
+            funcionario = self.get_object() # Obtém o funcionário baseado no ID
+            serializer = self.get_serializer(funcionario, data=request.data)
+            if serializer.is_valid():
+                funcionario = serializer.save()
+                funcionario.contribuicao = funcionario.calcular_contribuicao()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'Dados inválidos', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except FuncionarioPrevidencia.DoesNotExist:
+            return Response({'error': 'Funcionário não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+    def excluir_previdencia(self, request, pk, *args, **kwargs):
+        try:
+            funcionario = self.get_object() # Obtém o funcionário baseado no ID
+            funcionario.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except FuncionarioPrevidencia.DoesNotExist:
+            return Response({'error': 'Funcionário não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     

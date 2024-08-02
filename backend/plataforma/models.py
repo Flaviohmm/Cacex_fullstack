@@ -266,3 +266,31 @@ class RegistroAdminstracao(models.Model):
             f"{self.pub_femurn} | {self.na_cacex} | {self.na_prefeitura}"
         )
     
+
+class FuncionarioPrevidencia(models.Model):
+    CATEGORIAS = [
+        ('ATIVO', 'Ativo'),
+        ('INATIVO', 'Inativo'),
+        ('APOSENTADO', 'Aposentado'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    salario = models.DecimalField(max_digits=10, decimal_places=2)
+    categoria = models.CharField(max_length=20, choices=CATEGORIAS, default='ATIVO')
+
+    def calcular_contribuicao(self):
+        if self.salario <= Decimal('1100.00'):
+            aliquota = Decimal('0.075')
+        elif self.salario <= Decimal('2200.00'):
+            aliquota = Decimal('0.09')
+        elif self.salario <= Decimal('3300.00'):
+            aliquota = Decimal('0.12')
+        elif self.salario <= Decimal('6000.00'):
+            aliquota = Decimal('0.14')
+        else:
+            aliquota = Decimal('0.16')
+        return self.salario * aliquota
+    
+    def __str__(self):
+        return f'{self.nome} - {self.salario} - {self.categoria} - {self.calcular_contribuicao()}'
+    

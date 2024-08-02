@@ -8,6 +8,7 @@ router.register(r'setores', views.SetorViewSet)
 router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'atividades', views.AtividadeViewSet)
 router.register(r'historico', views.HistoricoViewSet)
+router.register(r'funcionarios_prev', views.FuncionarioViewSet)
 
 urlpatterns = [
     path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),
@@ -40,5 +41,9 @@ urlpatterns = [
     path('listar_tabela_administrativa/<int:id>', views.listar_tabela_administrativa_por_id, name='listar_tabela_administrativa_por_id'),
     path('editar_registro_administrativo/<int:registro_id>/', views.editar_registro_administrativo, name='editar_registro_administrativo'),
     path('excluir_registro_administrativo/<int:registro_id>/', views.excluir_registro_administrativo, name='excluir_registro_adminstrativo'),
+    path('funcionarios_prev/adicionar_previdencia/', views.FuncionarioViewSet.as_view({'post': 'adicionar_previdencia'}), name='adicionar_previdencia'),
+    path('funcionarios_prev/listar_previdencia/', views.FuncionarioViewSet.as_view({'get': 'listar_previdencia'}), name='listar_previdencia'),
+    path('funcionarios_prev/atualizar_previdencia/<int:pk>/', views.FuncionarioViewSet.as_view({'put': 'atualizar_previdencia'}), name='atualizar_previdencia'),
+    path('funcionarios_prev/excluir_previdencia/<int:pk>/', views.FuncionarioViewSet.as_view({'delete': 'excluir_previdencia'}), name='excluir_previdencia'),
     path('', include(router.urls)),
 ]

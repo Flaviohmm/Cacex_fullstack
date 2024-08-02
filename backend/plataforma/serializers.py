@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, RegistroAdminstracao
+from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, RegistroAdminstracao, FuncionarioPrevidencia
 
 
 class SetorSerializer(serializers.ModelSerializer):
@@ -72,3 +72,7 @@ class RegistroAdministracaoSerializer(serializers.ModelSerializer):
         model = RegistroAdminstracao
         fields = '__all__'
 
+class FuncionarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FuncionarioPrevidencia
+        fields = '__all__'

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Logo from '../logo2.png';
 
 const Header: React.FC = () => {
@@ -16,10 +17,6 @@ const Header: React.FC = () => {
 
   const goToAdicionarDados = () => {
     navigate('/adicionar_dados');
-  }
-
-  const goToListarRegistros = () => {
-    navigate('/listar_registros')
   }
 
   const goToListarDados = () => {
@@ -63,6 +60,7 @@ const Header: React.FC = () => {
                 <option value="" disabled>Listar Tabelas</option>
                 <option value="/listar_registros">Tabela Geral</option>
                 <option value="/listar_tabela_administrativa">Tabela Administrativa</option>
+                <option value="/listar_previdencia">Tabela Previdencia</option>
               </select>
             </div>
 
@@ -70,12 +68,15 @@ const Header: React.FC = () => {
             <div className="relative inline-block">
               <select 
                 onChange={handleDropdownChange}
-                className="hover:bg-blue-500 p-2 rounded font-bold bg-blue-700 text-white cursor-pointer w-48"
+                className="hover:bg-blue-500 p-2 rounded font-bold bg-blue-700 text-white cursor-pointer w-28"
                 defaultValue={""}
               >
-                <option value="" disabled>Adicionar Registros</option>
+                <option value="" disabled>Adicionar</option>
                 <option value="/adicionar_registro">Adicionar Registro Geral</option>
                 <option value="/adicionar_registro_administrativo">Adicionar Registro Administrativo</option>
+                <option value="/adicionar_previdencia">
+                  Adicionar Previdência
+                </option>
               </select>
             </div>
 

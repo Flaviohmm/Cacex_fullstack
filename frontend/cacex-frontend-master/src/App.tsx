@@ -23,9 +23,14 @@ import Dashboard from './components/Dashboard';
 import AdicionarRegistroAdministrativo from './components/AdicionarRegistroAdministrativo';
 import ListarTabelaAdministrativa from './components/ListarTabelaAdministrativa';
 import EditRegistroAdministrativo from './components/EditRegistroAdministrativo';
+import AdicionarFuncionarioPrevidencia from './components/AdicionarFuncionarioPrevidencia';
+import ListarFuncionarioPrevidencia from './components/ListarFuncionarioPrevidencia';
+import EditarFuncionarioPrevidencia from './components/EditarFuncionarioPrevidencia';
 import PrivateRoute from './PrivateRoute';
 
+
 const App: React.FC = () => {
+
   return (
     <BrowserRouter>
       <div>
@@ -53,6 +58,9 @@ const App: React.FC = () => {
           <Route path='/adicionar_registro_administrativo' Component={AdicionarRegistroAdministrativo} />
           <Route path='/listar_tabela_administrativa' Component={ListarTabelaAdministrativa} />
           <Route path='/editar_registro_administrativo/:id' Component={EditRegistroAdministrativo} />
+          <Route path='/adicionar_previdencia' Component={AdicionarFuncionarioPrevidencia} />
+          <Route path='/listar_previdencia' Component={ListarFuncionarioPrevidencia} />
+          <Route path='/editar_previdencia/:pk' Component={EditarFuncionarioPrevidencia} />
         </Routes>
       </div>
     </BrowserRouter>
