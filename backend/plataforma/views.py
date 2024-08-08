@@ -1,7 +1,17 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, Status, RegistroAdminstracao, FuncionarioPrevidencia
+from .models import (
+    Setor, 
+    Municipio, 
+    Atividade, 
+    RegistroFuncionarios, 
+    Historico, 
+    Status, 
+    RegistroAdminstracao, 
+    FuncionarioPrevidencia,
+    FGTS
+)
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
@@ -11,7 +21,16 @@ from django.http import JsonResponse
 from django.utils import timezone
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .templatetags.custom_filters import format_currency
-from .serializers import SetorSerializer, MunicipioSerializer, AtividadeSerializer, HistoricoSerializer, RegistroFuncionariosSerializer, RegistroAdministracaoSerializer, FuncionarioSerializer
+from .serializers import (
+    SetorSerializer, 
+    MunicipioSerializer, 
+    AtividadeSerializer, 
+    HistoricoSerializer, 
+    RegistroFuncionariosSerializer, 
+    RegistroAdministracaoSerializer, 
+    FuncionarioSerializer,
+    FGTSSerializer
+)
 from rest_framework import viewsets
 from datetime import datetime
 import json
@@ -1074,3 +1093,31 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
         except FuncionarioPrevidencia.DoesNotExist:
             return Response({'error': 'Funcionário não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     
+
+class FGTSViewSet(viewsets.ModelViewSet):
+    queryset = FGTS.objects.all()
+    serializer_class =  FGTSSerializer
+
+    def create(self, request, *args, **kwargs):
+        """ Cria um novo registro de FGTS. """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        fgts_instance = serializer.save() # Salva o novo registro
+
+        # Calcula e retorna os dados do FGTS
+        dados_fgts = fgts_instance.calcular_fgts()
+
+        return Response({**serializer.data, **dados_fgts}, status=status.HTTP_201_CREATED)
+    
+    def list(self, request, *args, **kwargs):
+        """ Lista todos os registros de FGTS e seus dados calculados. """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        # Calcula os dados do FGTS para cada instância
+        dados_fgts_lista = []
+        for fgts_instance, serialized_data in zip(queryset, serializer.data):
+            dados_fgts = fgts_instance.calcular_fgts()
+            dados_fgts_lista.append({**serialized_data, **dados_fgts})
+
+        return Response(dados_fgts_lista)

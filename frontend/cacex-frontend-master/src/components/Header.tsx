@@ -61,6 +61,7 @@ const Header: React.FC = () => {
                 <option value="/listar_registros">Tabela Geral</option>
                 <option value="/listar_tabela_administrativa">Tabela Administrativa</option>
                 <option value="/listar_previdencia">Tabela Previdencia</option>
+                <option value="/listar_fgts">Tabela FGTS</option>
               </select>
             </div>
 
@@ -76,6 +77,9 @@ const Header: React.FC = () => {
                 <option value="/adicionar_registro_administrativo">Adicionar Registro Administrativo</option>
                 <option value="/adicionar_previdencia">
                   Adicionar Previdência
+                </option>
+                <option value="/adicionar_fgts">
+                  Adicionar FGTS
                 </option>
               </select>
             </div>

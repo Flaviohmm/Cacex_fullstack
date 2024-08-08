@@ -1,5 +1,14 @@
 from rest_framework import serializers
-from .models import Setor, Municipio, Atividade, RegistroFuncionarios, Historico, RegistroAdminstracao, FuncionarioPrevidencia
+from .models import (
+    Setor, 
+    Municipio, 
+    Atividade, 
+    RegistroFuncionarios, 
+    Historico, 
+    RegistroAdminstracao, 
+    FuncionarioPrevidencia,
+    FGTS
+)
 
 
 class SetorSerializer(serializers.ModelSerializer):
@@ -75,4 +84,9 @@ class RegistroAdministracaoSerializer(serializers.ModelSerializer):
 class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = FuncionarioPrevidencia
+        fields = '__all__'
+
+class FGTSSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FGTS
         fields = '__all__'

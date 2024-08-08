@@ -294,3 +294,49 @@ class FuncionarioPrevidencia(models.Model):
     def __str__(self):
         return f'{self.nome} - {self.salario} - {self.categoria} - {self.calcular_contribuicao()}'
     
+
+class FGTS(models.Model):
+    nome = models.CharField(max_length=100)
+    data_inicial = models.DateField()
+    data_final = models.DateField()
+    salario_bruto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    taxa_juros_anual = models.DecimalField(max_digits=5, decimal_places=2, default=3.0)
+    taxa_correcao_mensal = models.DecimalField(max_digits=5, decimal_places=2, default=2.0)
+
+    def calcular_fgts(self):
+        try:
+            data_inicial = self.data_inicial
+            data_final = self.data_final
+        except ValueError:
+            return None
+        
+        # Cálcula a diferença em meses
+        diferenca_meses = ((data_final.year - data_inicial.year) * 12 + data_final.month - data_inicial.month) + 1
+
+        fgts_mensal = self.salario_bruto * Decimal(0.08)
+        saldo_fgts = fgts_mensal * diferenca_meses
+
+        # Cálculo de juros (exemplo: 3% ao ano)
+        juros = (saldo_fgts * (self.taxa_juros_anual / 100) * diferenca_meses) / 12
+
+        # Simulação de correção do saldo FGTS (exemplo: adicionar 2% por mês)
+        saldo_fgts_corrigido = saldo_fgts + (saldo_fgts * (self.taxa_correcao_mensal / 100) * diferenca_meses)
+    
+        # Cálculo da multa de 40% em caso de demissão sem justa causa
+        multa_40 = saldo_fgts * Decimal(0.4)
+
+        # Total a receber com multa
+        total_com_multa = saldo_fgts + multa_40
+
+        return {
+            "diferenca_meses": diferenca_meses,
+            "fgts_mensal": fgts_mensal,
+            "juros": juros,
+            "saldo_fgts_corrigido": saldo_fgts_corrigido,
+            "multa_40": multa_40,
+            "total_com_multa": total_com_multa
+        }
+    
+    def __str__(self):
+        return self.nome
+    

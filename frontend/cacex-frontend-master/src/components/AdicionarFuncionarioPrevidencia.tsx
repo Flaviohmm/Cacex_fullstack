@@ -71,7 +71,7 @@ const AdicionarFuncionarioPrevidencia: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <label className="block text-md font-bold mb-2 mt-4">Categorias</label>
+                    <label className="block text-md font-bold mb-2 mt-4">Categorias:</label>
                     <select value={categoria} onChange={(e) => setCategoria(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded" required>
                         <option value="ATIVO">Ativo</option>
                         <option value="INATIVO">Inativo</option>

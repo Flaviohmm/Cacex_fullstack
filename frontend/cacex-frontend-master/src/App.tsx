@@ -26,6 +26,8 @@ import EditRegistroAdministrativo from './components/EditRegistroAdministrativo'
 import AdicionarFuncionarioPrevidencia from './components/AdicionarFuncionarioPrevidencia';
 import ListarFuncionarioPrevidencia from './components/ListarFuncionarioPrevidencia';
 import EditarFuncionarioPrevidencia from './components/EditarFuncionarioPrevidencia';
+import FGTSForm from './components/FGTSForm';
+import ListFGTS from './components/ListFGTS';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -61,6 +63,8 @@ const App: React.FC = () => {
           <Route path='/adicionar_previdencia' Component={AdicionarFuncionarioPrevidencia} />
           <Route path='/listar_previdencia' Component={ListarFuncionarioPrevidencia} />
           <Route path='/editar_previdencia/:pk' Component={EditarFuncionarioPrevidencia} />
+          <Route path='/adicionar_fgts' Component={FGTSForm} />
+          <Route path='/listar_fgts' Component={ListFGTS} />
         </Routes>
       </div>
     </BrowserRouter>

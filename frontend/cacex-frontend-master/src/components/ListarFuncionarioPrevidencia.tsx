@@ -49,7 +49,7 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
         <div>
             <Header />
             <h2 className="text-2xl font-bold mt-10 text-center">Funcionários da Previdência</h2>
-            <div className="overflow-x-auto mt-6 mx-4">
+            <div className="overflow-x-auto mt-6 mx-10">
                 <table className="min-w-full border border-gray-300">
                     <thead>
                         <tr>
@@ -57,7 +57,7 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
                             <th className="border border-gray-300 p-4 text-left">Salário</th>
                             <th className="border border-gray-300 p-4 text-left">Categoria</th>
                             <th className="border border-gray-300 p-4 text-left">Contribuição</th>
-                            <th className="border border-gray-300 p-4 text-left">Ações</th>
+                            <th className="border border-gray-300 p-4 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,7 +68,7 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
                                     <td className="border border-gray-300 p-4">{funcionario.salario}</td>
                                     <td className="border border-gray-300 p-4">{funcionario.categoria}</td>
                                     <td className="border border-gray-300 p-4">{funcionario.contribuicao}</td>
-                                    <td className="border border-gray-300 p-4">
+                                    <td className="border border-gray-300 p-4 text-center">
                                         <button
                                             type="button"
                                             onClick={() => navigate(`/editar_previdencia/${funcionario.id}`)}

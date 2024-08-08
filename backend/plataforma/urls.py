@@ -9,6 +9,7 @@ router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'atividades', views.AtividadeViewSet)
 router.register(r'historico', views.HistoricoViewSet)
 router.register(r'funcionarios_prev', views.FuncionarioViewSet)
+router.register(r'fgts', views.FGTSViewSet)
 
 urlpatterns = [
     path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),
