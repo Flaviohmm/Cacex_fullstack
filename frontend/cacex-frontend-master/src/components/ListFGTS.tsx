@@ -77,44 +77,46 @@ const ListFGTS: React.FC = () => {
     return (
         <div>
             <Header />
-            <h2 className="text-2xl font-bold mb-6 text-center mt-5">Lista de FGTS</h2>
-            <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th className="py-2 border-b">Nome</th>
-                            <th className="py-2 border-b">Data Inicial</th>
-                            <th className="py-2 border-b">Data Final</th>
-                            <th className="py-2 border-b">Salário Bruto</th>
-                            <th className="py-2 border-b">Diferença de Meses</th>
-                            <th className="py-2 border-b">FGTS Mensal</th>
-                            <th className="py-2 border-b">Taxa de Juros Anual (%)</th>
-                            <th className="py-2 border-b">Juros</th>
-                            <th className="py-2 border-b">Taxa de Correção Mensal</th>
-                            <th className="py-2 border-b">Saldo FGTS Corrigido</th>
-                            <th className="py-2 border-b">Multa 40%</th>
-                            <th className="py-2 border-b">Total com Multa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {fgtsList.map((fgts) => (
-                            <tr key={fgts.id}>
-                                <td className="py-2 border-b text-center">{fgts.nome}</td>
-                                <td className="py-2 border-b text-center">{formatarData(fgts.data_inicial)}</td>
-                                <td className="py-2 border-b text-center">{formatarData(fgts.data_final)}</td>
-                                <td className="py-2 border-b text-center">{formatarMoeda(fgts.salario_bruto)}</td>
-                                <td className="py-2 border-b text-center">{fgts.diferenca_meses}</td>
-                                <td className="py-2 border-b text-center">{formatarMoeda(fgts.fgts_mensal)}</td>
-                                <td className="py-2 border-b text-center">{fgts.taxa_juros_anual} %</td>
-                                <td className="py-2 border-b text-center">{fgts.juros.toFixed(2)}</td>
-                                <td className="py-2 border-b text-center">{fgts.taxa_correcao_mensal} %</td>
-                                <td className="py-2 border-b text-center">{formatarMoeda(fgts.saldo_fgts_corrigido)}</td>
-                                <td className="py-2 border-b text-center">{formatarMoeda(fgts.multa_40)}</td>
-                                <td className="py-2 border-b text-center">{formatarMoeda(fgts.total_com_multa)}</td>
+            <div className="p-4">
+                <h2 className="text-2xl font-bold mb-6 text-center mt-5">Lista de FGTS</h2>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border border-gray-300">
+                        <thead>
+                            <tr>
+                                <th className="py-2 border-b">Nome</th>
+                                <th className="py-2 border-b">Data Inicial</th>
+                                <th className="py-2 border-b">Data Final</th>
+                                <th className="py-2 border-b">Salário Bruto</th>
+                                <th className="py-2 border-b">Diferença de Meses</th>
+                                <th className="py-2 border-b">FGTS Mensal</th>
+                                <th className="py-2 border-b">Taxa de Juros Anual (%)</th>
+                                <th className="py-2 border-b">Juros</th>
+                                <th className="py-2 border-b">Taxa de Correção Mensal</th>
+                                <th className="py-2 border-b">Saldo FGTS Corrigido</th>
+                                <th className="py-2 border-b">Multa 40%</th>
+                                <th className="py-2 border-b">Total com Multa</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {fgtsList.map((fgts) => (
+                                <tr key={fgts.id}>
+                                    <td className="py-2 border-b text-center">{fgts.nome}</td>
+                                    <td className="py-2 border-b text-center">{formatarData(fgts.data_inicial)}</td>
+                                    <td className="py-2 border-b text-center">{formatarData(fgts.data_final)}</td>
+                                    <td className="py-2 border-b text-center">{formatarMoeda(fgts.salario_bruto)}</td>
+                                    <td className="py-2 border-b text-center">{fgts.diferenca_meses}</td>
+                                    <td className="py-2 border-b text-center">{formatarMoeda(fgts.fgts_mensal)}</td>
+                                    <td className="py-2 border-b text-center">{fgts.taxa_juros_anual} %</td>
+                                    <td className="py-2 border-b text-center">{fgts.juros.toFixed(2)}</td>
+                                    <td className="py-2 border-b text-center">{fgts.taxa_correcao_mensal} %</td>
+                                    <td className="py-2 border-b text-center">{formatarMoeda(fgts.saldo_fgts_corrigido)}</td>
+                                    <td className="py-2 border-b text-center">{formatarMoeda(fgts.multa_40)}</td>
+                                    <td className="py-2 border-b text-center">{formatarMoeda(fgts.total_com_multa)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )
