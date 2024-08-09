@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import axios from "axios";
 
@@ -21,6 +22,7 @@ interface FGTSRecord {
 const ListFGTS: React.FC = () => {
     const [fgtsList, setFgtsList] = useState<FGTSRecord[]>([]);
     const token = localStorage.getItem('authToken');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchFGTS = async () => {
@@ -74,6 +76,25 @@ const ListFGTS: React.FC = () => {
         }).format(salario)}`;
     };
 
+    const handleDelete = async (id: number) => {
+        const confirmacao = window.confirm("Você tem certeza que deseja excluir este registro de FGTS?");
+
+        if(confirmacao) {
+            try {
+                await axios.delete(`http://localhost:8000/fgts/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                alert("Registro excluído com sucesso!");
+                setFgtsList(fgtsList.filter(fgts => fgts.id !== id));
+            } catch (error) {
+                console.error("Erro ao excluir o registro:", error);
+                alert("Erro ao excluir o registro.")
+            }
+        }
+    };
+
     return (
         <div>
             <Header />
@@ -95,6 +116,7 @@ const ListFGTS: React.FC = () => {
                                 <th className="py-2 border-b">Saldo FGTS Corrigido</th>
                                 <th className="py-2 border-b">Multa 40%</th>
                                 <th className="py-2 border-b">Total com Multa</th>
+                                <th className="py-2 border-b">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,6 +134,22 @@ const ListFGTS: React.FC = () => {
                                     <td className="py-2 border-b text-center">{formatarMoeda(fgts.saldo_fgts_corrigido)}</td>
                                     <td className="py-2 border-b text-center">{formatarMoeda(fgts.multa_40)}</td>
                                     <td className="py-2 border-b text-center">{formatarMoeda(fgts.total_com_multa)}</td>
+                                    <td className="py-2 border-b text-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate(`/editar_fgts/${fgts.id}`)}
+                                            className="bg-blue-500 hover:bg-sky-700 text-white font-bold rounded-md p-2"
+                                        >
+                                            Editar
+                                        </button> 
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(fgts.id)}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold rounded-md p-2 ml-2"
+                                        >
+                                            Excluir
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

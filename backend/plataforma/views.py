@@ -1121,3 +1121,22 @@ class FGTSViewSet(viewsets.ModelViewSet):
             dados_fgts_lista.append({**serialized_data, **dados_fgts})
 
         return Response(dados_fgts_lista)
+    
+    def update(self, request, *args, **kwargs):
+        """ Atualiza um registro de FGTS existente. """
+        fgts_instance = self.get_object() # Obtém a instância atual
+        serializer = self.get_serializer(fgts_instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        fgts_instance = serializer.save() # Salva as atualizações
+
+        # Calcula e retorna os dados atualizados do FGTS
+        dados_fgts = fgts_instance.calcular_fgts()
+
+        return Response({**serializer.data, **dados_fgts}, status=status.HTTP_200_OK)
+    
+    def destroy(self, request, *args, **kwargs):
+        """ Exclui um registro de FGTS. """
+        fgts_instance = self.get_object() # Obtém a instancia a ser excluída
+        fgts_instance.delete() # Exclui a instância
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
