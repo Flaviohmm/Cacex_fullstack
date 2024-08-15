@@ -29,6 +29,10 @@ import EditarFuncionarioPrevidencia from './components/EditarFuncionarioPreviden
 import FGTSForm from './components/FGTSForm';
 import ListFGTS from './components/ListFGTS';
 import EditFGTS from './components/EditFGTS';
+import AddEmpregado from './components/AddEmpregado';
+import AddFGTS from './components/AddFGTS';
+import EmpregadoFGTSTable from './components/EmpregadoFGTSTable';
+import ListEmpregado from './components/ListEmpregado';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -67,6 +71,10 @@ const App: React.FC = () => {
           <Route path='/adicionar_fgts' Component={FGTSForm} />
           <Route path='/listar_fgts' Component={ListFGTS} />
           <Route path='/editar_fgts/:id' Component={EditFGTS} />
+          <Route path='/adicionar_empregado' Component={AddEmpregado} />
+          <Route path='/registrar_individualizacao_fgts' Component={AddFGTS} />
+          <Route path='/listar_individualizacao_fgts' Component={EmpregadoFGTSTable} />
+          <Route path='/listar_empregados' Component={ListEmpregado} />
         </Routes>
       </div>
     </BrowserRouter>

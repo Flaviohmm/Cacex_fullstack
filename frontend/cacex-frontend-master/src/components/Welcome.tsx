@@ -41,6 +41,10 @@ const Welcome: React.FC = () => {
         navigate('/listar_fgts')
     }
 
+    const goToTabelaIndividualizacao = () => {
+        navigate('/listar_individualizacao_fgts')
+    }
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -57,7 +61,7 @@ const Welcome: React.FC = () => {
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">RECEITA FEDERAL</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaAdministrativa}>ADMINISTRAÇÃO</button>
                     <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">CONTABILIDADE</button>
-                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold">INDIVIDUALIZAÇÃO</button>
+                    <button className="bg-blue-700 text-white p-10 rounded-xl hover:bg-blue-500 font-bold" onClick={goToTabelaIndividualizacao}>INDIVIDUALIZAÇÃO</button>
                 </div>
             </main>         
         </div>

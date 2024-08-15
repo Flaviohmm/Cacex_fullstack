@@ -72,7 +72,7 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => navigate(`/editar_previdencia/${funcionario.id}`)}
-                                            className="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                            className="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-1 ml-2"
                                         >
                                             Editar
                                         </button>

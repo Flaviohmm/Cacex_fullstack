@@ -10,12 +10,16 @@ from .models import (
     Status, 
     RegistroAdminstracao, 
     FuncionarioPrevidencia,
-    FGTS
+    FGTS,
+    Empregado,
+    IndividualizacaoFGTS
 )
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.views import View
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
@@ -29,7 +33,9 @@ from .serializers import (
     RegistroFuncionariosSerializer, 
     RegistroAdministracaoSerializer, 
     FuncionarioSerializer,
-    FGTSSerializer
+    FGTSSerializer,
+    EmpregadoSerializer,
+    IndividualizacaoFGTSSerializer
 )
 from rest_framework import viewsets
 from datetime import datetime
@@ -1140,3 +1146,23 @@ class FGTSViewSet(viewsets.ModelViewSet):
         fgts_instance.delete() # Exclui a instância
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class EmpregadoViewSet(viewsets.ModelViewSet):
+    queryset = Empregado.objects.all()
+    serializer_class = EmpregadoSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("Dados recebidos:", request.data) # Adicione este log
+        return super().create(request, *args, **kwargs)
+
+
+class IndividualizacaoFGTSViewSet(viewsets.ModelViewSet):
+    queryset = IndividualizacaoFGTS.objects.all()
+    serializer_class = IndividualizacaoFGTSSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        individualizacao_fgts = serializer.save() # Salva o serializer, que chamará a lógica de salvar no modelo
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

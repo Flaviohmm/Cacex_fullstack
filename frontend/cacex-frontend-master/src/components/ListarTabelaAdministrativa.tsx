@@ -82,57 +82,59 @@ const ListarTabelaAdministrativa = () => {
             <Header />
             <div className="p-6">
             <h3 className="text-2xl font-bold mb-4">Registros Administrativos</h3>
-                <table className="min-w-full bg-white border border-gray-200">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Município</th>
-                            <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Vigência</th>
-                            <th colSpan={3} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Prefeitura</th>
-                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700 w-40">Na CACEX</th>
-                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Pref</th>
-                            <th rowSpan={2} className="py-2 border-b border-gray-200 text-center text-md font-semibold text-gray-700">Ações</th>
-                        </tr>
-                        <tr>
-                            <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">N° do Contrato</th>
-                            <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Publicação FEMURN</th>
-                            <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Contra Assinado</th>
-                        </tr>
-                        
-                    </thead>
-                    <tbody>
-                        {registros.map((registro: Registro, index: number) => {
-                            // Determinar a classe da linha com base nas condições
-                            let rowClass = '';
-                            if (registro.dias_restantes <= 30 && registro.dias_restantes >= 0) {
-                                rowClass = 'bg-yellow-100'; // tabela-warning
-                            } else if (registro.na_cacex && registro.na_prefeitura) {
-                                rowClass = 'bg-green-100'; // tabela-success
-                            } else {
-                                rowClass = 'bg-red-100'; // tabela-danger
-                            }
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border border-gray-200">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Município</th>
+                                <th rowSpan={2} className="py-2 border-b border-r border-gray-200 text-center text-md font-semibold text-gray-700">Vigência</th>
+                                <th colSpan={3} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Prefeitura</th>
+                                <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700 w-40">Na CACEX</th>
+                                <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Na Pref</th>
+                                <th rowSpan={2} className="py-2 border-b border-gray-200 text-center text-md font-semibold text-gray-700">Ações</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">N° do Contrato</th>
+                                <th className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Publicação FEMURN</th>
+                                <th colSpan={2} className="text-center border-b border-r border-gray-200 text-md font-semibold text-gray-700">Contra Assinado</th>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            {registros.map((registro: Registro, index: number) => {
+                                // Determinar a classe da linha com base nas condições
+                                let rowClass = '';
+                                if (registro.dias_restantes <= 30 && registro.dias_restantes >= 0) {
+                                    rowClass = 'bg-yellow-100'; // tabela-warning
+                                } else if (registro.na_cacex && registro.na_prefeitura) {
+                                    rowClass = 'bg-green-100'; // tabela-success
+                                } else {
+                                    rowClass = 'bg-red-100'; // tabela-danger
+                                }
 
-                            return (
-                                <tr key={registro.id} className={rowClass} onClick={() => {
-                                    if (registro.exibir_modal_prazo_vigencia) {
-                                        const index = registros.findIndex((r: Registro) => r.id === registro.id);
-                                        setCurrentModal(index);
-                                    }
-                                }}>
-                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.municipio}</td>
-                                    <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.prazo_vigencia}</td>
-                                    <td colSpan={2} className="text-center border-b border-gray-200 text-md text-gray-700">{registro.num_contrato}</td>
-                                    <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.pub_femurn}</td>
-                                    <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_cacex ? 'OK' : 'F'}</td>
-                                    <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_prefeitura ? 'OK' : 'F'}</td>
-                                    <td className="text-center border-b border-gray-200 text-md text-gray-700">
-                                       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1" onClick={() => editarRegistro(registro)}>Editar</button>
-                                       <button className="bg-red-500 hover:bg-red-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1 ml-2" onClick={() => excluirRegistro(registro.id)}>Excluir</button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                return (
+                                    <tr key={registro.id} className={rowClass} onClick={() => {
+                                        if (registro.exibir_modal_prazo_vigencia) {
+                                            const index = registros.findIndex((r: Registro) => r.id === registro.id);
+                                            setCurrentModal(index);
+                                        }
+                                    }}>
+                                        <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.municipio}</td>
+                                        <td className="py-2 border-b border-gray-200 text-md text-gray-700 text-center">{registro.prazo_vigencia}</td>
+                                        <td colSpan={2} className="text-center border-b border-gray-200 text-md text-gray-700">{registro.num_contrato}</td>
+                                        <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.pub_femurn}</td>
+                                        <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_cacex ? 'OK' : 'F'}</td>
+                                        <td className="text-center border-b border-gray-200 text-md text-gray-700">{registro.na_prefeitura ? 'OK' : 'F'}</td>
+                                        <td className="text-center border-b border-gray-200 text-md text-gray-700">
+                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1 mb-1" onClick={() => editarRegistro(registro)}>Editar</button>
+                                        <button className="bg-red-500 hover:bg-red-700 text-white font-bold rounded focus:outline-none focus:shadow-outline px-2 py-1 ml-2" onClick={() => excluirRegistro(registro.id)}>Excluir</button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
 
                 {/* Notificação de Prazo */}
                 {currentModal !== null && (

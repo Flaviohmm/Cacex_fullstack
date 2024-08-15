@@ -7,7 +7,9 @@ from .models import (
     Historico, 
     RegistroAdminstracao, 
     FuncionarioPrevidencia,
-    FGTS
+    FGTS,
+    Empregado,
+    IndividualizacaoFGTS
 )
 
 
@@ -90,3 +92,19 @@ class FGTSSerializer(serializers.ModelSerializer):
     class Meta:
         model = FGTS
         fields = '__all__'
+
+class EmpregadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Empregado
+        fields = ['id', 'nome', 'cpf', 'pis_pasep']
+        extra_kwargs = {
+            'nome': {'required': True},
+            'cpf': {'required': True},
+            'pis_pasep': {'required': True}
+        }
+
+class IndividualizacaoFGTSSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndividualizacaoFGTS
+        fields = ['id', 'empregado', 'mes_ano', 'renumeracao_bruta', 'valor_fgts']
+        read_only_fields = ['valor_fgts'] # Este campo será calculado automaticamente

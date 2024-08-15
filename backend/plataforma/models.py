@@ -340,3 +340,27 @@ class FGTS(models.Model):
     def __str__(self):
         return self.nome
     
+
+class Empregado(models.Model):
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=14, unique=True) # O CPF deve ser único
+    pis_pasep = models.CharField(max_length=12, unique=True) # O PIS/PASEP deve ser único
+
+    def __str__(self):
+        return self.nome
+    
+
+class IndividualizacaoFGTS(models.Model):
+    empregado = models.ForeignKey(Empregado, on_delete=models.CASCADE, related_name='fgts')
+    mes_ano = models.DateField() # Usar um campo DateField para armazenar o mês e ano
+    renumeracao_bruta = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_fgts = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        # Calcula o valor do FGTS ao salvar
+        self.valor_fgts = self.renumeracao_bruta * Decimal(0.08)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"FGTS de {self.empregado.nome} - {self.mes_ano.strftime('%m/%Y')}"
+    

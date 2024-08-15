@@ -138,7 +138,7 @@ const ListFGTS: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => navigate(`/editar_fgts/${fgts.id}`)}
-                                            className="bg-blue-500 hover:bg-sky-700 text-white font-bold rounded-md p-2"
+                                            className="bg-blue-500 hover:bg-sky-700 text-white font-bold rounded-md p-2 mb-1"
                                         >
                                             Editar
                                         </button> 

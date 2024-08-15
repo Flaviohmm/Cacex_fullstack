@@ -48,7 +48,7 @@ const AdicionarFuncionarioPrevidencia: React.FC = () => {
                     <label className="block text-md font-bold mb-2 mt-4">Nome do Funcionario:</label>
                     <input 
                         type="text" 
-                        placeholder="Digite o nome do funcionario para previdencia."
+                        placeholder="Digite o nome do funcionario para previdencia"
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded"

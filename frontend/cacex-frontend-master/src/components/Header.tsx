@@ -19,10 +19,6 @@ const Header: React.FC = () => {
     navigate('/adicionar_dados');
   }
 
-  const goToListarDados = () => {
-    navigate('/listar_dados')
-  }
-
   const goToHistorico = () => {
     navigate('/historico')
   }
@@ -49,7 +45,7 @@ const Header: React.FC = () => {
         </div>
         <nav className="flex flex-wrap justify-center space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToInicio}>Início</button>
-
+            
             {/* Dropdown para Listar Tabelas */}
             <div className="relative inline-block">
               <select 
@@ -62,6 +58,7 @@ const Header: React.FC = () => {
                 <option value="/listar_tabela_administrativa">Tabela Administrativa</option>
                 <option value="/listar_previdencia">Tabela Previdencia</option>
                 <option value="/listar_fgts">Tabela FGTS</option>
+                <option value="/listar_individualizacao_fgts">Tabela Individualização</option>
               </select>
             </div>
 
@@ -81,11 +78,29 @@ const Header: React.FC = () => {
                 <option value="/adicionar_fgts">
                   Adicionar FGTS
                 </option>
+                <option value="/adicionar_empregado">
+                  Adicionar Empregado
+                </option>
+                <option value="/registrar_individualizacao_fgts">
+                  Adicionar Individualização de FGTS
+                </option>
               </select>
             </div>
 
-            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button>           
-            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToListarDados}>Listar Dados</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAdicionarDados}>Adicionar Dados</button> 
+
+            {/* Dropdown para Lista de Dados*/ }
+            <div className="relative inline-block">
+              <select 
+                onChange={handleDropdownChange}
+                className="hover:bg-blue-500 p-2 rounded font-bold bg-blue-700 text-white cursor-pointer w-[162px]"
+                defaultValue={""}
+              >
+                <option value="" disabled>Listas Primárias</option>
+                <option value="/listar_dados">Lista de Dados</option>
+                <option value="/listar_empregados">Lista de Empregados</option>
+              </select>
+            </div>         
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAnexar}>Arquivado</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToDashboard}>Painel</button>
