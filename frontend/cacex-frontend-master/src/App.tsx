@@ -33,6 +33,8 @@ import AddEmpregado from './components/AddEmpregado';
 import AddFGTS from './components/AddFGTS';
 import EmpregadoFGTSTable from './components/EmpregadoFGTSTable';
 import ListEmpregado from './components/ListEmpregado';
+import EditEmpregado from './components/EditEmpregado';
+import EditIndividualizacaoFGTS from './components/EditIndividualizacaoFGTS';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -75,6 +77,8 @@ const App: React.FC = () => {
           <Route path='/registrar_individualizacao_fgts' Component={AddFGTS} />
           <Route path='/listar_individualizacao_fgts' Component={EmpregadoFGTSTable} />
           <Route path='/listar_empregados' Component={ListEmpregado} />
+          <Route path='/editar_empregado/:id' Component={EditEmpregado} />
+          <Route path='/editar_individualizacao/:id' Component={EditIndividualizacaoFGTS} />
         </Routes>
       </div>
     </BrowserRouter>

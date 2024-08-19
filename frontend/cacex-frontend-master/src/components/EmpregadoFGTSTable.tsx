@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
+import { useNavigate } from "react-router-dom";
 
 interface Empregado {
     id: number;
@@ -20,6 +21,7 @@ const EmpregadoFGTSTable: React.FC = () => {
     const [empregadoFGTS, setEmpregadoFGTS] = useState<IndividualizacaoFGTS[]>([]);
     const [empregados, setEmpregados] = useState<Empregado[]>([]);
     const token = localStorage.getItem('authToken');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEmpregado = async () => {
@@ -88,7 +90,7 @@ const EmpregadoFGTSTable: React.FC = () => {
         <div>
             <Header />
             <h2 className="text-2xl font-bold mb-6 text-center mt-5">Tabela de Individualização de FGTS</h2>
-            <div className="overflow-x-auto p-2">
+            <div className="overflow-x-auto p-4">
                 <table className="min-w-full bg-white border border-gray-300 shadow-md">
                     <thead>
                         <tr className="bg-gray-100">
@@ -98,6 +100,7 @@ const EmpregadoFGTSTable: React.FC = () => {
                             <th className="px-4 py-2 text-left">Mês/Ano</th>
                             <th className="px-4 py-2 text-left">Renumuneração Bruta</th>
                             <th className="px-4 py-2 text-left">Valor do FGTS</th>
+                            <th className="px-4 py-2 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -109,6 +112,21 @@ const EmpregadoFGTSTable: React.FC = () => {
                                 <td className="border px-4 py-2">{formatMonthYear(item.mes_ano)}</td>
                                 <td className="border px-4 py-2">{formatCurrency(parseFloat(item.renumeracao_bruta))}</td>
                                 <td className="border px-4 py-2">{formatCurrency(parseFloat(item.valor_fgts))}</td>
+                                <td className="border px-4 py-2 text-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate(`/editar_individualizacao/${item.id}`)}
+                                        className="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-1 ml-2"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4"
+                                    >
+                                        Excluir
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

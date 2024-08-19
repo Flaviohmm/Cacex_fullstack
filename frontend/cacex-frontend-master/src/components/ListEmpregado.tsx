@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "./Header";
 
@@ -12,6 +13,7 @@ interface Empregado {
 const ListEmpregado: React.FC = () => {
     const [empregados, setEmpregados] = useState<Empregado[]>([]);
     const token = localStorage.getItem('authToken');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEmpregado = async () => {
@@ -51,6 +53,7 @@ const ListEmpregado: React.FC = () => {
                             <th className="px-4 py-2 text-left">Nome do Empregado</th>
                             <th className="px-4 py-2 text-left">CPF</th>
                             <th className="px-4 py-2 text-left">PIS/PASEP</th>
+                            <th className="px-4 py-2 text-left">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,6 +62,21 @@ const ListEmpregado: React.FC = () => {
                                 <td className="border px-4 py-2">{item.nome}</td>
                                 <td className="border px-4 py-2">{formatCPF(item.cpf)}</td>
                                 <td className="border px-4 py-2">{formatPISPasep(item.pis_pasep)}</td>
+                                <td className="border px-4 py-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate(`/editar_empregado/${item.id}`)}
+                                        className="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-1 ml-2"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4"
+                                    >
+                                        Excluir
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
