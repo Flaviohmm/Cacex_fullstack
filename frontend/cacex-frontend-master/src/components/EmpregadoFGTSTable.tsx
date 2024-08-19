@@ -86,6 +86,26 @@ const EmpregadoFGTSTable: React.FC = () => {
         })}`;
     };
 
+    // Função de exclusão
+    const handleDelete = async (id: number) => {
+        const confirmar = window.confirm("Você tem certeza que deseja excluir está individualização de FGTS?");
+        if (confirmar) {
+            try {
+                await axios.delete(`http://localhost:8000/individualizacao_fgts/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                // Atualiza a tabela após a exclusão
+                setEmpregadoFGTS(empregadoFGTS.filter(item => item.id !== id));
+                alert("Individualização de FGTS excluída com sucesso!");
+            } catch (error) {
+                console.error("Erro ao excluir individualização de FGTS:", error);
+                alert("Ocorreu um erro ao excluir a individualização.");
+            }
+        }
+    };
+
     return (
         <div>
             <Header />
@@ -122,6 +142,7 @@ const EmpregadoFGTSTable: React.FC = () => {
                                     </button>
                                     <button 
                                         type="button" 
+                                        onClick={() => handleDelete(item.id)} // Chamada à função handleDelete
                                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4"
                                     >
                                         Excluir
