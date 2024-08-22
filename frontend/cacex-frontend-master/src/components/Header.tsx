@@ -59,6 +59,7 @@ const Header: React.FC = () => {
                 <option value="/listar_previdencia">Tabela Previdencia</option>
                 <option value="/listar_fgts">Tabela FGTS</option>
                 <option value="/listar_individualizacao_fgts">Tabela Individualização</option>
+                <option value="/listar_receita_federal">Tabela Receita Federal</option>
               </select>
             </div>
 
@@ -83,6 +84,9 @@ const Header: React.FC = () => {
                 </option>
                 <option value="/registrar_individualizacao_fgts">
                   Adicionar Individualização de FGTS
+                </option>
+                <option value="/add_receita_federal">
+                  Adicionar Receita Federal
                 </option>
               </select>
             </div>

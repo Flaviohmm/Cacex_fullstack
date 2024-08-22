@@ -31,11 +31,6 @@ const AddEmpregado: React.FC = () => {
                     'Authorization': `Token ${token}`
                 }
             });
-            console.log('Dados enviados:', {
-                nome,
-                cpf,
-                pis_pasep: pisPasep,
-            });
             console.log('Empregado criado:', response.data);
             setSuccess('Empregado criado com sucesso!');
             // Resetando os campos do formulário

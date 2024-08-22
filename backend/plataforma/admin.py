@@ -5,7 +5,11 @@ from .models import (
     Atividade, 
     RegistroFuncionarios, 
     RegistroAdminstracao,
-    FuncionarioPrevidencia
+    FuncionarioPrevidencia,
+    FGTS,
+    Empregado,
+    IndividualizacaoFGTS,
+    ReceitaFederal,
 )
 
 # Register your models here.
@@ -15,3 +19,7 @@ admin.site.register(Atividade)
 admin.site.register(RegistroFuncionarios)
 admin.site.register(RegistroAdminstracao)
 admin.site.register(FuncionarioPrevidencia)
+admin.site.register(FGTS)
+admin.site.register(Empregado)
+admin.site.register(IndividualizacaoFGTS)
+admin.site.register(ReceitaFederal)

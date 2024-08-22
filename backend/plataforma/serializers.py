@@ -9,7 +9,8 @@ from .models import (
     FuncionarioPrevidencia,
     FGTS,
     Empregado,
-    IndividualizacaoFGTS
+    IndividualizacaoFGTS,
+    ReceitaFederal,
 )
 
 
@@ -108,3 +109,11 @@ class IndividualizacaoFGTSSerializer(serializers.ModelSerializer):
         model = IndividualizacaoFGTS
         fields = ['id', 'empregado', 'mes_ano', 'renumeracao_bruta', 'valor_fgts']
         read_only_fields = ['valor_fgts'] # Este campo será calculado automaticamente
+
+
+class ReceitaFederalSerializer(serializers.ModelSerializer):
+    municipio = MunicipioSerializer()
+
+    class Meta:
+        model = ReceitaFederal
+        fields = '__all__'  # Ou liste os campos manualmente se preferir

@@ -274,7 +274,7 @@ class FuncionarioPrevidencia(models.Model):
         ('APOSENTADO', 'Aposentado'),
     ]
 
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=255)
     salario = models.DecimalField(max_digits=10, decimal_places=2)
     categoria = models.CharField(max_length=20, choices=CATEGORIAS, default='ATIVO')
 
@@ -296,7 +296,7 @@ class FuncionarioPrevidencia(models.Model):
     
 
 class FGTS(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=255)
     data_inicial = models.DateField()
     data_final = models.DateField()
     salario_bruto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -342,7 +342,7 @@ class FGTS(models.Model):
     
 
 class Empregado(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=255)
     cpf = models.CharField(max_length=14, unique=True) # O CPF deve ser único
     pis_pasep = models.CharField(max_length=12, unique=True) # O PIS/PASEP deve ser único
 
@@ -363,4 +363,49 @@ class IndividualizacaoFGTS(models.Model):
 
     def __str__(self):
         return f"FGTS de {self.empregado.nome} - {self.mes_ano.strftime('%m/%Y')}"
+    
+
+class ReceitaFederal(models.Model):
+    class Meta:
+        verbose_name_plural = "Tabela da Receita Federal"
+
+    nome = models.CharField(max_length=255)
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    atividade = models.CharField(max_length=255)
+    num_parcelamento = models.IntegerField()
+    objeto = models.CharField(max_length=255)
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
+    prazo_vigencia = models.DateField()
+    situacao = models.CharField(max_length=255)
+    providencia = models.CharField(max_length=255)
+
+    def exibir_modal_prazo_vigencia(self):
+        hoje = timezone.now().date()
+        prazo_vigencia = self.prazo_vigencia
+        dias_restantes = (prazo_vigencia - hoje).days
+        
+        return {
+            "exibir_modal": dias_restantes <= 30, 
+            "dias_restantes": dias_restantes
+        }
+    
+    def save(self, *args, **kwargs):
+        if not self.prazo_vigencia:
+            raise ValueError("A data do prazo de vigência é obrigatório")
+        
+        if self.prazo_vigencia and isinstance(self.prazo_vigencia, str) and self.prazo_vigencia.strip(): # Verifica se a string não está vazia após remoção de espaços
+            try:
+                # Converta a string para objeto date
+                self.prazo_vigencia = datetime.strptime(self.prazo_vigencia, '%Y-%m-%d').date()
+            except ValueError:
+                raise ValidationError("Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.")
+            
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return (
+            f"{self.nome} | {self.municipio.municipio} | {self.atividade} | {self.num_parcelamento} | "
+            f"{self.objeto} | {self.valor_total} | {self.prazo_vigencia} | {self.situacao} | "
+            f"{self.providencia}"
+        )
     

@@ -12,7 +12,8 @@ from .models import (
     FuncionarioPrevidencia,
     FGTS,
     Empregado,
-    IndividualizacaoFGTS
+    IndividualizacaoFGTS,
+    ReceitaFederal,
 )
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
@@ -35,12 +36,16 @@ from .serializers import (
     FuncionarioSerializer,
     FGTSSerializer,
     EmpregadoSerializer,
-    IndividualizacaoFGTSSerializer
+    IndividualizacaoFGTSSerializer,
+    ReceitaFederalSerializer,
 )
 from rest_framework import viewsets
 from datetime import datetime
 import json
 import traceback
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 def adicionar_setor(request):
@@ -1155,6 +1160,18 @@ class EmpregadoViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         print("Dados recebidos:", request.data) # Adicione este log
         return super().create(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        empregado = self.get_object() # Obtém o objeto específico por ID
+        serializer = self.get_serializer(empregado, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_empregado = serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def destroy(self, request, *args, **kwargs):
+        empregado = self.get_object()
+        empregado.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IndividualizacaoFGTSViewSet(viewsets.ModelViewSet):
@@ -1166,3 +1183,84 @@ class IndividualizacaoFGTSViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         individualizacao_fgts = serializer.save() # Salva o serializer, que chamará a lógica de salvar no modelo
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self, request, *args, **kwargs):
+        individualizacao_fgts = self.get_object()
+        serializer = self.get_serializer(individualizacao_fgts, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_individualizacao_fgts = serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def destroy(self, request, *args, **kwargs):
+        individualizacao_fgts = self.get_object()
+        individualizacao_fgts.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class ReceitaFederalViewSet(viewsets.ModelViewSet):
+    queryset = ReceitaFederal.objects.all()
+    serializer_class = ReceitaFederalSerializer
+
+    def create(self, request, *args, **kwargs):
+        logger.info("Recebendo dados para criar Receita Federal: %s", request.data)
+        if request.method == 'POST':
+            try:
+                # Carregar dados do corpo da requisição
+                data = request.data # O DRF já faz a desrelização do JSON
+
+                # Verificar se o município foi enviado como um ID
+                municipio_id = data.get('municipio')
+                municipio = get_object_or_404(Municipio, id=municipio_id)
+
+                # Obter outros dados da requisição
+                prazo_vigencia = data.get('prazo_vigencia')
+                nome = data.get('nome')
+                atividade = data.get('atividade')
+                num_parcelamento = data.get('num_parcelamento')
+                objeto = data.get('objeto')
+                valor_total = data.get('valor_total')
+                situacao = data.get('situacao')
+                providencia = data.get('providencia')
+
+                # Verificar se todos os dados obrigatórios foram fornecidos
+                if not all([nome, municipio, atividade, num_parcelamento, objeto, valor_total, prazo_vigencia, situacao, providencia]):
+                    return Response({'error': 'Dados obrigatórios ausentes.'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Verificar e converter prazo_vigencia
+                try:
+                    prazo_vigencia = datetime.strptime(prazo_vigencia, '%Y-%m-%d').date()
+                except ValueError:
+                    return Response({'error': 'Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Criar a instância do registro
+                receita_federal = ReceitaFederal(
+                    nome=nome,
+                    municipio=municipio,
+                    atividade=atividade,
+                    num_parcelamento=num_parcelamento,
+                    objeto=objeto,
+                    valor_total=valor_total,
+                    prazo_vigencia=prazo_vigencia,
+                    situacao=situacao,
+                    providencia=providencia,
+                )
+
+                # Salvar a instância no banco de dados
+                receita_federal.save()
+                logger.info("Receita Federal criada: %s", receita_federal)
+                
+                # Serialize the created instance to return the necessary data
+                serializer = self.get_serializer(receita_federal)
+
+
+                # Chame a função para obter dados adicionais, como exibir o modal
+                exibir_modal_data = receita_federal.exibir_modal_prazo_vigencia()
+
+                # Retornar uma resposta de sucesso
+                return Response({**serializer.data, **exibir_modal_data}, status=status.HTTP_201_CREATED)
+            
+            except Exception as e:
+                print(traceback.format_exc())
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({'error': 'Método não permitido.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
