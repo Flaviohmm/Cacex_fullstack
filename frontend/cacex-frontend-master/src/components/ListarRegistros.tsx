@@ -225,10 +225,10 @@ const ListarRegistros: React.FC = () => {
             <div className="p-4">
                 <h1 className="text-2xl font-bold mb-4">Registros</h1>
                 <div className="overflow-x-auto">
-                    <div className="max-h-[650px] overflow-auto">
+                    <div className="max-h-[650px] overflow-auto shadow-md">
                         <table className="min-w-full bg-white" id="registros-table">
-                            <thead className="sticky top-0 bg-white text-left">
-                                <th className="py-2 px-4 border-b text-left">Nome</th>
+                            <thead className="sticky top-0 bg-gray-100 text-left border-t">
+                                <th className="border-l py-2 px-4 border-b text-left">Nome</th>
                                 <th className="py-2 px-4 border-b text-left">Órgão/Setor</th>
                                 <th className="py-2 px-4 border-b text-left">Município</th>
                                 <th className="py-2 px-4 border-b text-left">Atividade</th>
@@ -250,12 +250,12 @@ const ListarRegistros: React.FC = () => {
                                 <th className="py-2 px-4 border-b text-left">Documento Cancelado</th>
                                 <th className="py-2 px-4 border-b text-left">Data do Fim</th>
                                 <th className="py-2 px-4 border-b text-left">Duração de Dias Uteis</th>
-                                <th className="py-2 px-4 border-b text-left">Ver Detalhes</th>
+                                <th className="border-r py-2 px-4 border-b text-left">Ver Detalhes</th>
                             </thead>
                             <tbody>
                                 {filteredRegistros.map((registro: Registro, index: number) => (
                                     <tr key={index} className="hover:bg-gray-100">
-                                        <td className="py-2 px-4 border-b">{registro.nome}</td>
+                                        <td className="border-l py-2 px-4 border-b">{registro.nome}</td>
                                         <td className="py-2 px-4 border-b">{registro.orgao_setor}</td>
                                         <td className="py-2 px-4 border-b">{registro.municipio}</td>
                                         <td className="py-2 px-4 border-b">{registro.atividade}</td>
@@ -347,7 +347,7 @@ const ListarRegistros: React.FC = () => {
                                         <td className="py-2 px-4 border-b">{registro.documento_cancelado}</td>
                                         <td className="py-2 px-4 border-b">{registro.data_fim}</td>
                                         <td className="py-2 px-4 border-b">{registro.duracao_dias_uteis}</td>
-                                        <td className="py-2 px-4 border-b">
+                                        <td className="border-r py-2 px-4 border-b">
                                             <button className="bg-blue-500 text-white font-bold hover:bg-blue-700 py-2 px-4 rounded" onClick={() => openModal(registro)}>
                                                 Detalhes
                                             </button>

@@ -50,16 +50,16 @@ const HistoricoRegistroID: React.FC = () => {
             <div className="mt-10 p-4">
                 <h2 className="text-2xl font-bold mb-6 text-center">Histórico de Alterações</h2>
                 <br />
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto shadow-md">
                     <table className="min-w-full bg-white">
-                        <thead>
+                        <thead className="bg-gray-100 border-t">
                             <tr>
-                                <th className="px-4 py-2 border-b">Ação</th>
+                                <th className="border-l px-4 py-2 border-b">Ação</th>
                                 <th className="px-4 py-2 border-b">Data</th>
                                 <th className="px-4 py-2 border-b">Usuário</th>
                                 <th className="px-4 py-2 border-b">Dados Anteriores</th>
                                 <th className="px-4 py-2 border-b">Dados Atuais</th>
-                                <th className="px-4 py-2 border-b">Dados Alterados</th>
+                                <th className="border-r px-4 py-2 border-b">Dados Alterados</th>
                             </tr>
                         </thead>
                         <tbody>

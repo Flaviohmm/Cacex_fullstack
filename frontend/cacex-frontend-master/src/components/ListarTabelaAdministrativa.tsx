@@ -82,7 +82,7 @@ const ListarTabelaAdministrativa = () => {
             <Header />
             <div className="p-6">
             <h3 className="text-2xl font-bold mb-4">Registros Administrativos</h3>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto shadow-md">
                     <table className="min-w-full bg-white border border-gray-200">
                         <thead className="bg-gray-100">
                             <tr>
@@ -146,7 +146,7 @@ const ListarTabelaAdministrativa = () => {
                             <div key={registros[currentModal].id}>
                                 <p className="mb-4">
                                     {registros[currentModal].dias_restantes > 0
-                                        ? `O prazo de vigência está próximo do seu vencimento. Restam ${registros[currentModal].dias_restantes} dias.`
+                                        ? `O prazo de vigência do contrato ${registros[currentModal].num_contrato} está próximo do seu vencimento. Restam ${registros[currentModal].dias_restantes} dias.`
                                         : `O prazo de vigência do contrato ${registros[currentModal].num_contrato} venceu.`
                                     }
                                 </p>

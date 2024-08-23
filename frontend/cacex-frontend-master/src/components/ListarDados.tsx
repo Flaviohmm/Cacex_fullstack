@@ -161,7 +161,7 @@ const ListarDados: React.FC = () => {
             <h2 className="text-2xl font-bold mb-6 text-center">Lista de Dados</h2>
                 <div className="container mx-auto">
                     <h2 className="text-xl font-bold mb-2 mt-4">Setores</h2>
-                    <table className="table-auto mt-4">
+                    <table className="table-auto mt-4 shadow-md">
                         <thead>
                             <tr>
                                 <th className="border px-4 py-2">Setor</th>
@@ -212,7 +212,7 @@ const ListarDados: React.FC = () => {
                     </table>
 
                     <h2 className="text-xl font-bold mb-2 mt-4">Municípios</h2>
-                    <table className="table-auto mt-4">
+                    <table className="table-auto mt-4 shadow-md">
                         <thead>
                             <tr>
                                 <th className="border px-4 py-2">Município</th>
@@ -263,7 +263,7 @@ const ListarDados: React.FC = () => {
                     </table>
 
                     <h2 className="text-xl font-bold mb-2 mt-4">Atividades</h2>
-                    <table className="table-auto mt-4 mb-4">
+                    <table className="table-auto mt-4 mb-4 shadow-md">
                         <thead>
                             <tr>
                                 <th className="border px-4 py-2">Atividade</th>

@@ -100,7 +100,7 @@ const ListFGTS: React.FC = () => {
             <Header />
             <div className="p-4">
                 <h2 className="text-2xl font-bold mb-6 text-center mt-5">Lista de FGTS</h2>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto shadow-md">
                     <table className="min-w-full bg-white border border-gray-300">
                         <thead>
                             <tr>

@@ -1202,7 +1202,6 @@ class ReceitaFederalViewSet(viewsets.ModelViewSet):
     serializer_class = ReceitaFederalSerializer
 
     def create(self, request, *args, **kwargs):
-        logger.info("Recebendo dados para criar Receita Federal: %s", request.data)
         if request.method == 'POST':
             try:
                 # Carregar dados do corpo da requisição
@@ -1247,11 +1246,9 @@ class ReceitaFederalViewSet(viewsets.ModelViewSet):
 
                 # Salvar a instância no banco de dados
                 receita_federal.save()
-                logger.info("Receita Federal criada: %s", receita_federal)
                 
                 # Serialize the created instance to return the necessary data
                 serializer = self.get_serializer(receita_federal)
-
 
                 # Chame a função para obter dados adicionais, como exibir o modal
                 exibir_modal_data = receita_federal.exibir_modal_prazo_vigencia()

@@ -39,7 +39,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8">
+    <header className="bg-blue-700 text-white flex flex-col md:flex-row items-center justify-between p-8 shadow-md">
         <div className="flex items-center mb-4 md:mb-0">
             <img src={Logo} alt="Logo" className="h-14 mr-2" />
         </div>

@@ -49,7 +49,7 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
         <div>
             <Header />
             <h2 className="text-2xl font-bold mt-10 text-center">Funcionários da Previdência</h2>
-            <div className="overflow-x-auto mt-6 mx-10">
+            <div className="overflow-x-auto mt-6 mx-10 shadow-md">
                 <table className="min-w-full border border-gray-300">
                     <thead>
                         <tr>

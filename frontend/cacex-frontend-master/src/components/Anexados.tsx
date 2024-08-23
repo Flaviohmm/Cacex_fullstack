@@ -93,10 +93,10 @@ const Anexados: React.FC = () => {
       <Header />
       <div className="p-4">
         <h1 className='text-2xl font-bold mb-4'>Registros Anexados</h1>
-        <div className='overflow-x-auto'>
+        <div className='overflow-x-auto shadow-md'>
           <table className='min-w-full bg-white'>
-            <thead>
-            <th className="py-2 px-4 border-b text-left">Nome</th>
+            <thead className='bg-gray-100 border-t'>
+              <th className="border-l py-2 px-4 border-b text-left">Nome</th>
               <th className="py-2 px-4 border-b text-left">Órgão/Setor</th>
               <th className="py-2 px-4 border-b text-left">Município</th>
               <th className="py-2 px-4 border-b text-left">Atividade</th>
@@ -118,12 +118,12 @@ const Anexados: React.FC = () => {
               <th className="py-2 px-4 border-b text-left">Documento Cancelado</th>
               <th className="py-2 px-4 border-b text-left">Data do Fim</th>
               <th className="py-2 px-4 border-b text-left">Duração de Dias Uteis</th>
-              <th className="py-2 px-4 border-b text-center">Ação</th>
+              <th className="border-r py-2 px-4 border-b text-center">Ação</th>
             </thead>
             <tbody>
               {registrosAnexados.map((registro: Registro) => (
                 <tr key={registro.id} className='hover:bg-gray-100'>
-                  <td className='py-4 px-2 border-b'>{registro.nome}</td>
+                  <td className='border-l py-4 px-2 border-b text-center'>{registro.nome}</td>
                   <td className='py-4 px-2 border-b'>{registro.orgao_setor}</td>
                   <td className='py-4 px-2 border-b'>{registro.municipio}</td>
                   <td className='py-4 px-2 border-b'>{registro.atividade}</td>
@@ -195,7 +195,7 @@ const Anexados: React.FC = () => {
                   <td className='py-4 px-2 border-b'>{registro.documento_cancelado ? 'Sim' : 'Não'}</td>
                   <td className='py-4 px-2 border-b'>{registro.data_fim ? registro.data_fim : 'Sem Data de Termino'}</td>
                   <td className='py-4 px-2 border-b'>{registro.duracao_dias_uteis}</td>
-                  <td className='py-4 px-2 border-b'>
+                  <td className='border-r py-4 px-2 border-b text-center'>
                     <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleDesanexar}>
                       Desanexar
                     </button>
