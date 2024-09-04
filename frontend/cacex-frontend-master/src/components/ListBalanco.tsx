@@ -103,7 +103,12 @@ const ListBalanco: React.FC = () => {
                                     <td>{ativo.nome}</td>
                                     <td className="text-center">{formatCurrency(parseFloat(ativo.valor))}</td>
                                     <td className="text-center space-x-4">
-                                        <button className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700">Editar</button> 
+                                        <button 
+                                            className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700"
+                                            onClick={() => navigate(`/editar_ativo/${ativo.id}`)}
+                                        >
+                                            Editar
+                                        </button> 
                                         <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
                                     </td>
                                     {index < passivosCirculantes.length ? (
@@ -111,7 +116,12 @@ const ListBalanco: React.FC = () => {
                                             <td>{passivosCirculantes[index].nome}</td>
                                             <td className="text-center">{formatCurrency(parseFloat(passivosCirculantes[index].valor))}</td>
                                             <td className="text-center space-x-4">
-                                                <button className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700">Editar</button> 
+                                                <button 
+                                                    className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700"
+                                                    onClick={() => navigate(`/editar_passivo/${passivosCirculantes[index].id}`)}
+                                                >
+                                                    Editar
+                                                </button> 
                                                 <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
                                             </td>
                                         </>
@@ -156,7 +166,12 @@ const ListBalanco: React.FC = () => {
                                     <td>{ativo.nome}</td>
                                     <td className="text-center">{formatCurrency(parseFloat(ativo.valor))}</td>
                                     <td className="text-center space-x-4">
-                                        <button className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700">Editar</button>
+                                        <button 
+                                            className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700"
+                                            onClick={() => navigate(`/editar_ativo/${ativo.id}`)}
+                                        >
+                                            Editar
+                                        </button>
                                         <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
                                     </td>
                                     {index < passivosNaoCiculantes.length ? (
@@ -164,7 +179,12 @@ const ListBalanco: React.FC = () => {
                                             <td>{passivosNaoCiculantes[index].nome}</td>
                                             <td className="text-center">{formatCurrency(parseFloat(passivosNaoCiculantes[index].valor))}</td>
                                             <td className="text-center space-x-4">
-                                                <button className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700">Editar</button> 
+                                                <button 
+                                                    className="bg-blue-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-blue-700"
+                                                    onClick={() => navigate(`/editar_passivo/${passivosNaoCiculantes[index].id}`)}
+                                                >
+                                                    Editar
+                                                </button> 
                                                 <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
                                             </td>
                                         </>
@@ -220,6 +240,7 @@ const ListBalanco: React.FC = () => {
                         Adicionar Passivo
                     </button>
                 </div>
+                <br />
             </div>
         </div>
     );

@@ -41,6 +41,8 @@ import EditReceitaFederal from './components/EditReceitaFederal';
 import ListBalanco from './components/ListBalanco';
 import AddAtivo from './components/AddAtivo';
 import AddPassivo from './components/AddPassivo';
+import EditAtivo from './components/EditAtivo';
+import EditPassivo from './components/EditPassivo';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -91,6 +93,8 @@ const App: React.FC = () => {
           <Route path='/listar_balanco' Component={ListBalanco} />
           <Route path='/adicionar_ativo' Component={AddAtivo} />
           <Route path='/adicionar_passivo' Component={AddPassivo} />
+          <Route path='/editar_ativo/:id' Component={EditAtivo} />
+          <Route path='/editar_passivo/:id' Component={EditPassivo} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -52,5 +52,9 @@ urlpatterns = [
     path('balanco/', views.balanco_api, name='balanco'),
     path('add_ativo/', views.add_ativo, name='add_ativo'),
     path('add_passivo/', views.add_passivo, name='add_passivo'),
+    path('edit_ativo/<int:id>/', views.edit_ativo, name='edit_ativo'),
+    path('fetch_ativo/<int:id>/', views.fetch_ativo, name='fetch_ativo'),
+    path('edit_passivo/<int:id>/', views.edit_passivo, name='edit_passivo'),
+    path('fetch_passivo/<int:id>/', views.fetch_passivo, name='fetch_passivo'),
     path('', include(router.urls)),
 ]

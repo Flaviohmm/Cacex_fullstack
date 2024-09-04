@@ -1372,3 +1372,58 @@ def add_passivo(request):
         serializer.save()
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+def edit_ativo(request, id):
+    ativo = get_object_or_404(Ativo, id=id)
+
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body) # Carrega os dados fornecidos no corpo da requisição
+            ativo.nome = data.get('nome', ativo.nome)
+            ativo.valor = data.get('valor', ativo.valor)
+            ativo.circulante = data.get('circulante', ativo.circulante)
+            ativo.save() # Salva as alterações
+            return JsonResponse({'message': 'Ativo atualizado com sucesso!'}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Dados inválidos.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método não permitido.'}, status=405)
+    
+def fetch_ativo(request, id):
+    ativo = get_object_or_404(Ativo, id=id)
+    data = {
+        'id': ativo.id,
+        'nome': ativo.nome,
+        'valor': ativo.valor, # A conversão para string é feita para evitar problemas de serialização
+        'circulante': ativo.circulante,
+    }
+    print(ativo.valor)
+    return JsonResponse(data, status=status.HTTP_200_OK)
+    
+@csrf_exempt
+def edit_passivo(request, id):
+    passivo = get_object_or_404(Passivo, id=id)
+
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body) # Carrega os dados fornecidos no corpo da requisição
+            passivo.nome = data.get('nome', passivo.nome)
+            passivo.valor = data.get('valor', passivo.valor)
+            passivo.circulante = data.get('circulante', passivo.circulante)
+            passivo.save() # Salva as alterações
+            return JsonResponse({'message': 'Passivo atualizado com sucesso!'}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Dados inválidos.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método não permitido.'}, status=405)
+    
+def fetch_passivo(request, id):
+    passivo = get_object_or_404(Passivo, id=id)
+    data = {
+        'id': passivo.id,
+        'nome': passivo.nome,
+        'valor': str(passivo.valor), # A conversão para string é feita para evitar problemas de serialização
+        'circulante': passivo.circulante,
+    }
+    return JsonResponse(data, status=status.HTTP_200_OK)

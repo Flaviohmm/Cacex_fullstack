@@ -102,7 +102,6 @@ const AddFGTS: React.FC = () => {
                         prefix="R$ "
                         decimalScale={2}
                         fixedDecimalScale={true}
-                        required
                     />
                 </div>
                 <br />

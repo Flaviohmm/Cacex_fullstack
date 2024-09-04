@@ -66,7 +66,6 @@ const AddPassivo: React.FC = () => {
                         prefix="R$ "
                         decimalScale={2}
                         fixedDecimalScale={true}
-                        required
                     />
                 </div>
                 <div className="flex items-center mt-4">
