@@ -11,6 +11,8 @@ from .models import (
     Empregado,
     IndividualizacaoFGTS,
     ReceitaFederal,
+    Ativo,
+    Passivo,
 )
 
 
@@ -117,3 +119,15 @@ class ReceitaFederalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReceitaFederal
         fields = '__all__'  # Ou liste os campos manualmente se preferir
+
+
+class AtivoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ativo
+        fields = ['id', 'nome', 'valor', 'circulante']
+
+
+class PassivoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Passivo
+        fields = ['id', 'nome', 'valor', 'circulante']

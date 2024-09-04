@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
+import { useParams, useNavigate } from "react-router-dom";
 
 interface Municipio {
     id: number;
@@ -25,6 +26,7 @@ const ListarReceitaFederal: React.FC = () => {
     const [error, setError] = useState('');
     const [currentModal, setCurrentModal] = useState<number | null>(null);
     const token = localStorage.getItem('authToken');
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchReceitas();
@@ -53,6 +55,26 @@ const ListarReceitaFederal: React.FC = () => {
             setError('Erro ao buscar receitas');
         }
     };
+
+    const handleDelete = async (id: number) => {
+        const confirmDelete = window.confirm("Tem certeza que deseja excluir este funcionário?");
+
+        if (!token) return;
+
+        if (confirmDelete) {
+            try {
+                await axios.delete(`http://localhost:8000/receita_federal/${id}`, {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                alert('Dados da receita federal excluido com sucesso!');
+            } catch (error) {
+                console.error("Erro ao excluir receita federal:", error);
+                alert('Erro ao excluir dados da receita federal');
+            }
+        }
+    }
 
     const openModal = (index: number) => {
         setCurrentModal(index);
@@ -97,7 +119,7 @@ const ListarReceitaFederal: React.FC = () => {
             <div className="overflow-x-auto">
                 <div className="max-h-[650px] overflow-auto p-5">
                     <table className="min-w-full border-collapse shadow-md">
-                        <thead className="sticky top-0">
+                        <thead className="sticky top-0 bg-gray-100">
                             <tr>
                                 <th className="border px-4 py-2">Nome</th>
                                 <th className="border px-4 py-2">Município</th>
@@ -108,6 +130,7 @@ const ListarReceitaFederal: React.FC = () => {
                                 <th className="border px-4 py-2">Prazo de Vigência</th>
                                 <th className="border px-4 py-2">Situação</th>
                                 <th className="border px-4 py-2">Providência</th>
+                                <th className="border px-4 py-2">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,6 +146,20 @@ const ListarReceitaFederal: React.FC = () => {
                                         <td className="border px-4 py-2 text-center">{formatDate(receita.prazo_vigencia)}</td>
                                         <td className="border px-4 py-2 text-center">{receita.situacao}</td>
                                         <td className="border px-4 py-2 text-center">{receita.providencia}</td>
+                                        <td className="border px-4 py-2 text-center">
+                                            <button 
+                                                onClick={() => navigate(`/editar_receita_federal/${receita.id}`)}
+                                                className="bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mx-2"
+                                            >
+                                                Editar
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(receita.id)} 
+                                                className="bg-red-500 text-white font-bold px-4 py-2 rounded hover:bg-red-700 transition duration-300 mx-2"
+                                            >
+                                                Deletar
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (

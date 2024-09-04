@@ -88,6 +88,12 @@ const Header: React.FC = () => {
                 <option value="/add_receita_federal">
                   Adicionar Receita Federal
                 </option>
+                <option value="/adicionar_ativo">
+                  Adicionar Ativo
+                </option>
+                <option value="/adicionar_passivo">
+                  Adicionar Passivo
+                </option>
               </select>
             </div>
 

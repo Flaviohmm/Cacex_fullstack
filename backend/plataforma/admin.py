@@ -10,6 +10,8 @@ from .models import (
     Empregado,
     IndividualizacaoFGTS,
     ReceitaFederal,
+    Ativo,
+    Passivo,
 )
 
 # Register your models here.
@@ -23,3 +25,5 @@ admin.site.register(FGTS)
 admin.site.register(Empregado)
 admin.site.register(IndividualizacaoFGTS)
 admin.site.register(ReceitaFederal)
+admin.site.register(Ativo)
+admin.site.register(Passivo)

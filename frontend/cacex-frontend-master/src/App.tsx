@@ -37,6 +37,10 @@ import EditEmpregado from './components/EditEmpregado';
 import EditIndividualizacaoFGTS from './components/EditIndividualizacaoFGTS';
 import AddReceitaFederal from './components/AddReceitaFederal';
 import ListarReceitaFederal from './components/ListarReceitaFederal';
+import EditReceitaFederal from './components/EditReceitaFederal';
+import ListBalanco from './components/ListBalanco';
+import AddAtivo from './components/AddAtivo';
+import AddPassivo from './components/AddPassivo';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -83,6 +87,10 @@ const App: React.FC = () => {
           <Route path='/editar_individualizacao/:id' Component={EditIndividualizacaoFGTS} />
           <Route path='/add_receita_federal' Component={AddReceitaFederal} />
           <Route path='/listar_receita_federal' Component={ListarReceitaFederal} />
+          <Route path='/editar_receita_federal/:id' Component={EditReceitaFederal} />
+          <Route path='/listar_balanco' Component={ListBalanco} />
+          <Route path='/adicionar_ativo' Component={AddAtivo} />
+          <Route path='/adicionar_passivo' Component={AddPassivo} />
         </Routes>
       </div>
     </BrowserRouter>

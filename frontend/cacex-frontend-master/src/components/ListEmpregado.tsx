@@ -70,7 +70,7 @@ const ListEmpregado: React.FC = () => {
             <div className="overflow-x-auto p-5">
                 <table className="min-w-full bg-white border border-gray-300 shadow-md">
                     <thead>
-                        <tr className="bg-slate-100">
+                        <tr className="bg-gray-100">
                             <th className="px-4 py-2 text-left">Nome do Empregado</th>
                             <th className="px-4 py-2 text-left">CPF</th>
                             <th className="px-4 py-2 text-left">PIS/PASEP</th>

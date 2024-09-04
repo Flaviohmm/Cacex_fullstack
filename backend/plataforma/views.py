@@ -14,10 +14,13 @@ from .models import (
     Empregado,
     IndividualizacaoFGTS,
     ReceitaFederal,
+    Ativo,
+    Passivo,
 )
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.views import View
@@ -38,9 +41,12 @@ from .serializers import (
     EmpregadoSerializer,
     IndividualizacaoFGTSSerializer,
     ReceitaFederalSerializer,
+    AtivoSerializer,
+    PassivoSerializer,
 )
 from rest_framework import viewsets
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 import json
 import traceback
 import logging
@@ -1196,6 +1202,15 @@ class IndividualizacaoFGTSViewSet(viewsets.ModelViewSet):
         individualizacao_fgts.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+def convert_currency_to_decimal(value):
+    if isinstance(value, str):
+        # Remove currency symbol and thousand separators
+        value = value.replace('R$', '').replace('.', '').replace(',', '.').strip()
+    try:
+        return Decimal(value)
+    except InvalidOperation:
+        raise ValidationError(f"'{value}' is not a valid decimal number.")
+    
 
 class ReceitaFederalViewSet(viewsets.ModelViewSet):
     queryset = ReceitaFederal.objects.all()
@@ -1261,3 +1276,99 @@ class ReceitaFederalViewSet(viewsets.ModelViewSet):
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
         return Response({'error': 'Método não permitido.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object() # Obtém a instância atual com base no ID da URL
+        data = request.data
+
+        # Verificar se o município foi enviado como um ID
+        municipio_id = data.get('municipio')
+
+        if isinstance(municipio_id, dict):
+            municipio_id = municipio_id.get('id')
+
+        if municipio_id:
+            municipio = get_object_or_404(Municipio, id=municipio_id)
+            instance.municipio = municipio
+
+        # Atualizar outros campos da instância
+        instance.nome = data.get('nome', instance.nome)
+        instance.atividade = data.get('atividade', instance.atividade)
+        instance.num_parcelamento = data.get('num_parcelamento', instance.num_parcelamento)
+        instance.objeto = data.get('objeto', instance.objeto)
+        instance.valor_total = convert_currency_to_decimal(data.get('valor_total', instance.valor_total))
+
+        # Manter a validação de prazo_vigencia
+        prazo_vigencia = data.get('prazo_vigencia', None)
+        if prazo_vigencia:
+            try:
+                instance.prazo_vigencia = datetime.strptime(prazo_vigencia, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({'error': 'Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Atualizar outros campos
+        instance.situacao = data.get('situacao', instance.situacao)
+        instance.providencia = data.get('providencia', instance.providencia)
+
+        # Salvar as alterações
+        instance.save()
+
+        # Retornar a instância atualizada
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object() # Obtém a instância atual com base no ID da URL
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+def balanco_api(request):
+    # Obtém todos os ativos e passivos, separados por circulantes e não circulantes
+    ativos_circulantes = Ativo.objects.filter(circulante=True)
+    passivos_circulantes = Passivo.objects.filter(circulante=True)
+    ativos_nao_circulantes = Ativo.objects.filter(circulante=False)
+    passivos_nao_circulantes = Passivo.objects.filter(circulante=False)
+
+    total_ativos_circulantes = sum(ativo.valor for ativo in ativos_circulantes)
+    total_passivos_circulantes = sum(passivo.valor for passivo in passivos_circulantes)
+    total_ativos_nao_circulantes = sum(ativo.valor for ativo in ativos_nao_circulantes)
+    total_passivos_nao_circulantes = sum(passivo.valor for passivo in passivos_nao_circulantes)
+
+    total_ativos = total_ativos_circulantes + total_ativos_nao_circulantes
+    total_passivos = total_passivos_circulantes + total_passivos_nao_circulantes
+    patrimonio_liquido = total_ativos - total_passivos
+
+    data = {
+        'ativos_circulantes': AtivoSerializer(ativos_circulantes, many=True).data,
+        'passivos_circulantes': PassivoSerializer(passivos_circulantes, many=True).data,
+        'ativos_nao_circulantes': AtivoSerializer(ativos_nao_circulantes, many=True).data,
+        'passivos_nao_circulantes': PassivoSerializer(passivos_nao_circulantes, many=True).data,
+        'total_ativos_circulantes': total_ativos_circulantes,
+        'total_passivos_circulantes': total_passivos_circulantes,
+        'total_ativos_nao_circulantes': total_ativos_nao_circulantes,
+        'total_passivos_nao_circulantes': total_passivos_nao_circulantes,
+        'total_ativos': total_ativos,
+        'total_passivos': total_passivos,
+        'patrimonio_liquido': patrimonio_liquido,
+    }
+
+    return JsonResponse(data)
+
+
+@api_view(['POST'])
+def add_ativo(request):
+    serializer = AtivoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+    return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def add_passivo(request):
+    serializer = PassivoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+    return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

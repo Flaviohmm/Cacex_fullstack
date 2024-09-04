@@ -49,5 +49,8 @@ urlpatterns = [
     path('funcionarios_prev/listar_previdencia/', views.FuncionarioViewSet.as_view({'get': 'listar_previdencia'}), name='listar_previdencia'),
     path('funcionarios_prev/atualizar_previdencia/<int:pk>/', views.FuncionarioViewSet.as_view({'put': 'atualizar_previdencia'}), name='atualizar_previdencia'),
     path('funcionarios_prev/excluir_previdencia/<int:pk>/', views.FuncionarioViewSet.as_view({'delete': 'excluir_previdencia'}), name='excluir_previdencia'),
+    path('balanco/', views.balanco_api, name='balanco'),
+    path('add_ativo/', views.add_ativo, name='add_ativo'),
+    path('add_passivo/', views.add_passivo, name='add_passivo'),
     path('', include(router.urls)),
 ]
