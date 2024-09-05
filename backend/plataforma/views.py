@@ -1398,7 +1398,6 @@ def fetch_ativo(request, id):
         'valor': ativo.valor, # A conversão para string é feita para evitar problemas de serialização
         'circulante': ativo.circulante,
     }
-    print(ativo.valor)
     return JsonResponse(data, status=status.HTTP_200_OK)
     
 @csrf_exempt
