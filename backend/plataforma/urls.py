@@ -56,5 +56,7 @@ urlpatterns = [
     path('fetch_ativo/<int:id>/', views.fetch_ativo, name='fetch_ativo'),
     path('edit_passivo/<int:id>/', views.edit_passivo, name='edit_passivo'),
     path('fetch_passivo/<int:id>/', views.fetch_passivo, name='fetch_passivo'),
+    path('ativos/<int:id>/', views.ativo_detail, name='ativo_detail'),
+    path('passivos/<int:id>/', views.passivo_detail, name='passivo_detail'),
     path('', include(router.urls)),
 ]

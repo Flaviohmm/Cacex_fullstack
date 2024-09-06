@@ -1426,3 +1426,31 @@ def fetch_passivo(request, id):
         'circulante': passivo.circulante,
     }
     return JsonResponse(data, status=status.HTTP_200_OK)
+
+
+# Para listar e deletar Ativos
+@api_view(['GET', 'DELETE'])
+def ativo_detail(request, id):
+    ativo = get_object_or_404(Ativo, id=id)
+
+    if request.method == 'GET':
+        serializer = AtivoSerializer(ativo)
+        return JsonResponse(serializer.data)
+    
+    elif request.method == 'DELETE':
+        ativo.delete()
+        return JsonResponse({'message': 'Ativo deletado com sucesso'}, status=status.HTTP_204_NO_CONTENT)
+
+
+# Para listar e deletar Passivos
+@api_view(['GET', 'DELETE'])
+def passivo_detail(request, id):
+    passivo = get_object_or_404(Passivo, id=id)
+
+    if request.method == 'GET':
+        serializer = PassivoSerializer(passivo)
+        return JsonResponse(serializer.data)
+    
+    elif request.method == 'DELETE':
+        passivo.delete()
+        return JsonResponse({'message': 'Passivo deletado com sucesso'}, status=status.HTTP_204_NO_CONTENT)

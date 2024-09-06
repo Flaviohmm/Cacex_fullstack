@@ -75,6 +75,45 @@ const ListBalanco: React.FC = () => {
         })}`;
     };
 
+    const handleDeleteAtivo = async (id: number, circulante: boolean) => {
+        if (window.confirm('Deseja realmente excluir este ativo?')) {
+            try {
+                await axios.delete(`http://localhost:8000/ativos/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                if (circulante) {
+                    setAtivosCirculantes(ativosCirculantes.filter(ativo => ativo.id !== id));
+                } else {
+                    setAtivosNaoCirculantes(ativosNaoCirculantes.filter(ativo => ativo.id !== id));
+                }
+            } catch (error) {
+                console.error('Erro ao exclui ativo:', error);
+            }
+        }
+    };
+
+    const handleDeletePassivo = async (id: number, circulante: boolean) => {
+        if (window.confirm('Deseja realmente excluir este passivo?')) {
+            try {
+                await axios.delete(`http://localhost:8000/passivos/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+
+                if (circulante) {
+                    setPassivosCirculantes(passivosCirculantes.filter(passivo => passivo.id !== id));
+                } else {
+                    setPassivosNaoCirculantes(passivosNaoCiculantes.filter(passivo => passivo.id !== id));
+                }
+            } catch (error) {
+                console.error('Erro ao excluir passivo:', error);
+            }
+        }
+    }
+
     return (
         <div>
             <Header />
@@ -109,7 +148,12 @@ const ListBalanco: React.FC = () => {
                                         >
                                             Editar
                                         </button> 
-                                        <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
+                                        <button 
+                                            className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700"
+                                            onClick={() => handleDeleteAtivo(ativo.id, ativo.circulante)}
+                                        >
+                                            Excluir
+                                        </button>
                                     </td>
                                     {index < passivosCirculantes.length ? (
                                         <>
@@ -122,7 +166,12 @@ const ListBalanco: React.FC = () => {
                                                 >
                                                     Editar
                                                 </button> 
-                                                <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
+                                                <button 
+                                                    className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700"
+                                                    onClick={() => handleDeletePassivo(passivosCirculantes[index].id, passivosCirculantes[index].circulante)}
+                                                >
+                                                    Excluir
+                                                </button>
                                             </td>
                                         </>
                                     ) : (
@@ -172,7 +221,12 @@ const ListBalanco: React.FC = () => {
                                         >
                                             Editar
                                         </button>
-                                        <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
+                                        <button 
+                                            className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700"
+                                            onClick={() => handleDeleteAtivo(ativo.id, ativo.circulante)}
+                                        >
+                                            Excluir
+                                        </button>
                                     </td>
                                     {index < passivosNaoCiculantes.length ? (
                                         <>
@@ -185,7 +239,12 @@ const ListBalanco: React.FC = () => {
                                                 >
                                                     Editar
                                                 </button> 
-                                                <button className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700">Excluir</button>
+                                                <button 
+                                                    className="bg-red-500 text-white font-bold px-4 py-2 text-center rounded hover:bg-red-700"
+                                                    onClick={() => handleDeletePassivo(passivosNaoCiculantes[index].id, passivosNaoCiculantes[index].circulante)}
+                                                >
+                                                    Excluir
+                                                </button>
                                             </td>
                                         </>
                                     ) : (
