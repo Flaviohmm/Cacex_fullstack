@@ -7,6 +7,7 @@ import logo from '../cacex-logo.jpeg'
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [senha, setSenha] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Estado para controlar a visibilidade da senha
     const navigate = useNavigate();
 
     const fetchUsuarios = async () => {
@@ -83,13 +84,22 @@ const Login: React.FC = () => {
                                     className="border border-gray-300 p-2 rounded w-full mb-4 focus:outline-none focus:border-blue-500" 
                                 />
                             </div>
-                            <div>
+                            <div className="relative mb-4">
                                 <input 
-                                    type="password" 
+                                    type={showPassword ? "text" : "password"} 
                                     placeholder="Senha"
                                     value={senha} 
                                     onChange={(e) => setSenha(e.target.value)} 
-                                    className="border border-gray-300 p-2 rounded w-full mb-4 focus:outline-none focus:border-blue-500" />
+                                    className="border border-gray-300 p-2 rounded w-full pr-10 focus:outline-none focus:border-blue-500" 
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+                                    style={{ marginTop: 1 }}
+                                >
+                                    {showPassword ? "👁️" : "🙈"} {/* Ícone de olho */}
+                                </button>
                             </div>
                             <button type="submit" className="shadow btn-grad focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded w-full">Login</button>
                         </form>
