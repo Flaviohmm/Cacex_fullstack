@@ -439,4 +439,15 @@ class BalancoPatrimonial(models.Model):
     def patrimonio_liquido(self):
         return self.total_ativos() - self.total_passivos()
     
+
+class ProcessoJudicial(models.Model):
+    processo = models.CharField(max_length=20)
+    tipo_acao = models.CharField(max_length=100)
+    autor = models.CharField(max_length=100)
+    reu = models.CharField(max_length=100)
+    status = models.CharField(max_length=50)
+    data_abertura = models.DateField()
+
+    def __str__(self):
+        return self.processo
         

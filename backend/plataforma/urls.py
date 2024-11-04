@@ -13,6 +13,7 @@ router.register(r'fgts', views.FGTSViewSet)
 router.register(r'empregado', views.EmpregadoViewSet)
 router.register(r'individualizacao_fgts', views.IndividualizacaoFGTSViewSet)
 router.register(r'receita_federal', views.ReceitaFederalViewSet)
+router.register(r'processos', views.ProcessoJudicialViewSet)
 
 urlpatterns = [
     path('adicionar_setor/', views.adicionar_setor, name='adicionar_setor'),

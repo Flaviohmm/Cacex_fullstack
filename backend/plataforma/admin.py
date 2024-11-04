@@ -12,6 +12,7 @@ from .models import (
     ReceitaFederal,
     Ativo,
     Passivo,
+    ProcessoJudicial
 )
 
 # Register your models here.
@@ -27,3 +28,4 @@ admin.site.register(IndividualizacaoFGTS)
 admin.site.register(ReceitaFederal)
 admin.site.register(Ativo)
 admin.site.register(Passivo)
+admin.site.register(ProcessoJudicial)

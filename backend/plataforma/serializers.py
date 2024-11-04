@@ -13,6 +13,7 @@ from .models import (
     ReceitaFederal,
     Ativo,
     Passivo,
+    ProcessoJudicial,
 )
 
 
@@ -131,3 +132,9 @@ class PassivoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Passivo
         fields = ['id', 'nome', 'valor', 'circulante']
+
+
+class ProcessoJudicialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProcessoJudicial
+        fields = '__all__'

@@ -16,6 +16,7 @@ from .models import (
     ReceitaFederal,
     Ativo,
     Passivo,
+    ProcessoJudicial,
 )
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
@@ -43,6 +44,7 @@ from .serializers import (
     ReceitaFederalSerializer,
     AtivoSerializer,
     PassivoSerializer,
+    ProcessoJudicialSerializer,
 )
 from rest_framework import viewsets
 from datetime import datetime
@@ -1454,3 +1456,7 @@ def passivo_detail(request, id):
     elif request.method == 'DELETE':
         passivo.delete()
         return JsonResponse({'message': 'Passivo deletado com sucesso'}, status=status.HTTP_204_NO_CONTENT)
+    
+class ProcessoJudicialViewSet(viewsets.ModelViewSet):
+    queryset = ProcessoJudicial.objects.all()
+    serializer_class = ProcessoJudicialSerializer
