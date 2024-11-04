@@ -95,6 +95,9 @@ const Header: React.FC = () => {
                 <option value="/adicionar_passivo">
                   Adicionar Passivo
                 </option>
+                <option value="/adicionar_processo">
+                  Adicionar Processo
+                </option>
               </select>
             </div>
 
