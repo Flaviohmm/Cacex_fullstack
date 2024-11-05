@@ -57,7 +57,7 @@ const Header: React.FC = () => {
                 <option value="/listar_registros">Tabela Geral</option>
                 <option value="/listar_tabela_administrativa">Tabela Administrativa</option>
                 <option value="/listar_previdencia">Tabela Previdencia</option>
-                <option value="/listar_fgts">Tabela FGTS</option>
+                <option value="/listar_processos">Tabela Jurídico</option>
                 <option value="/listar_individualizacao_fgts">Tabela Individualização</option>
                 <option value="/listar_receita_federal">Tabela Receita Federal</option>
                 <option value="/listar_balanco">Tabela Contabilidade</option>

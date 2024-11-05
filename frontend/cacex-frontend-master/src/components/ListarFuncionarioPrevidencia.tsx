@@ -49,14 +49,14 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
         <div>
             <Header />
             <h2 className="text-2xl font-bold mt-10 text-center">Funcionários da Previdência</h2>
-            <div className="overflow-x-auto mt-6 mx-10 shadow-md">
+            <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md">
                 <table className="min-w-full border border-gray-300">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th className="border border-gray-300 p-4 text-left">Nome</th>
-                            <th className="border border-gray-300 p-4 text-left">Salário</th>
-                            <th className="border border-gray-300 p-4 text-left">Categoria</th>
-                            <th className="border border-gray-300 p-4 text-left">Contribuição</th>
+                            <th className="border border-gray-300 p-4 text-center">Nome</th>
+                            <th className="border border-gray-300 p-4 text-center">Salário</th>
+                            <th className="border border-gray-300 p-4 text-center">Categoria</th>
+                            <th className="border border-gray-300 p-4 text-center">Contribuição</th>
                             <th className="border border-gray-300 p-4 text-center">Ações</th>
                         </tr>
                     </thead>
@@ -64,10 +64,10 @@ const ListarFuncionarioPrevidencia: React.FC = () => {
                         {funcionarios.length > 0 ? (
                             funcionarios.map((funcionario: any) => (
                                 <tr key={funcionario.id}>
-                                    <td className="border border-gray-300 p-4">{funcionario.nome}</td>
-                                    <td className="border border-gray-300 p-4">{funcionario.salario}</td>
-                                    <td className="border border-gray-300 p-4">{funcionario.categoria}</td>
-                                    <td className="border border-gray-300 p-4">{funcionario.contribuicao}</td>
+                                    <td className="border border-gray-300 p-4 text-center">{funcionario.nome}</td>
+                                    <td className="border border-gray-300 p-4 text-center">{funcionario.salario}</td>
+                                    <td className="border border-gray-300 p-4 text-center">{funcionario.categoria}</td>
+                                    <td className="border border-gray-300 p-4 text-center">{funcionario.contribuicao}</td>
                                     <td className="border border-gray-300 p-4 text-center">
                                         <button
                                             type="button"
