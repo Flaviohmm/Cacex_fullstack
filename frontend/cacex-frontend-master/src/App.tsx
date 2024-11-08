@@ -46,6 +46,7 @@ import EditPassivo from './components/EditPassivo';
 import PrivateRoute from './PrivateRoute';
 import AddProcesso from './components/AddProcesso';
 import ListarProcessos from './components/ListarProcessos';
+import EditProcesso from './components/EditProcesso';
 
 
 const App: React.FC = () => {
@@ -99,6 +100,7 @@ const App: React.FC = () => {
           <Route path='/editar_passivo/:id' Component={EditPassivo} />
           <Route path='/adicionar_processo' Component={AddProcesso} />
           <Route path='/listar_processos' Component={ListarProcessos} />
+          <Route path='/editar_processo/:id' Component={EditProcesso} />
         </Routes>
       </div>
     </BrowserRouter>
