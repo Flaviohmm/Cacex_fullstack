@@ -5,6 +5,7 @@ import Header from "./Header";
 import DetalheModal from "./DetalheModal";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import headerImage from "../assets/images/4f80f2fd-e0f5-4343-9626-8b41aab1041b.png"
 
 interface Registro {
     id: number;
@@ -203,17 +204,28 @@ const ListarRegistros: React.FC = () => {
 
                 let position = 0;
 
-                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                position += heightLeft;
+                // Adiciona a imagem do cabeçalho
+                const headerImg = new Image();
+                headerImg.src = headerImage;
 
-                // Se a imagem for maior que uma página, adicione uma nova página
-                while (heightLeft >= pageHeight) {
-                    position = heightLeft - pageHeight;
-                    pdf.addPage();
+                headerImg.onload = () => {
+                    // Adicione a imagem do cabeçalho
+                    pdf.addImage(headerImg, 'PNG', 10, 10, imgWidth, 30); // Adaptação do tamanho e posição da imagem do cabeçalho
+                    position += 42; // Ajuste a posição para o conteúdo principal do PDF
+
+                    // Adiciona a tabela registrada como imagem
                     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                }
+                    position += heightLeft;
 
-                pdf.save('registros.pdf');
+                    // Se a imagem for maior que uma página, adicione uma nova página
+                    while (heightLeft >= pageHeight) {
+                        position = heightLeft - pageHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    }
+
+                    pdf.save('registros.pdf');
+                };
             });
         }
     };

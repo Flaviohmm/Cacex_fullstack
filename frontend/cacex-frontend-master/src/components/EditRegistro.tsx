@@ -216,39 +216,39 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Nome de Usuário:</label>
                     <select name="username" value={data.username} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        <option value="">Selecione um Nome de Usuário</option>
-                        {usuarios.map((usuario: any, index: number) => (
-                            <option key={index} value={usuario.id}>{usuario.username}</option>
+                        {/* <option value="">Selecione um Nome de Usuário</option> */}
+                        {usuarios.map((usuario: any) => (
+                            <option key={usuario.id} value={usuario.id}>{usuario.username}</option>
                         ))}
                     </select>
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Órgão Setor:</label>
-                    <select name="orgao_setor" value={data.orgao_setor} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        <option value="">Selecione um Órgão/Setor</option>
-                        {setores.map((setor: any, index: number) => (
-                            <option key={index} value={setor.id}>{setor.orgao_setor}</option>
+                    <select name="orgao_setor" value={data.orgao_setor} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required disabled>
+                        {/* <option value="">Selecione um Órgão/Setor</option> */}
+                        {setores.map((setor: any) => (
+                            <option key={id} value={id}>{data.orgao_setor}</option>
                         ))}
                     </select>
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Município:</label>
-                    <select name="municipio" value={data.municipio} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        <option value="">Selecione um Município</option>
+                    <select name="municipio" value={data.municipio} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required disabled>
+                        {/* <option value="">Selecione um Município</option> */}
                         {municipios.map((municipio: any, index: number) => (
-                            <option key={index} value={municipio.id}>{municipio.municipio}</option>
+                            <option key={id} value={id}>{data.municipio}</option>
                         ))}
                     </select>
                 </div>
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Atividade:</label>
-                    <select name="atividade" value={data.atividade} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        <option value="">Selecione uma Atividade</option>
+                    <select name="atividade" value={data.atividade} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required disabled>
+                        {/* <option value="">Selecione uma Atividade</option> */}
                         {atividades.map((atividade: any, index: number) => (
-                            <option key={index} value={atividade.id}>{atividade.atividade}</option>
+                            <option key={id} value={id}>{data.atividade}</option>
                         ))}
                     </select>
                 </div>
@@ -263,6 +263,7 @@ const EditRegistro: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded"
                         placeholder='Digite o Número do Convênio'
                         required
+                        disabled
                     />
                 </div>
 
@@ -276,6 +277,7 @@ const EditRegistro: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded"
                         placeholder='Digite o nome do Parlamentar'
                         required
+                        disabled
                     />
                 </div>
 
@@ -289,6 +291,7 @@ const EditRegistro: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded"
                         placeholder='Digite a descrição do Objeto'
                         required
+                        disabled
                     />
                 </div>
 
@@ -305,6 +308,7 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
+                        disabled
                     />
                 </div>
 
@@ -321,6 +325,7 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
+                        disabled
                     />
                 </div>
 
