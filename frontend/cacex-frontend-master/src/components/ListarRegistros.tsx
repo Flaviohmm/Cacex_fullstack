@@ -5,7 +5,8 @@ import Header from "./Header";
 import DetalheModal from "./DetalheModal";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import headerImage from "../assets/images/4f80f2fd-e0f5-4343-9626-8b41aab1041b.png"
+import headerImage from "../assets/images/4f80f2fd-e0f5-4343-9626-8b41aab1041b.png";
+
 
 interface Registro {
     id: number;
@@ -211,7 +212,7 @@ const ListarRegistros: React.FC = () => {
                 headerImg.onload = () => {
                     // Adicione a imagem do cabeçalho
                     pdf.addImage(headerImg, 'PNG', 10, 10, imgWidth, 30); // Adaptação do tamanho e posição da imagem do cabeçalho
-                    position += 42; // Ajuste a posição para o conteúdo principal do PDF
+                    position += 43; // Ajuste a posição para o conteúdo principal do PDF
 
                     // Adiciona a tabela registrada como imagem
                     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
@@ -223,6 +224,23 @@ const ListarRegistros: React.FC = () => {
                         pdf.addPage();
                         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
                     }
+
+                    // Adiciona o rodapé centralizado
+                    const footerText = `Av. Antoine de Saint Exupery, n° 1003, Bairro Pitimbu, Natal/RN CEP: 59.066-430\nFone: (84) 98823-9781 / 3301-1282 - CNPJ 02.398.628/0001-12\ne-mail: centrocacex@hotmail.com\nwww.cacex.org.br`;
+                    const footerX = (pdf.internal.pageSize.getWidth() / 2); // Posição X centralizada
+                    let footerY = pageHeight - 20; // Posição Y para o rodapé (20 unidades do fundo da página)
+
+                    // Define a cor e o tamanho da fonte do rodapé
+                    pdf.setTextColor('#0F51A1'); // Define a cor do texto
+                    pdf.setFontSize(8); // Define o tamanho da fonte (ajuste conforme necessário)
+
+                    // Divide o footerText em linhas
+                    const footerLines = footerText.split('\n');
+                    footerLines.forEach(line => {
+                        const lineWidth = pdf.getTextWidth(line); // Obtém a largura da linha
+                        pdf.text(line, (footerX - lineWidth / 2), footerY, { baseline: 'bottom' }); // Centraliza o texto
+                        footerY += 5; // Ajusta a posição Y para a próxima linha do rodapé
+                    });
 
                     pdf.save('registros.pdf');
                 };

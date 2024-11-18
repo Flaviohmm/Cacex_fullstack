@@ -5,7 +5,7 @@ import Header from "./Header";
 import DetalheModalCaixa from "./DetalheModalCaixa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
+import headerImage from '../assets/images/4f80f2fd-e0f5-4343-9626-8b41aab1041b.png';
 
 interface OrgaoSetor {
     id: number;
@@ -248,17 +248,45 @@ const ListarTabelaEntidade: React.FC = () => {
 
                 let position = 0;
 
-                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                position += heightLeft;
+                // Adiciona a imagem do cabeçalho
+                const headerImg = new Image();
+                headerImg.src = headerImage;
 
-                // Se a imagem for maior que uma página, adicione uma nova página
-                while (heightLeft >= pageHeight) {
-                    position = heightLeft - pageHeight;
-                    pdf.addPage();
+                headerImg.onload = () => {
+                    // Adicione a imagem do cabeçalho
+                    pdf.addImage(headerImg, 'PNG', 10, 10, imgWidth, 30); // Adaptação do tamanho e posição da imagem do cabeçalho
+                    position += 43 // Ajuste a posição para o conteúdo principal
+
+                    // Adiciona a tabela registrada como imagem
                     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                }
+                    position += heightLeft;
+    
+                    // Se a imagem for maior que uma página, adicione uma nova página
+                    while (heightLeft >= pageHeight) {
+                        position = heightLeft - pageHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    }
 
-                pdf.save('registros.pdf');
+                    // Adiciona o rodapé centralizado
+                    const footerText = `Av. Antoine de Saint Exupery, n° 1003, Bairro Pitimbu, Natal/RN CEP: 59.066-430\nFone: (84) 98823-9781 / 3301-1282 - CNPJ 02.398.628/0001-12\ne-mail: centrocacex@hotmail.com\nwww.cacex.org.br`;
+                    const footerX = (pdf.internal.pageSize.getWidth() / 2); // Posição X centralizada
+                    let footerY = pageHeight - 20; // Posição Y para o rodapé (20 unidades do fundo da página)
+
+                    // Define a cor e o tamanho da fonte do rodapé
+                    pdf.setTextColor('#0F51A1'); // Define a cor do texto
+                    pdf.setFontSize(8);
+
+                    // Divide o footerText em linhas
+                    const footerLines = footerText.split('\n');
+                    footerLines.forEach(line => {
+                        const lineWidth = pdf.getTextWidth(line); // Obtém a largura da linha
+                        pdf.text(line, (footerX - lineWidth / 2), footerY, { baseline: 'bottom' }); // Centraliza o texto
+                        footerY += 5; // Ajusta a posição Y para a proxima linha do rodapé
+                    });
+    
+                    pdf.save('registros.pdf');
+                };
             });
         }
     };
