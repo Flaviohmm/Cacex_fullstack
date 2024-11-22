@@ -275,7 +275,7 @@ const ListarTabelaEntidade: React.FC = () => {
 
                     // Define a cor e o tamanho da fonte do rodapé
                     pdf.setTextColor('#0F51A1'); // Define a cor do texto
-                    pdf.setFontSize(8);
+                    pdf.setFontSize(8); // Define o tamanho da fonte (ajuste conforme necessário)
 
                     // Divide o footerText em linhas
                     const footerLines = footerText.split('\n');
