@@ -176,22 +176,46 @@ const EditRegistro: React.FC = () => {
         }));
     };
 
+    const checkRegistroExists = async (id: number) => {
+        const token = localStorage.getItem('authToken');
+
+        try {
+            const response = await axios.get(`http://localhost:8000/listar_registro/${id}`, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+            });
+            return response.status === 200; // Retorna verdadeiro se o registro existir
+        } catch (error) {
+            console.error('Erro ao verificar existência do registro:', error);
+            return false; // Retorna falso se hover um erro (o registro pode não existir)
+        }
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         const token = localStorage.getItem('authToken');
         e.preventDefault();
+
+        const registroExists = await checkRegistroExists(data.id);
+        if (!registroExists) {
+            alert('Erro: O registro que você está tentando editar não existe.')
+        }
 
         console.log("Dados enviados:", data);
 
         // Convertendo strings de data para o formato correto se necessário
         const formattedData = {
             ...data,
+            // oge_ogu: parseFloat(data.oge_ogu.toString().replace('R$', '').replace('.', '').replace(',', '.')),
+            // cp_prefeitura: parseFloat(data.cp_prefeitura.toString().replace('R$', '').replace('.', '').replace(',', '.')),
+            // valor_liberado: parseFloat(data.valor_liberado.toString().replace('R$', '').replace('.', '').replace(',', '.')),
             prazo_vigencia: new Date(data.prazo_vigencia).toISOString().split('T')[0],
             data_recepcao: new Date(data.data_recepcao).toISOString().split('T')[0],
             data_inicio: data.data_inicio ? new Date(data.data_inicio).toISOString().split('T')[0] : null,
             data_fim: data.data_fim ? new Date(data.data_fim).toISOString().split('T')[0] : null,
         };
 
-        console.log("Dados enviados:", formattedData);
+        // console.log("Dados enviados:", formattedData);
         
         try {
             const response = await axios.put(`http://localhost:8000/editar_registro/${id}/`, formattedData, {
@@ -221,9 +245,9 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Nome de Usuário:</label>
                     <select name="username" value={data.username} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        {/* <option value="">Selecione um Nome de Usuário</option> */}
-                        {usuarios.map((usuario: RegistroData) => (
-                            <option key={usuario.id} value={usuario.id}>{usuario.username}</option>
+                        <option value="">Selecione um Nome de Usuário</option>
+                        {usuarios.map((usuario: any, index: number) => (
+                            <option key={index} value={usuario.id}>{usuario.username}</option>
                         ))}
                     </select>
                 </div>
@@ -231,9 +255,9 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Órgão Setor:</label>
                     <select name="orgao_setor" value={data.orgao_setor} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        {/* <option value="">Selecione um Órgão/Setor</option> */}
-                        {setores.map((setor: RegistroData) => (
-                            <option key={id} value={id}>{setor.orgao_setor}</option>
+                        <option value="">Selecione um Órgão/Setor</option>
+                        {setores.map((setor: any, index: number) => (
+                            <option key={index} value={setor.id}>{setor.orgao_setor}</option>
                         ))}
                     </select>
                 </div>
@@ -241,9 +265,9 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Município:</label>
                     <select name="municipio" value={data.municipio} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        {/* <option value="">Selecione um Município</option> */}
-                        {municipios.map((municipio: RegistroData) => (
-                            <option key={id} value={id}>{municipio.municipio}</option>
+                        <option value="">Selecione um Município</option>
+                        {municipios.map((municipio: any, index: number) => (
+                            <option key={index} value={municipio.id}>{municipio.municipio}</option>
                         ))}
                     </select>
                 </div>
@@ -251,9 +275,9 @@ const EditRegistro: React.FC = () => {
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Atividade:</label>
                     <select name="atividade" value={data.atividade} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
-                        {/* <option value="">Selecione uma Atividade</option> */}
-                        {atividades.map((atividade: RegistroData) => (
-                            <option key={id} value={id}>{atividade.atividade}</option>
+                        <option value="">Selecione um Órgão/Setor</option>
+                        {atividades.map((atividade: any, index: number) => (
+                            <option key={index} value={atividade.id}>{atividade.atividade}</option>
                         ))}
                     </select>
                 </div>
@@ -310,6 +334,7 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
+                        required
                     />
                 </div>
 
@@ -326,6 +351,7 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
+                        required
                     />
                 </div>
 
@@ -342,6 +368,7 @@ const EditRegistro: React.FC = () => {
                         prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale={true}
+                        required
                     />
                 </div>
 
