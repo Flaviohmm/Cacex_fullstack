@@ -15,6 +15,7 @@ from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
 import json
 
+
 @csrf_exempt
 def cadastro(request):
     if request.method == "POST":
@@ -36,7 +37,7 @@ def cadastro(request):
             return JsonResponse({'success': 'Cadastro realizado com sucesso.'}, status=201)
         except:
             return JsonResponse({'error': 'Erro interno do sistema.'}, status=500)
-        
+     
 @csrf_exempt
 def login(request):
     if request.method == "POST":

@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
+from autenticar.models import UsuarioSetor
 from .models import (
     Setor, 
     Municipio, 
@@ -21,6 +23,20 @@ class SetorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Setor
         fields = ['id', 'orgao_setor']
+
+class UsuarioSetorSerializer(serializers.ModelSerializer):
+    usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    setor = SetorSerializer()
+
+    class Meta:
+        model = UsuarioSetor
+        fields = ['usuario', 'setor']
+
+    def create(self, validated_data):
+        setor_data = validated_data.pop('setor')
+        setor = Setor.objects.create(**setor_data)
+        usuario_setor = UsuarioSetor.objects.create(setor=setor, **validated_data)
+        return usuario_setor
 
 class MunicipioSerializer(serializers.ModelSerializer):
     class Meta:

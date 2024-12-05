@@ -396,18 +396,18 @@ def editar_registro(request, id):
                 historico.dados_anteriores = dados_anteriores
 
             registro.nome = User.objects.get(id=data.get('username'))
-            registro.orgao_setor = Setor.objects.get(id=data.get('orgao_setor'))
-            registro.municipio = Municipio.objects.get(id=data.get('municipio'))
-            registro.atividade = Atividade.objects.get(id=data.get('atividade'))
-            registro.num_convenio = data.get('num_convenio')
-            registro.parlamentar = data.get('parlamentar')
-            registro.objeto = data.get('objeto')
+            # registro.orgao_setor = Setor.objects.get(id=data.get('orgao_setor'))
+            # registro.municipio = Municipio.objects.get(id=data.get('municipio'))
+            # registro.atividade = Atividade.objects.get(id=data.get('atividade'))
+            # registro.num_convenio = data.get('num_convenio')
+            # registro.parlamentar = data.get('parlamentar')
+            # registro.objeto = data.get('objeto')
 
-            oge_ogu_str = data.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
-            registro.oge_ogu = float(oge_ogu_str)
+            # oge_ogu_str = data.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            # registro.oge_ogu = float(oge_ogu_str)
 
-            cp_prefeitura_str = data.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
-            registro.cp_prefeitura = float(cp_prefeitura_str)
+            # cp_prefeitura_str = data.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
+            # registro.cp_prefeitura = float(cp_prefeitura_str)
 
             valor_liberado_str = data.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
             registro.valor_liberado = float(valor_liberado_str)

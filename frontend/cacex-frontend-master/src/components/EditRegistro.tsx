@@ -237,7 +237,7 @@ const EditRegistro: React.FC = () => {
         }
     };
 
-    return (
+   return (
         <div>
             <Header />
             <form onSubmit={handleSubmit} className='max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow-md'>
@@ -252,7 +252,7 @@ const EditRegistro: React.FC = () => {
                     </select>
                 </div>
 
-                <div>
+                {/* <div>
                     <label className="block text-md font-bold mb-2 mt-4">Órgão Setor:</label>
                     <select name="orgao_setor" value={data.orgao_setor} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded" required>
                         <option value="">Selecione um Órgão/Setor</option>
@@ -319,9 +319,9 @@ const EditRegistro: React.FC = () => {
                         placeholder='Digite a descrição do Objeto'
                         required
                     />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                     <label className="block text-md font-bold mb-2 mt-4">OGE/OGU:</label>
                     <NumericFormat
                         name='oge_ogu'
@@ -353,7 +353,7 @@ const EditRegistro: React.FC = () => {
                         fixedDecimalScale={true}
                         required
                     />
-                </div>
+                </div> */}
 
                 <div>
                     <label className="block text-md font-bold mb-2 mt-4">Valor Liberado:</label>
