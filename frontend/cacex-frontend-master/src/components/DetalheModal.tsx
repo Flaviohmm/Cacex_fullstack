@@ -41,6 +41,7 @@ interface DetalheModalProps {
 const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, onUpdate}) => {
     const navigate = useNavigate();
     const [csrfToken, setCsrfToken] = useState<string>("");
+    const token = localStorage.getItem('authToken');
 
     useEffect(() => {
         const getCsrfToken = async () => {
@@ -61,7 +62,11 @@ const DetalheModal: React.FC<DetalheModalProps> = ({registro, isOpen, onClose, o
 
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8000/excluir_registro/${registro.id}/`);
+            const response = await axios.delete(`http://localhost:8000/excluir_registro/${registro.id}/`, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
             alert(response.data.success);
             onClose();
             onUpdate();

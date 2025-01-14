@@ -31,6 +31,10 @@ const Header: React.FC = () => {
     navigate('/dashboard_data')
   }
 
+  const goToAssociarUsuarioSetor = () => {
+    navigate('/associar_usuario_setor')
+  }
+
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const path = e.target.value;
     if (path) {
@@ -118,6 +122,7 @@ const Header: React.FC = () => {
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAnexar}>Arquivado</button>
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToDashboard}>Painel</button>
+            <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToAssociarUsuarioSetor}>Associação</button>
         </nav>
         <button onClick={handleLogout} className="bg-white text-blue-700 font-bold hover:bg-gray-200 p-2 rounded mt-4 md:mt-0">
             Sair

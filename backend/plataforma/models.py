@@ -13,6 +13,16 @@ class Setor(models.Model):
     def __str__(self):
         return self.orgao_setor
     
+class UserSetor(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'setor')
+        indexes = [
+            models.Index(fields=['user', 'setor']),
+        ]
+    
     
 class Municipio(models.Model):
     municipio = models.CharField(max_length=255)

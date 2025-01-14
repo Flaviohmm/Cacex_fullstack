@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer
+from plataforma.models import Setor, UserSetor
 import json
 
 
@@ -77,4 +77,39 @@ class UserList(APIView):
         user = get_object_or_404(User, username=request.user.username)
         user_data = {'id': user.id, 'username': user.username, 'name': user.first_name}
         return Response([user_data])
+    
+    
+@api_view(['POST'])
+def associar_usuario_setor(request):
+    user = request.user
+    setor_ids = request.data.get('setor_ids')
+
+    if not setor_ids:
+        return Response({'error': 'Nenhum setor foi fornecido.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    success_count = 0
+    already_associated = []
+
+    for setor_id in setor_ids:
+        try:
+            setor = Setor.objects.get(id=setor_id)
+            user_setor, created = UserSetor.objects.get_or_create(user=user, setor=setor)
+
+            if created:
+                success_count += 1
+            else:
+                already_associated.append(setor_id)
+        except Setor.DoesNotExist:
+            return Response({'error': f'Setor com ID {setor_id} não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    response_message = {
+        'success': f'{success_count} setor(es) associado(s) com sucesso.'
+    }
+
+    if already_associated:
+        response_message['message'] = f'O(s) setor(es) com ID(s) {already_associated} já está(ão) associado(s) ao usuário.'
+
+    return Response(response_message, status=status.HTTP_200_OK)
     

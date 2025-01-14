@@ -8,4 +8,5 @@ urlpatterns = [
     path('auth/sair', views.sair, name='sair'),
     path('usuarios/', views.UserList.as_view(), name='lista_usuarios'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('associar_usuario_setor/', views.associar_usuario_setor, name='associar_usuario_setor'),
 ]
