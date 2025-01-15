@@ -48,6 +48,8 @@ import AddProcesso from './components/AddProcesso';
 import ListarProcessos from './components/ListarProcessos';
 import EditProcesso from './components/EditProcesso';
 import AssociarUsuarioSetor from './components/AssociarUsuarioSetor';
+import ListarAssociacaoUsuario from './components/ListarAssociacaoUsuario';
+import EditarAssociacaoUsuario from './components/EditarAssociacaoUsuario';
 
 
 const App: React.FC = () => {
@@ -103,6 +105,8 @@ const App: React.FC = () => {
           <Route path='/listar_processos' Component={ListarProcessos} />
           <Route path='/editar_processo/:id' Component={EditProcesso} />
           <Route path='/associar_usuario_setor' Component={AssociarUsuarioSetor} />
+          <Route path='/listar_associacao_usuario' Component={ListarAssociacaoUsuario} />
+          <Route path='/editar_associacao/:id' element={<EditarAssociacaoUsuario />} />
         </Routes>
       </div>
     </BrowserRouter>

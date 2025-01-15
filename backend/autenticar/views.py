@@ -6,13 +6,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from plataforma.models import Setor, UserSetor
+from plataforma.serializers import UsuarioSetorSerializer
 import json
 
 
@@ -112,4 +113,87 @@ def associar_usuario_setor(request):
         response_message['message'] = f'O(s) setor(es) com ID(s) {already_associated} já está(ão) associado(s) ao usuário.'
 
     return Response(response_message, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def listar_associacoes_usuario(request):
+    user = request.user
+
+    # Verificação se o usuário está autenticado
+    if not user.is_authenticated:
+        return Response({'error': 'Usuário não autenticado.'}, status=status.HTTP_401_UNAUTHORIZED)
     
+    try:
+        user_setores = UserSetor.objects.filter(user=user).select_related('setor')
+        associacoes = [{
+            'id': user_setor.id,
+            'orgao_setor': user_setor.setor.orgao_setor,
+        } for user_setor in user_setores]
+
+        return Response(associacoes, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PUT'])
+def editar_associacao_usuario(request, associacao_id):
+    user = request.user
+    setor_id = request.data.get('setor_id')
+
+    if setor_id is None:
+        # Se setor_id é None, apaga todos os registros de UserSetor do usuário
+        try:
+            # Exclui todos os setores associados a esse usuário
+            UserSetor.objects.filter(user=user).delete()
+            return Response({'success': 'Todos os setores associados foram removidos.'}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    try:
+        # Buscar a associação existente
+        user_setor = UserSetor.objects.get(id=associacao_id, user=user)
+        setor = Setor.objects.get(id=setor_id)
+
+        # Atualizar a associação
+        user_setor.setor = setor
+        user_setor.save()
+
+        return Response({'success': 'Associação atualizada com sucesso.'}, status=status.HTTP_200_OK)
+    
+    except UserSetor.DoesNotExist:
+        return Response({'error': 'Associação não encontrada ou você não tem permissão para editá-la.'}, status=status.HTTP_404_NOT_FOUND)
+    except Setor.DoesNotExist:
+        return Response({'error': 'Setor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UsuarioSetorViewSet(viewsets.ModelViewSet):
+    queryset=UserSetor.objects.all()
+    serializer_class=UsuarioSetorSerializer
+
+    # Endpoint para listar setores associados a um usuário
+    @action(methods=['get'], detail=True, url_path='associacoes_usuario')
+    def get_associacoes_usuario(self, request, pk=None):
+        associacao = self.get_object()
+        setores = associacao.setores.all()  # Ajuste conforme os relacionamentos em seu modelo
+        setor_ids = [setor.id for setor in setores]
+        return Response({'setor_ids': setor_ids}, status=status.HTTP_200_OK)
+    
+    # Endpoint para editar a associação entre usuário e setores
+    @action(methods=['put'], detail=True, url_path='editar_associacao_usuario')
+    def editar_associacao_usuario(self, request, pk=None):
+        associacao = self.get_object()
+        setores_ids = request.data.get('setor_ids', [])
+
+        if not setores_ids:
+            return Response({'error': 'Nenhum setor foi fornecido.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Supõe que você tenha uma relação ManyToMany
+        associacao.setores.clear() # Limpa associações anteriores
+        for setor_id in setores_ids:
+            associacao.setores.add(setor_id) # Adiciona novos setores
+
+        associacao.save()
+        return Response({'success': 'Associação atualizada com sucesso.'}, status=status.HTTP_200_OK)

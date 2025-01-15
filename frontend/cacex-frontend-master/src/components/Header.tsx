@@ -117,6 +117,7 @@ const Header: React.FC = () => {
                 <option value="" disabled>Listas Primárias</option>
                 <option value="/listar_dados">Lista de Dados</option>
                 <option value="/listar_empregados">Lista de Empregados</option>
+                <option value="/listar_associacao_usuario">Lista de Associações</option>
               </select>
             </div>         
             <button className="hover:bg-blue-500 p-2 rounded font-bold" onClick={goToHistorico}>Histórico Geral</button>
